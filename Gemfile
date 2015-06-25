@@ -1,6 +1,19 @@
 source 'https://rubygems.org'
 
-gem 'rom', github: 'rom-rb/rom', branch: 'master'
-gem 'transproc', github: 'solnic/transproc', branch: 'master'
-gem 'rspec'
-gem 'inflecto'
+gemspec
+
+group :test do
+  gem 'byebug', platforms: :mri
+  gem 'rom', github: 'rom-rb/rom', branch: 'master'
+  gem 'rspec', '~> 3.1'
+  gem 'codeclimate-test-reporter', require: false
+  gem 'inflecto'
+  gem 'faraday'
+end
+
+group :tools do
+  gem 'guard'
+  gem 'guard-rspec'
+  gem 'guard-rubocop'
+  gem 'rubocop', '~> 0.28'
+end
