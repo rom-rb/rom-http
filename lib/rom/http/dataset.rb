@@ -18,6 +18,10 @@ module ROM
         config[:url]
       end
 
+      def headers
+        {}
+      end
+
       def name
         config[:name]
       end
@@ -81,8 +85,11 @@ module ROM
         ).response
       end
 
-      def delete
-        with_options(request_method: :delete).response
+      def delete(params)
+        with_options(
+          request_method: :delete,
+          params: params
+        ).response
       end
 
       def response
