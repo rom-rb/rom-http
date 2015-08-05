@@ -1,4 +1,5 @@
 require 'rom'
+require 'rom/http/error'
 require 'rom/http/commands'
 require 'rom/http/gateway'
 require 'rom/http/relation'

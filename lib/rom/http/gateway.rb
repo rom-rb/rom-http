@@ -4,13 +4,15 @@ require 'rom/http/dataset'
 module ROM
   module HTTP
     class Gateway < ROM::Gateway
-      attr_reader :datasets, :config, :options
-      private :datasets, :config, :options
+      attr_reader :datasets, :config
+      private :datasets, :config
 
-      def initialize(config = {}, options = {})
+      def initialize(config)
+        missing_keys = %i(uri request_handler response_handler) - config.keys
+        fail GatewayConfigurationError, missing_keys unless missing_keys.empty?
+
         @datasets = ThreadSafe::Cache.new
         @config = config
-        @options = options
       end
 
       def [](name)
@@ -18,7 +20,7 @@ module ROM
       end
 
       def dataset(name)
-        datasets[name] = Dataset.new(config.merge(name: name), options)
+        datasets[name] = Dataset.new(config.merge(name: name))
       end
 
       def dataset?(name)

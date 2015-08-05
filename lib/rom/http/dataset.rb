@@ -14,16 +14,16 @@ module ROM
         }.merge(options)
       end
 
-      def url
-        config[:url]
+      def uri
+        config[:uri]
       end
 
       def headers
-        {}
+        config.fetch(:headers, {}).merge(options.fetch(:headers, {}))
       end
 
       def name
-        config[:name]
+        config[:name].to_s
       end
 
       def path
@@ -36,6 +36,14 @@ module ROM
 
       def params
         options[:params]
+      end
+
+      def with_headers(headers)
+        self.class.new(config, options.merge(headers: headers))
+      end
+
+      def add_header(header, value)
+        with_headers(header => value)
       end
 
       def with_options(opts)
@@ -60,10 +68,6 @@ module ROM
 
       def with_params(params)
         with_options(params: params)
-      end
-
-      def clear_params
-        with_options(params: {})
       end
 
       def each(&block)
