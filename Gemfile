@@ -13,4 +13,9 @@ group :tools do
   gem 'guard-rspec'
   gem 'guard-rubocop'
   gem 'rubocop', '~> 0.28'
+
+  platform :mri do
+    gem 'mutant', '>= 0.8.0', github: 'mbj/mutant', branch: 'master'
+    gem 'mutant-rspec'
+  end
 end
