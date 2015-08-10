@@ -2,6 +2,7 @@ module ROM
   module HTTP
     class Dataset
       include Enumerable
+      include Equalizer.new(:config, :options)
 
       attr_reader :config, :options
 
@@ -12,10 +13,6 @@ module ROM
           path: '',
           params: {}
         }.merge(options)
-      end
-
-      def ==(other)
-        config == other.config && options == other.options
       end
 
       def uri

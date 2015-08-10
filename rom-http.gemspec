@@ -19,6 +19,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_runtime_dependency 'rom', '~> 0.8', '>= 0.8.0'
+  spec.add_runtime_dependency 'equalizer', '~> 0.0', '>= 0.0.9'
   spec.add_runtime_dependency 'thread_safe'
 
   spec.add_development_dependency 'bundler'
