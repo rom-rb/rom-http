@@ -1,4 +1,4 @@
-Copyright (c) 2014 Piotr Solnica
+Copyright (c) 2015 Ruby Object Mapper Team
 
 MIT License
 

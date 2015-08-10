@@ -42,7 +42,8 @@ class ResponseHandler
   end
 end
 
-ROM.setup(:http, 'http://localhost:3000', {
+ROM.setup(:http, {
+  uri: 'http://localhost:3000',
   headers: {
     accept: 'application/json'
   },
