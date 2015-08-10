@@ -14,8 +14,10 @@ class RequestHandler
   def initialize
     @connections = ThreadSafe::Hash.new do |hash, uri|
       hash[uri] = Faraday.new(uri) do |faraday|
-        faraday.adapter Faraday.default_adapter
+        faraday.request  :multipart
+        faraday.request  :url_encoded
         faraday.response :logger
+        faraday.adapter  Faraday.default_adapter
       end
     end
   end
@@ -23,7 +25,7 @@ class RequestHandler
   def call(dataset)
     connection(dataset.uri).send(
       dataset.request_method,
-      dataset.name,
+      dataset.name + dataset.path,
       dataset.params,
       dataset.headers
     )

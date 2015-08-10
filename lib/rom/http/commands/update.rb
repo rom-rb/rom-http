@@ -4,10 +4,17 @@ module ROM
       class Update < ROM::Commands::Update
         adapter :http
 
-        def execute(params)
-          attributes = input[params]
-          validator.call(attributes)
-          relation.map { |tuple| tuple.update(attributes.to_h) }
+        def execute(tuples)
+          Array(tuples).flat_map do |tuple|
+            attributes = input[tuple]
+            validator.call(attributes)
+            relation.update(attributes.to_h)
+          end.to_a
+        end
+
+        # H4xz0rz: We don't know the tuple count
+        def tuple_count
+          one? ? 1 : super
         end
       end
     end
