@@ -14,6 +14,10 @@ module ROM
         }.merge(options)
       end
 
+      def ==(other)
+        config == other.config && options == other.options
+      end
+
       def uri
         config[:uri]
       end

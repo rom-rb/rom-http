@@ -5,8 +5,8 @@ module ROM
 
       adapter :http
 
-      forward :with_request_method, :with_path, :prepend_path, :append_path,
-              :with_options, :with_params, :clear_params, :insert, :delete
+      forward :with_request_method, :with_path, :append_path, :with_options,
+              :with_params, :clear_params, :insert, :update, :delete
     end
   end
 end

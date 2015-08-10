@@ -58,6 +58,24 @@ RSpec.describe ROM::HTTP::Dataset do
     end
   end
 
+  describe '#==' do
+    subject { dataset == other }
+
+    context 'when config and options equal' do
+      let(:other) { ROM::HTTP::Dataset.new(dataset.config, dataset.options) }
+
+      it { is_expected.to be true }
+    end
+
+    context 'when config and options equal' do
+      let(:other) do
+        ROM::HTTP::Dataset.new(dataset.config, dataset.options.merge(path: Random.new_seed))
+      end
+
+      it { is_expected.to be false }
+    end
+  end
+
   describe '#uri' do
     it { expect(dataset.uri).to eq(uri) }
   end
