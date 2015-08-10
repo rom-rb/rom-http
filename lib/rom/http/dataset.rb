@@ -43,7 +43,7 @@ module ROM
       end
 
       def add_header(header, value)
-        with_headers(header => value)
+        with_headers(headers.merge(header => value))
       end
 
       def with_options(opts)
@@ -52,10 +52,6 @@ module ROM
 
       def with_path(path)
         with_options(path: path)
-      end
-
-      def prepend_path(path)
-        with_options(path: File.join(path, options[:path]))
       end
 
       def append_path(path)
@@ -89,15 +85,14 @@ module ROM
         ).response
       end
 
-      def delete(params)
+      def delete
         with_options(
-          request_method: :delete,
-          params: params
+          request_method: :delete
         ).response
       end
 
       def response
-        response_handler.call(self, request_handler.call(self))
+        response_handler.call(request_handler.call(self), self)
       end
 
       private

@@ -37,7 +37,7 @@ class RequestHandler
 end
 
 class ResponseHandler
-  def call(dataset, response)
+  def call(response, dataset)
     JSON.parse(response.body)['_embedded'][dataset.name]
   end
 end
