@@ -1,0 +1,28 @@
+language: ruby
+sudo: false
+cache: bundler
+bundler_args: --without sql benchmarks console tools
+script: "bundle exec rake ci"
+rvm:
+  - 2.0
+  - 2.1
+  - 2.2
+  - rbx-2
+  - jruby
+  - ruby-head
+  - jruby-head
+env:
+  global:
+    - JRUBY_OPTS='--dev -J-Xmx1024M'
+matrix:
+  allow_failures:
+    - rvm: ruby-head
+    - rvm: jruby-head
+    - rvm: rbx-2
+notifications:
+  webhooks:
+    urls:
+      - https://webhooks.gitter.im/e/39e1225f489f38b0bd09
+    on_success: change
+    on_failure: always
+    on_start: false
