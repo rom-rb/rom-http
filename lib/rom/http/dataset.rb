@@ -28,11 +28,11 @@ module ROM
       end
 
       def path
-        options[:path].to_s
+        options[:path].to_s.sub(%r{\A/}, '')
       end
 
       def absolute_path
-        '/' + options[:path].to_s.sub(%r{\A/}, '')
+        '/' + path
       end
 
       def request_method

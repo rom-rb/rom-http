@@ -12,7 +12,7 @@ require 'net/http'
 class RequestHandler
   def call(dataset)
     uri = URI(dataset.uri)
-    uri.path = File.join('/', dataset.name, dataset.path)
+    uri.path = "/#{dataset.name}/#{dataset.path}"
     uri.query = URI.encode_www_form(dataset.params)
 
     http = Net::HTTP.new(uri.host, uri.port)

@@ -149,10 +149,21 @@ RSpec.describe ROM::HTTP::Dataset do
     end
 
     context 'with path option' do
-      let(:path) { 'users' }
-      let(:options) { { path: path } }
+      context 'when path is absolute' do
+        let(:path) { '/users' }
+        let(:options) { { path: path } }
 
-      it { is_expected.to eq(path) }
+        it 'removes the leading /' do
+          is_expected.to eq('users')
+        end
+      end
+
+      context 'when path is not absolute' do
+        let(:path) { 'users' }
+        let(:options) { { path: path } }
+
+        it { is_expected.to eq(path) }
+      end
     end
   end
 
@@ -164,14 +175,14 @@ RSpec.describe ROM::HTTP::Dataset do
     end
 
     context 'with path option' do
-      context 'when path already absolute' do
+      context 'when path is absolute' do
         let(:path) { '/users' }
         let(:options) { { path: path } }
 
         it { is_expected.to eq(path) }
       end
 
-      context 'when path not already absolute' do
+      context 'when path is not absolute' do
         let(:path) { 'users' }
         let(:options) { { path: path } }
 
