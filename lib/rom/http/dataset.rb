@@ -31,6 +31,10 @@ module ROM
         options[:path].to_s
       end
 
+      def absolute_path
+        '/' + options[:path].to_s.sub(%r{\A/}, '')
+      end
+
       def request_method
         options[:request_method]
       end
@@ -56,7 +60,7 @@ module ROM
       end
 
       def append_path(path)
-        with_options(path: File.join(options[:path], path))
+        with_options(path: options[:path] + '/' + path)
       end
 
       def with_request_method(request_method)

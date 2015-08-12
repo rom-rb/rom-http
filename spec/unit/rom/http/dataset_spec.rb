@@ -61,13 +61,13 @@ RSpec.describe ROM::HTTP::Dataset do
   describe '#==' do
     subject { dataset == other }
 
-    context 'when config and options equal' do
+    context 'with config and options equal' do
       let(:other) { ROM::HTTP::Dataset.new(dataset.config, dataset.options) }
 
       it { is_expected.to be true }
     end
 
-    context 'when config and options equal' do
+    context 'with config and options equal' do
       let(:other) do
         ROM::HTTP::Dataset.new(dataset.config, dataset.options.merge(path: Random.new_seed))
       end
@@ -83,7 +83,7 @@ RSpec.describe ROM::HTTP::Dataset do
   describe '#headers' do
     subject { dataset.headers }
 
-    context 'when no headers configured' do
+    context 'with no headers configured' do
       context 'with no headers option' do
         it { is_expected.to eq({}) }
       end
@@ -96,7 +96,7 @@ RSpec.describe ROM::HTTP::Dataset do
       end
     end
 
-    context 'when headers configured' do
+    context 'with headers configured' do
       context 'with no headers option' do
         let(:headers) { { 'Accept' => 'application/json' } }
         let(:config) do
@@ -127,11 +127,11 @@ RSpec.describe ROM::HTTP::Dataset do
   describe '#name' do
     subject { dataset.name }
 
-    context 'when no name configured' do
+    context 'with no name configured' do
       it { is_expected.to eq('') }
     end
 
-    context 'when name configured' do
+    context 'with name configured' do
       let(:name) { 'users' }
       let(:config) do
         super().merge(name: name)
@@ -144,11 +144,11 @@ RSpec.describe ROM::HTTP::Dataset do
   describe '#path' do
     subject { dataset.path }
 
-    context 'when no path option' do
+    context 'with no path option' do
       it { is_expected.to eq('') }
     end
 
-    context 'when path option' do
+    context 'with path option' do
       let(:path) { 'users' }
       let(:options) { { path: path } }
 
@@ -156,14 +156,38 @@ RSpec.describe ROM::HTTP::Dataset do
     end
   end
 
+  describe '#absolute_path' do
+    subject { dataset.absolute_path }
+
+    context 'with no path option' do
+      it { is_expected.to eq('/') }
+    end
+
+    context 'with path option' do
+      context 'when path already absolute' do
+        let(:path) { '/users' }
+        let(:options) { { path: path } }
+
+        it { is_expected.to eq(path) }
+      end
+
+      context 'when path not already absolute' do
+        let(:path) { 'users' }
+        let(:options) { { path: path } }
+
+        it { is_expected.to eq("/#{path}") }
+      end
+    end
+  end
+
   describe '#request_method' do
     subject { dataset.request_method }
 
-    context 'when no request_method option' do
+    context 'with no request_method option' do
       it { is_expected.to eq(:get) }
     end
 
-    context 'when request_method option' do
+    context 'with request_method option' do
       let(:request_method) { :put }
       let(:options) { { request_method: request_method } }
 
@@ -174,11 +198,11 @@ RSpec.describe ROM::HTTP::Dataset do
   describe '#params' do
     subject { dataset.params }
 
-    context 'when no params option' do
+    context 'with no params option' do
       it { is_expected.to eq({}) }
     end
 
-    context 'when params option' do
+    context 'with params option' do
       let(:params) { { name: 'Jack' } }
       let(:options) { { params: params } }
 
@@ -336,7 +360,7 @@ RSpec.describe ROM::HTTP::Dataset do
       allow(response).to receive(:each).and_yield.and_return(result)
     end
 
-    context 'when no block given' do
+    context 'with no block given' do
       subject! { dataset.each }
 
       it { expect(dataset).to_not have_received(:response) }
@@ -344,7 +368,7 @@ RSpec.describe ROM::HTTP::Dataset do
       it { is_expected.to be_kind_of(Enumerable) }
     end
 
-    context 'when block given' do
+    context 'with block given' do
       subject! { dataset.each(&block) }
 
       it { expect(dataset).to have_received(:response).once }
