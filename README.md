@@ -6,57 +6,53 @@ HTTP adapter for ROM
 
 ```ruby
 require 'json'
-require 'faraday'
+require 'uri'
+require 'net/http'
 
 class RequestHandler
-  attr_reader :connections
-
-  def initialize
-    @connections = ThreadSafe::Hash.new do |hash, uri|
-      hash[uri] = Faraday.new(uri) do |faraday|
-        faraday.request  :multipart
-        faraday.request  :url_encoded
-        faraday.response :logger
-        faraday.adapter  Faraday.default_adapter
-      end
-    end
-  end
-
   def call(dataset)
-    connection(dataset.uri).send(
-      dataset.request_method,
-      dataset.name + dataset.path,
-      dataset.params,
-      dataset.headers
-    )
-  end
+    uri = URI(dataset.uri)
+    uri.path = File.join('/', dataset.name, dataset.path)
+    uri.query = URI.encode_www_form(dataset.params)
 
-  private
+    http = Net::HTTP.new(uri.host, uri.port)
+    request_klass = Net::HTTP.const_get(ROM::Inflector.classify(dataset.request_method))
 
-  def connection(uri)
-    connections[uri]
+    request = request_klass.new(uri.request_uri)
+    dataset.headers.each_with_object(request) do |(header, value), request|
+      request[header.to_s] = value
+    end
+
+    response = http.request(request)
   end
 end
 
 class ResponseHandler
   def call(response, dataset)
-    JSON.parse(response.body)['_embedded'][dataset.name]
+    Array([JSON.parse(response.body)]).flatten
   end
 end
 
-ROM.setup(:http, {
-  uri: 'http://localhost:3000',
+class Users < ROM::Relation[:http]
+  dataset :users
+
+  def by_id(id)
+    with_path(id.to_s)
+  end
+end
+
+rom = ROM::Environment.new
+rom.setup(:http, {
+  uri: 'http://jsonplaceholder.typicode.com',
   headers: {
-    accept: 'application/json'
+    Accept: 'application/json'
   },
   request_handler: RequestHandler.new,
   response_handler: ResponseHandler.new
 })
+rom.register_relation(Users)
 
-class Users < ROM::Relation[:http]
-  dataset :users
-end
-
-rom = ROM.finalize.env
-rom.relation(:users).to_a
+container = rom.finalize.env
+container.relation(:users).by_id(1).to_a
+# => GET http://jsonplaceholder.typicode.com/users/1 [ Accept: application/json ]
 ```
