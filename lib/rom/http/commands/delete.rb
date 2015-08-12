@@ -8,9 +8,8 @@ module ROM
           relation.delete
         end
 
-        # H4xz0rz: We don't know the tuple count
-        def tuple_count
-          one? ? 1 : super
+        def assert_tuple_count
+          # noop
         end
       end
     end

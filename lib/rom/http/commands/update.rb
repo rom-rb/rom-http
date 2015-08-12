@@ -5,16 +5,15 @@ module ROM
         adapter :http
 
         def execute(tuples)
-          Array(tuples).flat_map do |tuple|
+          Array([tuples]).flatten.map do |tuple|
             attributes = input[tuple]
             validator.call(attributes)
             relation.update(attributes.to_h)
           end.to_a
         end
 
-        # H4xz0rz: We don't know the tuple count
-        def tuple_count
-          one? ? 1 : super
+        def assert_tuple_count
+          # noop
         end
       end
     end

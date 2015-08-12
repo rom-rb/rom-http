@@ -5,7 +5,7 @@ module ROM
         adapter :http
 
         def execute(tuples)
-          Array(tuples).flat_map do |tuple|
+          Array([tuples]).flatten.map do |tuple|
             attributes = input[tuple]
             validator.call(attributes)
             relation.insert(attributes.to_h)
