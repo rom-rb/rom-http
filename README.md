@@ -1,4 +1,10 @@
-# rom-http
+# rom-http <a href="https://gitter.im/rom-rb/chat" target="_blank">![Join the chat at https://gitter.im/rom-rb/chat](https://badges.gitter.im/Join%20Chat.svg)</a>
+
+<a href="https://rubygems.org/gems/rom-http" target="_blank">![Gem Version](https://badge.fury.io/rb/rom-http.svg)</a>
+<a href="https://travis-ci.org/rom-rb/rom-http" target="_blank">![Build Status](https://travis-ci.org/rom-rb/rom-http.svg?branch=master)</a>
+<a href="https://gemnasium.com/rom-rb/rom-http" target="_blank">![Dependency Status](https://gemnasium.com/rom-rb/rom-http.svg)</a>
+<a href="https://codeclimate.com/github/rom-rb/rom-http" target="_blank">![Code Climate](https://codeclimate.com/github/rom-rb/rom-http/badges/gpa.svg)</a>
+<a href="http://inch-ci.org/github/rom-rb/rom-http" target="_blank">![Documentation Status](http://inch-ci.org/github/rom-rb/rom-http.svg?branch=master&style=flat)</a>
 
 HTTP adapter for ROM
 
