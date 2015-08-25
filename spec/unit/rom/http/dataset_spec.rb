@@ -52,7 +52,8 @@ RSpec.describe ROM::HTTP::Dataset do
           is_expected.to eq(
             request_method: :get,
             path: '',
-            params: {}
+            params: {},
+            headers: {}
           )
         end
       end
@@ -329,7 +330,8 @@ RSpec.describe ROM::HTTP::Dataset do
         path: '',
         params: {
           name: name
-        }
+        },
+        headers: {}
       )
     end
     it { is_expected.to_not be(dataset) }

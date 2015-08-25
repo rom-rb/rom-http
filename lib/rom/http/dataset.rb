@@ -3,8 +3,14 @@ module ROM
     class Dataset
       include Enumerable
       include Equalizer.new(:config, :options)
+      include ROM::Options
 
-      attr_reader :config, :options
+      attr_reader :config
+
+      option :request_method, type: ::Symbol, default: :get, reader: true
+      option :path, type: ::String, default: ''
+      option :params, type: ::Hash, default: {}, reader: true
+      option :headers, type: ::Hash, default: {}
 
       class << self
         def default_request_handler(handler = Undefined)
@@ -20,11 +26,7 @@ module ROM
 
       def initialize(config, options = {})
         @config = config
-        @options = {
-          request_method: :get,
-          path: '',
-          params: {}
-        }.merge(options)
+        super(options)
       end
 
       def uri
@@ -47,16 +49,8 @@ module ROM
         '/' + path
       end
 
-      def request_method
-        options[:request_method]
-      end
-
-      def params
-        options[:params]
-      end
-
       def with_headers(headers)
-        self.class.new(config, options.merge(headers: headers))
+        __new__(config, options.merge(headers: headers))
       end
 
       def add_header(header, value)
@@ -64,7 +58,7 @@ module ROM
       end
 
       def with_options(opts)
-        self.class.new(config, options.merge(opts))
+        __new__(config, options.merge(opts))
       end
 
       def with_path(path)
@@ -132,6 +126,10 @@ module ROM
 
       def default_request_handler
         self.class.default_request_handler
+      end
+
+      def __new__(*args, &block)
+        self.class.new(*args, &block)
       end
     end
   end
