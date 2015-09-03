@@ -6,6 +6,18 @@ module ROM
 
       attr_reader :config, :options
 
+      class << self
+        def default_request_handler(handler = Undefined)
+          return @default_request_handler if Undefined === handler
+          @default_request_handler = handler
+        end
+
+        def default_response_handler(handler = Undefined)
+          return @default_response_handler if Undefined === handler
+          @default_response_handler = handler
+        end
+      end
+
       def initialize(config, options = {})
         @config = config
         @options = {
@@ -16,7 +28,7 @@ module ROM
       end
 
       def uri
-        config[:uri]
+        config.fetch(:uri) { fail Error, ':uri configuration missing' }
       end
 
       def headers
@@ -103,11 +115,23 @@ module ROM
       private
 
       def response_handler
-        config.fetch(:response_handler) { fail Error, ':response_handler configuration missing' }
+        config.fetch(:response_handler, default_response_handler).tap do |response_handler|
+          fail Error, ':response_handler configuration missing' if response_handler.nil?
+        end
       end
 
       def request_handler
-        config.fetch(:request_handler)  { fail Error, ':response_handler configuration missing' }
+        config.fetch(:request_handler, default_request_handler).tap do |request_handler|
+          fail Error, ':response_handler configuration missing' if request_handler.nil?
+        end
+      end
+
+      def default_response_handler
+        self.class.default_response_handler
+      end
+
+      def default_request_handler
+        self.class.default_request_handler
       end
     end
   end
