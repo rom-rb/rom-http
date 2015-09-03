@@ -1,5 +1,6 @@
 RSpec.describe ROM::HTTP::Dataset do
-  let(:dataset) { ROM::HTTP::Dataset.new(config, options) }
+  let(:klass) { ROM::HTTP::Dataset }
+  let(:dataset) { klass.new(config, options) }
   let(:config) do
     {
       uri: uri,
@@ -58,8 +59,66 @@ RSpec.describe ROM::HTTP::Dataset do
     end
   end
 
+  describe '.default_request_handler' do
+    before do
+      module Test
+        class Dataset < ROM::HTTP::Dataset; end
+      end
+    end
+
+    context 'when no default_request_handler set' do
+      it 'returns nil' do
+        expect(klass.default_request_handler).to be nil
+      end
+    end
+
+    context 'when default_request_handler set' do
+      before do
+        Test::Dataset.default_request_handler(request_handler)
+      end
+
+      it 'returns the default request handler' do
+        expect(Test::Dataset.default_request_handler).to eq request_handler
+      end
+    end
+  end
+
+  describe '.default_response_handler' do
+    before do
+      module Test
+        class Dataset < ROM::HTTP::Dataset; end
+      end
+    end
+
+    context 'when no default_response_handler set' do
+      it 'returns nil' do
+        expect(klass.default_response_handler).to be nil
+      end
+    end
+
+    context 'when default_response_handler set' do
+      before do
+        Test::Dataset.default_response_handler(response_handler)
+      end
+
+      it 'returns the default response handler' do
+        expect(Test::Dataset.default_response_handler).to eq response_handler
+      end
+    end
+  end
+
   describe '#uri' do
-    it { expect(dataset.uri).to eq(uri) }
+    context 'when no uri configured' do
+      let(:config) { {} }
+
+      it do
+        expect { dataset.uri }.to raise_error(ROM::HTTP::Error)
+      end
+    end
+
+    context 'when uri configured' do
+      it { expect(dataset.uri).to eq(uri) }
+    end
   end
 
   describe '#headers' do
@@ -437,10 +496,10 @@ RSpec.describe ROM::HTTP::Dataset do
   end
 
   describe '#response' do
-    context 'when request_handler and response_handler configured' do
-      let(:response) { double }
-      let(:result) { double }
+    let(:response) { double }
+    let(:result) { double }
 
+    context 'when request_handler and response_handler configured' do
       before do
         allow(request_handler).to receive(:call).and_return(response)
         allow(response_handler).to receive(:call).and_return(result)
@@ -453,7 +512,30 @@ RSpec.describe ROM::HTTP::Dataset do
       it { is_expected.to eq(result) }
     end
 
-    context 'when no request_handler configured' do
+    context 'when request_handler and response_handler configured' do
+      let(:klass) { Test::Dataset }
+      let(:config) { {} }
+
+      before do
+        module Test
+          class Dataset < ROM::HTTP::Dataset; end
+        end
+
+        Test::Dataset.default_request_handler(request_handler)
+        Test::Dataset.default_response_handler(response_handler)
+
+        allow(request_handler).to receive(:call).and_return(response)
+        allow(response_handler).to receive(:call).and_return(result)
+      end
+
+      subject! { dataset.response }
+
+      it { expect(request_handler).to have_received(:call).with(dataset) }
+      it { expect(response_handler).to have_received(:call).with(response, dataset) }
+      it { is_expected.to eq(result) }
+    end
+
+    context 'when no request_handler configured and no default set' do
       let(:config) { { response_handler: response_handler } }
 
       it do
@@ -461,7 +543,7 @@ RSpec.describe ROM::HTTP::Dataset do
       end
     end
 
-    context 'when no response_handler configured' do
+    context 'when no response_handler configured and no default set' do
       let(:config) { { request_handler: request_handler } }
 
       it do

@@ -4,6 +4,9 @@ inherit_from: .rubocop_todo.yml
 Metrics/LineLength:
   Max: 100
 
+Style/CaseEquality:
+  Enabled: false
+
 # No need to handle LoadError in Rakefile
 Lint/HandleExceptions:
   Exclude:
