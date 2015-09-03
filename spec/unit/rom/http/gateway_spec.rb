@@ -28,4 +28,44 @@ RSpec.describe ROM::HTTP::Gateway do
       expect(gateway.dataset?(:not_here)).to be(false)
     end
   end
+
+  describe '#dataset' do
+    subject { gateway.dataset(:name) }
+
+    context 'when extended' do
+      let(:gateway) { Test::Gateway.new({}) }
+
+      before do
+        module Test
+          class Gateway < ROM::HTTP::Gateway; end
+        end
+      end
+
+      context 'when no Dataset defined in the same namespace' do
+        it 'returns ROM::HTTP::Dataset' do
+          is_expected.to be_kind_of(ROM::HTTP::Dataset)
+        end
+      end
+
+      context 'when Dataset defined in the same namespace' do
+        before do
+          module Test
+            class Dataset < ROM::HTTP::Dataset; end
+          end
+        end
+
+        it 'returns ROM::HTTP::Dataset' do
+          is_expected.to be_kind_of(Test::Dataset)
+        end
+      end
+    end
+
+    context 'when not extended' do
+      let(:gateway) { ROM::HTTP::Gateway.new({}) }
+
+      it 'returns ROM::HTTP::Dataset' do
+        is_expected.to be_kind_of(ROM::HTTP::Dataset)
+      end
+    end
+  end
 end
