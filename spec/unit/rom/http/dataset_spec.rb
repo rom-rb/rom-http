@@ -58,24 +58,6 @@ RSpec.describe ROM::HTTP::Dataset do
     end
   end
 
-  describe '#==' do
-    subject { dataset == other }
-
-    context 'with config and options equal' do
-      let(:other) { ROM::HTTP::Dataset.new(dataset.config, dataset.options) }
-
-      it { is_expected.to be true }
-    end
-
-    context 'with config and options equal' do
-      let(:other) do
-        ROM::HTTP::Dataset.new(dataset.config, dataset.options.merge(path: Random.new_seed))
-      end
-
-      it { is_expected.to be false }
-    end
-  end
-
   describe '#uri' do
     it { expect(dataset.uri).to eq(uri) }
   end
@@ -455,18 +437,36 @@ RSpec.describe ROM::HTTP::Dataset do
   end
 
   describe '#response' do
-    let(:response) { double }
-    let(:result) { double }
+    context 'when request_handler and response_handler configured' do
+      let(:response) { double }
+      let(:result) { double }
 
-    before do
-      allow(request_handler).to receive(:call).and_return(response)
-      allow(response_handler).to receive(:call).and_return(result)
+      before do
+        allow(request_handler).to receive(:call).and_return(response)
+        allow(response_handler).to receive(:call).and_return(result)
+      end
+
+      subject! { dataset.response }
+
+      it { expect(request_handler).to have_received(:call).with(dataset) }
+      it { expect(response_handler).to have_received(:call).with(response, dataset) }
+      it { is_expected.to eq(result) }
     end
 
-    subject! { dataset.response }
+    context 'when no request_handler configured' do
+      let(:config) { { response_handler: response_handler } }
 
-    it { expect(request_handler).to have_received(:call).with(dataset) }
-    it { expect(response_handler).to have_received(:call).with(response, dataset) }
-    it { is_expected.to eq(result) }
+      it do
+        expect { dataset.response }.to raise_error(ROM::HTTP::Error)
+      end
+    end
+
+    context 'when no response_handler configured' do
+      let(:config) { { request_handler: request_handler } }
+
+      it do
+        expect { dataset.response }.to raise_error(ROM::HTTP::Error)
+      end
+    end
   end
 end

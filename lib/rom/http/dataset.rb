@@ -103,11 +103,11 @@ module ROM
       private
 
       def response_handler
-        config[:response_handler]
+        config.fetch(:response_handler) { fail Error, ':response_handler configuration missing' }
       end
 
       def request_handler
-        config[:request_handler]
+        config.fetch(:request_handler)  { fail Error, ':response_handler configuration missing' }
       end
     end
   end

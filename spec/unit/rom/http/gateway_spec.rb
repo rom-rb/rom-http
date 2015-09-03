@@ -28,10 +28,4 @@ RSpec.describe ROM::HTTP::Gateway do
       expect(gateway.dataset?(:not_here)).to be(false)
     end
   end
-
-  describe 'required config' do
-    it 'errors if config does not meet requirements' do
-      expect { ROM::HTTP::Gateway.new({}) }.to raise_error(ROM::HTTP::GatewayConfigurationError)
-    end
-  end
 end

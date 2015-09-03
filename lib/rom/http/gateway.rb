@@ -8,9 +8,6 @@ module ROM
       private :datasets, :config
 
       def initialize(config)
-        missing_keys = [:uri, :request_handler, :response_handler] - config.keys
-        fail GatewayConfigurationError, missing_keys unless missing_keys.empty?
-
         @datasets = ThreadSafe::Cache.new
         @config = config
       end
