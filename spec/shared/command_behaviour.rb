@@ -1,10 +1,10 @@
 shared_examples_for 'a command' do
   describe '#method_missing' do
     it 'forwards to relation and wraps response if it returned another relation' do
-      new_command = command.with_params(1)
+      new_command = command.with_params({})
 
       expect(new_command).to be_instance_of(command.class)
-      expect(new_command.relation).to eq(command.with_params(1).relation)
+      expect(new_command.relation).to eq(command.with_params({}).relation)
     end
 
     it 'returns original response if it was not a relation' do
