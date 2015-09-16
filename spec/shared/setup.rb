@@ -9,6 +9,6 @@ RSpec.shared_context 'setup' do
     )
   end
   let(:rom) { setup.finalize }
-  let(:request_handler) { double(Proc) }
-  let(:response_handler) { double(Proc) }
+  let(:request_handler) { double(Proc, freeze: self) }
+  let(:response_handler) { double(Proc, freeze: self) }
 end

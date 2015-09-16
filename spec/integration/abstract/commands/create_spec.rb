@@ -3,8 +3,8 @@ RSpec.describe ROM::HTTP::Commands::Create do
   let(:headers) { { accept: 'application/json' } }
   let(:rom) { ROM::Environment.new }
   let(:container) { rom.finalize.env }
-  let(:request_handler) { double(Proc) }
-  let(:response_handler) { double(Proc) }
+  let(:request_handler) { double(Proc, freeze: self) }
+  let(:response_handler) { double(Proc, freeze: self) }
   let(:relation) do
     Class.new(ROM::HTTP::Relation) do
       dataset :users
