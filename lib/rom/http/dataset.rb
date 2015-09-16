@@ -145,7 +145,7 @@ module ROM
         if projections.empty?
           ROM::HTTP::Support::Transformations[:noop]
         else
-          ROM::HTTP::Support::Transformations[:apply_projections, projections]
+          ROM::HTTP::Support::Transformations[:project, projections]
         end
       end
 

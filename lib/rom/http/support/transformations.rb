@@ -8,7 +8,7 @@ module ROM
         uses :accept_keys, from: ::Transproc::HashTransformations
         import :identity, from: ::Transproc::Coercions, as: :noop
 
-        def self.apply_projections(value, projections)
+        def self.project(value, projections)
           t(:map_array, t(:accept_keys, projections)).call(value)
         end
       end
