@@ -69,7 +69,7 @@ module ROM
 
         with_options(
           projections: (self.projections + projections)
-        ) 
+        )
       end
 
       def with_path(path)
