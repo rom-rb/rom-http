@@ -6,7 +6,7 @@ module ROM
       adapter :http
 
       forward :with_request_method, :with_path, :append_path, :with_options,
-              :with_params, :clear_params
+              :with_params, :clear_params, :project
 
       def insert(*args)
         dataset.insert(*args)

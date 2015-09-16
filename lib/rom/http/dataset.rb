@@ -1,3 +1,5 @@
+require 'rom/http/support/transformations'
+
 module ROM
   module HTTP
     class Dataset
@@ -7,6 +9,7 @@ module ROM
 
       attr_reader :config
 
+      option :projections, type: ::Array, default: [], reader: true
       option :request_method, type: ::Symbol, default: :get, reader: true
       option :path, type: ::String, default: ''
       option :params, type: ::Hash, default: {}, reader: true
@@ -61,6 +64,14 @@ module ROM
         __new__(config, options.merge(opts))
       end
 
+      def project(*args)
+        projections = args.first.is_a?(::Array) ? args.first : args
+
+        with_options(
+          projections: (self.projections + projections)
+        ) 
+      end
+
       def with_path(path)
         with_options(path: path)
       end
@@ -103,7 +114,9 @@ module ROM
       end
 
       def response
-        response_handler.call(request_handler.call(self), self)
+        response_transformer.call(
+          response_handler.call(request_handler.call(self), self)
+        )
       end
 
       private
@@ -126,6 +139,14 @@ module ROM
 
       def default_request_handler
         self.class.default_request_handler
+      end
+
+      def response_transformer
+        if projections.empty?
+          ROM::HTTP::Support::Transformations[:noop]
+        else
+          ROM::HTTP::Support::Transformations[:apply_projections, projections]
+        end
       end
 
       def __new__(*args, &block)
