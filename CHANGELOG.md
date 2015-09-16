@@ -1,3 +1,10 @@
+# v0.1.2 2015-09-16
+### Added
+
+  - Projections (`container.relation(:users).project(:id, :name)`) (AMHOL)
+
+[Compare v0.1.1...v0.1.2](https://github.com/rom-rb/rom-http/compare/v0.1.1...v0.1.2)
+
 # v0.1.1 2015-09-03
 ### Added
 
