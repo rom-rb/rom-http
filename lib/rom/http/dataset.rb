@@ -25,11 +25,23 @@ module ROM
           return @default_response_handler if Undefined === handler
           @default_response_handler = handler
         end
+
+        def row_proc
+          Support::Transformations[:identity]
+        end
       end
 
       def initialize(config, options = {})
         @config = config
         super(options)
+      end
+
+      def row_proc
+        if projections.empty?
+          self.class.row_proc
+        else
+          Support::Transformations[:project, projections] >> self.class.row_proc
+        end
       end
 
       def uri
@@ -88,9 +100,9 @@ module ROM
         with_options(params: params)
       end
 
-      def each(&block)
+      def each
         return to_enum unless block_given?
-        response.each(&block)
+        response.each { |tuple| yield(row_proc[tuple]) }
       end
 
       def insert(params)
@@ -114,9 +126,7 @@ module ROM
       end
 
       def response
-        response_transformer.call(
-          response_handler.call(request_handler.call(self), self)
-        )
+        response_handler.call(request_handler.call(self), self)
       end
 
       private
@@ -139,14 +149,6 @@ module ROM
 
       def default_request_handler
         self.class.default_request_handler
-      end
-
-      def response_transformer
-        if projections.empty?
-          ROM::HTTP::Support::Transformations[:noop]
-        else
-          ROM::HTTP::Support::Transformations[:project, projections]
-        end
       end
 
       def __new__(*args, &block)

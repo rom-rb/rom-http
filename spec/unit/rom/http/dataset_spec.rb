@@ -463,7 +463,7 @@ RSpec.describe ROM::HTTP::Dataset do
 
     before do
       allow(dataset).to receive(:response).and_return(response)
-      allow(response).to receive(:each).and_yield.and_return(result)
+      allow(response).to receive(:each).and_yield(result).and_return(result)
     end
 
     context 'with no block given' do
