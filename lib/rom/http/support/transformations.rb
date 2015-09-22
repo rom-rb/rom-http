@@ -3,14 +3,8 @@ module ROM
     module Support
       class Transformations
         extend Transproc::Registry
-
-        uses :map_array, from: ::Transproc::ArrayTransformations
-        uses :accept_keys, from: ::Transproc::HashTransformations
-        import :identity, from: ::Transproc::Coercions, as: :noop
-
-        def self.project(value, projections)
-          t(:map_array, t(:accept_keys, projections)).call(value)
-        end
+        import :accept_keys, from: ::Transproc::HashTransformations, as: :project
+        import :identity, from: ::Transproc::Coercions
       end
     end
   end
