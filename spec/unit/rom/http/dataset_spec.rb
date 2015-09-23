@@ -110,6 +110,40 @@ RSpec.describe ROM::HTTP::Dataset do
     end
   end
 
+  describe '#response_transformer' do
+    context 'with argument' do
+      let(:transformer) { double('ResponseTransformer') }
+
+      subject! { dataset.response_transformer(transformer) }
+
+      it do
+        expect(dataset.instance_variable_get(:@response_transformer))
+          .to eq(transformer)
+      end
+      it { is_expected.to eq(transformer) }
+    end
+
+    context 'without argument' do
+      context 'when transformer not set' do
+        subject! { dataset.response_transformer }
+
+        it { is_expected.to be_a(ROM::HTTP::Dataset::ResponseTransformers::Schemaless) }
+      end
+
+      context 'when transformer set' do
+        let(:transformer) { double('ResponseTransformer') }
+
+        before do
+          dataset.response_transformer(transformer)
+        end
+
+        subject! { dataset.response_transformer }
+
+        it { is_expected.to eq(transformer) }
+      end
+    end
+  end
+
   describe '#uri' do
     context 'when no uri configured' do
       let(:config) { {} }
