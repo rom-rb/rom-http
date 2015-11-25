@@ -18,9 +18,9 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ['lib']
 
-  spec.add_runtime_dependency 'rom', '~> 0.9', '>= 0.9.0'
-  spec.add_runtime_dependency 'equalizer', '~> 0.0', '>= 0.0.9'
   spec.add_runtime_dependency 'thread_safe'
+  spec.add_runtime_dependency 'rom', '~> 1.0.0.beta2'
+  spec.add_runtime_dependency 'dry-equalizer'
 
   spec.add_development_dependency 'bundler'
   spec.add_development_dependency 'rspec', '~> 3.1'
