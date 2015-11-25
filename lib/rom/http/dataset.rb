@@ -4,7 +4,7 @@ module ROM
   module HTTP
     class Dataset
       include Enumerable
-      include Equalizer.new(:config, :options)
+      include Dry::Equalizer(:config, :options)
       include ROM::Options
 
       attr_reader :config

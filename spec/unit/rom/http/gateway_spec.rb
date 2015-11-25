@@ -3,8 +3,6 @@ require 'rom/lint/spec'
 RSpec.describe ROM::HTTP::Gateway do
   include_context 'users and tasks'
 
-  let(:gateway) { rom.gateways[:default] }
-
   it_behaves_like 'a rom gateway' do
     let(:identifier) { :http }
     let(:gateway) { ROM::HTTP::Gateway }

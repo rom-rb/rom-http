@@ -1,10 +1,5 @@
 RSpec.describe ROM::HTTP::Commands::Delete do
-  let(:uri) { 'http://localhost:3000' }
-  let(:headers) { { accept: 'application/json' } }
-  let(:rom) { ROM::Environment.new }
-  let(:container) { rom.finalize.env }
-  let(:request_handler) { double(Proc, freeze: self) }
-  let(:response_handler) { double(Proc, freeze: self) }
+  include_context 'setup'
   let(:relation) do
     Class.new(ROM::HTTP::Relation) do
       dataset :users
@@ -34,18 +29,8 @@ RSpec.describe ROM::HTTP::Commands::Delete do
   end
 
   before do
-    rom.setup(
-      :http,
-      uri: uri,
-      headers: headers,
-      request_handler: request_handler,
-      response_handler: response_handler
-    )
-  end
-
-  before do
-    rom.register_relation(relation)
-    rom.register_command(command)
+    configuration.register_relation(relation)
+    configuration.register_command(command)
 
     allow(request_handler).to receive(:call).and_return(response)
     allow(response_handler).to receive(:call).and_return(tuples)
