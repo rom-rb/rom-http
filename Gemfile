@@ -2,8 +2,6 @@ source 'https://rubygems.org'
 
 gemspec
 
-gem 'dry-data', github: 'dryrb/dry-data'
-
 group :test do
   gem 'rom', github: 'rom-rb/rom', branch: 'master'
   gem 'faraday'
