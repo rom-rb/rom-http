@@ -42,13 +42,24 @@ end
 class Users < ROM::Relation[:http]
   dataset :users
 
+  # You can also define a schema block
+  # which will use dry-data's Dry::Data['hash']
+  # coercion to pre-process your data
+  schema do
+    attribute 'id', 'strict.int'
+    attribute 'name', 'strict.string'
+    attribute 'username', 'strict.string'
+    attribute 'email', 'strict.string'
+    attribute 'phone', 'strict.string'
+    attribute 'website', 'strict.string'
+  end
+
   def by_id(id)
     with_path(id.to_s)
   end
 end
 
-rom = ROM::Environment.new
-rom.setup(:http, {
+configuration = ROM::Configuration.new(:http, {
   uri: 'http://jsonplaceholder.typicode.com',
   headers: {
     Accept: 'application/json'
@@ -56,9 +67,9 @@ rom.setup(:http, {
   request_handler: RequestHandler.new,
   response_handler: ResponseHandler.new
 })
-rom.register_relation(Users)
+configuration.register_relation(Users)
+container = ROM.container(configuration)
 
-container = rom.finalize.env
 container.relation(:users).by_id(1).to_a
 # => GET http://jsonplaceholder.typicode.com/users/1 [ Accept: application/json ]
 ```
@@ -118,8 +129,7 @@ end
 
 ROM.register_adapter(:my_adapter, ROM::MyAdapter)
 
-rom = ROM::Environment.new
-rom.setup(:my_adapter, {
+configuration = ROM::Configuration.new(:my_adapter, {
   uri: 'http://jsonplaceholder.typicode.com',
   headers: {
     Accept: 'application/json'
@@ -134,9 +144,9 @@ class Users < ROM::Relation[:my_adapter]
   end
 end
 
-rom.register_relation(Users)
+configuration.register_relation(Users)
+container = ROM.container(configuration)
 
-container = rom.finalize.env
 container.relation(:users).by_id(1).to_a
 # => GET http://jsonplaceholder.typicode.com/users/1 [ Accept: application/json ]
 ```

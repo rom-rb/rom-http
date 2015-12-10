@@ -1,4 +1,5 @@
-require 'rom/http/support/transformations'
+require 'rom/http/dataset/response_transformers/schemad'
+require 'rom/http/dataset/response_transformers/schemaless'
 
 module ROM
   module HTTP
@@ -29,7 +30,13 @@ module ROM
 
       def initialize(config, options = {})
         @config = config
+        @response_transformer = ResponseTransformers::Schemaless.new
         super(options)
+      end
+
+      def response_transformer(transformer = Undefined)
+        return @response_transformer if Undefined === transformer
+        @response_transformer = transformer
       end
 
       def uri
@@ -115,38 +122,23 @@ module ROM
 
       def response
         response_transformer.call(
-          response_handler.call(request_handler.call(self), self)
+          response_handler.call(request_handler.call(self), self),
+          self
         )
       end
 
       private
 
       def response_handler
-        config.fetch(:response_handler, default_response_handler).tap do |response_handler|
-          fail Error, ':response_handler configuration missing' if response_handler.nil?
-        end
+        response_handler = config.fetch(:response_handler, self.class.default_response_handler)
+        fail Error, ':response_handler configuration missing' if response_handler.nil?
+        response_handler
       end
 
       def request_handler
-        config.fetch(:request_handler, default_request_handler).tap do |request_handler|
-          fail Error, ':response_handler configuration missing' if request_handler.nil?
-        end
-      end
-
-      def default_response_handler
-        self.class.default_response_handler
-      end
-
-      def default_request_handler
-        self.class.default_request_handler
-      end
-
-      def response_transformer
-        if projections.empty?
-          ROM::HTTP::Support::Transformations[:noop]
-        else
-          ROM::HTTP::Support::Transformations[:project, projections]
-        end
+        request_handler = config.fetch(:request_handler, self.class.default_request_handler)
+        fail Error, ':response_handler configuration missing' if request_handler.nil?
+        request_handler
       end
 
       def __new__(*args, &block)
