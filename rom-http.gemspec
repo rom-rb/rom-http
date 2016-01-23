@@ -6,8 +6,8 @@ require 'rom/http/version'
 Gem::Specification.new do |spec|
   spec.name          = 'rom-http'
   spec.version       = ROM::HTTP::VERSION.dup
-  spec.authors       = ['Piotr Solnica', 'Andy Holland']
-  spec.email         = ['piotr.solnica@gmail.com', 'andyholland1991@aol.com']
+  spec.authors       = ['Piotr Solnica', 'Andy Holland', 'Chris Flipse']
+  spec.email         = ['piotr.solnica@gmail.com', 'andyholland1991@aol.com', 'cflipse@gmail.com']
   spec.summary       = 'HTTP support for ROM'
   spec.description   = spec.summary
   spec.homepage      = 'http://rom-rb.org'
