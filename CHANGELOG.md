@@ -1,3 +1,8 @@
+# v0.2.0 2016-01-30
+### Added
+
+  - schema support using `dry-data` (AMHOL)
+
 # v0.1.2 2015-09-16
 ### Added
 
