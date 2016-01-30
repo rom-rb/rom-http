@@ -20,7 +20,7 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency 'thread_safe'
   spec.add_runtime_dependency 'dry-data'
-  spec.add_runtime_dependency 'rom', '~> 1.0.0.beta2'
+  spec.add_runtime_dependency 'rom', '~> 1.0'
   spec.add_runtime_dependency 'dry-equalizer'
 
   spec.add_development_dependency 'bundler'
