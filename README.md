@@ -43,7 +43,7 @@ class Users < ROM::Relation[:http]
   dataset :users
 
   # You can also define a schema block
-  # which will use dry-data's Dry::Data['hash']
+  # which will use dry-types' Dry::Types['hash']
   # coercion to pre-process your data
   schema do
     attribute 'id', 'strict.int'
