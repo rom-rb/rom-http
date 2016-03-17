@@ -1,4 +1,4 @@
-require 'dry/data'
+require 'dry/types'
 
 module ROM
   module Plugins
@@ -23,7 +23,7 @@ module ROM
             new.tap { |schema| schema.instance_eval(&block) }
           end
 
-          def initialize(schema = {}, coercer = Dry::Data['hash'])
+          def initialize(schema = {}, coercer = Dry::Types['hash'])
             @schema = schema
             @coercer = coercer
           end
