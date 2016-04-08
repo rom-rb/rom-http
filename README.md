@@ -116,11 +116,11 @@ module ROM
         adapter :my_adapter
       end
 
-      class Update < ROM::HTTP::Commands::Create
+      class Update < ROM::HTTP::Commands::Update
         adapter :my_adapter
       end
 
-      class Delete < ROM::HTTP::Commands::Create
+      class Delete < ROM::HTTP::Commands::Delete
         adapter :my_adapter
       end
     end
