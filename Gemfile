@@ -4,6 +4,7 @@ gemspec
 
 group :test do
   gem 'rom', github: 'rom-rb/rom', branch: 'master'
+  gem 'rom-support', github: 'rom-rb/rom-support', branch: 'master'
   gem 'faraday'
   gem 'inflecto'
 end
