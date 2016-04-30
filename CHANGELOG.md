@@ -1,7 +1,22 @@
+# v0.4.0 2016-04-30
+### Changed
+  - updated to depend on the forthcoming rom 2.0 (cflipse)
+
+[Compare v0.3.0...v0.4.0](https://github.com/rom-rb/rom-http/compare/v0.3.0...v0.4.0)
+
+# v0.3.0 2016-03-17
+
+### Changed
+  - replaced dry-data with dry-types  (Nikita Shilnikov <ns@latera.ru>)
+
+[Compare v0.2.0...v0.3.0](https://github.com/rom-rb/rom-http/compare/v0.2.0...v0.3.0)
+
 # v0.2.0 2016-01-30
 ### Added
 
   - schema support using `dry-data` (AMHOL)
+
+[Compare v0.1.2...v0.2.0](https://github.com/rom-rb/rom-http/compare/v0.1.2...v0.2.0)
 
 # v0.1.2 2015-09-16
 ### Added
