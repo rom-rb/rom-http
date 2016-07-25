@@ -7,8 +7,7 @@
 [rom]:  https://github.com/rom-rb/rom
 
 
-# ROM-http # [![Gitter chat](https://badges.gitter.im/rom-rb/chat.svg)][gitter]
-
+# ROM-http [![Gitter chat](https://badges.gitter.im/rom-rb/chat.svg)][gitter]
 
 [![Gem Version](https://badge.fury.io/rb/rom-http.svg)][gem]
 [![Build Status](https://travis-ci.org/rom-rb/rom-http.svg?branch=master)][travis]
@@ -20,7 +19,7 @@ HTTP adapter for [Ruby Object Mapper][rom]
 
 ## Installation
 
-Add this line to your applicaiton's Gemfile:
+Add this line to your application's Gemfile:
 
 ```ruby
 gem 'rom-http'
