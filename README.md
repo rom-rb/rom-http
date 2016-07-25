@@ -18,7 +18,32 @@
 
 HTTP adapter for [Ruby Object Mapper][rom]
 
-### Synopsis
+## Installation
+
+Add this line to your applicaiton's Gemfile:
+
+```ruby
+gem 'rom-http'
+```
+
+And then execute:
+
+    $ bundle
+
+Or install it yourself as:
+
+    $ gem install rom-http
+
+## ROADMAP
+
+For details please refer to [issues](https://github.com/rom-rb/rom-http/issues).
+
+
+## License
+
+See `LICENSE` file.
+
+## Synopsis
 
 ```ruby
 require 'json'
