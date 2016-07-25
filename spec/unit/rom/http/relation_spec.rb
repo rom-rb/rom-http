@@ -7,7 +7,7 @@ RSpec.describe ROM::HTTP::Relation do
       let(:relation_klass) do
         Class.new(ROM::HTTP::Relation) do
           schema do
-            attribute 'id', 'strict.int'
+            attribute 'id', ROM::Types::Strict::Int
           end
         end
       end

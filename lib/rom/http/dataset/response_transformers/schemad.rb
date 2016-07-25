@@ -1,4 +1,4 @@
-require 'rom/http/support/transformations'
+require 'rom/types'
 
 module ROM
   module HTTP
@@ -8,26 +8,19 @@ module ROM
           attr_reader :schema
 
           def initialize(schema)
-            @schema = schema
+            @schema = Types::Hash.schema(schema)
           end
 
           def call(response, dataset)
-            t(:map_array,
-              t(:accept_keys, projections(dataset.projections)) >> ->(tuple) { schema.apply(tuple) }
-             ).call(response)
-          end
+            projections = dataset.projections
 
-          private
-
-          def t(*args)
-            ROM::HTTP::Support::Transformations[*args]
-          end
-
-          def projections(projections)
-            if projections.empty?
-              schema.attribute_names
+            if projections.size > 0 && schema.member_types.keys != projections
+              projected_schema = Types::Hash.schema(
+                schema.member_types.select { |k, _| projections.include?(k) }
+              )
+              projected_schema[response]
             else
-              projections.reject { |attr| !schema.attribute_names.include?(attr) }
+              response.map { |tuple| schema[tuple] }
             end
           end
         end

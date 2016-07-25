@@ -1,11 +1,10 @@
 RSpec.describe ROM::HTTP::Dataset::ResponseTransformers::Schemad do
-  let(:transformer) { ROM::HTTP::Dataset::ResponseTransformers::Schemad.new(schema) }
+  subject(:transformer) { ROM::HTTP::Dataset::ResponseTransformers::Schemad.new(schema) }
+
   let(:schema) do
-    ROM::Plugins::Relation::Schema::Schema.create do
-      attribute :id, 'form.int'
-      attribute :name, 'strict.string'
-      attribute :active, 'form.bool'
-    end
+    { id: ROM::Types::Form::Int,
+      name: ROM::Types::Strict::String,
+      active: ROM::Types::Form::Bool }
   end
 
   describe '#call' do
@@ -23,29 +22,23 @@ RSpec.describe ROM::HTTP::Dataset::ResponseTransformers::Schemad do
       double('ROM::HTTP::Dataset', projections: projections)
     end
 
-    subject! { transformer.call(response, dataset) }
-
     context 'with no projections' do
       let(:projections) { [] }
 
-      it do
-        is_expected.to eq([
-          id: 1,
-          name: 'Jill',
-          active: true
-        ])
+      it 'returns original tuples' do
+        result = transformer.call(response, dataset)
+
+        expect(result).to eql([id: 1, name: 'Jill', active: true])
       end
     end
 
     context 'with projections' do
       let(:projections) { [:id, :name, :active] }
 
-      it do
-        is_expected.to eq([
-          id: 1,
-          name: 'Jill',
-          active: true
-        ])
+      it 'returns projected relation tuples' do
+        result = transformer.call(response, dataset)
+
+        expect(result).to eql([id: 1, name: 'Jill', active: true])
       end
     end
   end
