@@ -1,3 +1,6 @@
+require 'json'
+require 'rom-repository'
+
 RSpec.describe ROM::HTTP::Relation do
   subject(:users) { container.relation(:users).by_id(id).filter(params) }
 
@@ -6,6 +9,10 @@ RSpec.describe ROM::HTTP::Relation do
   let(:relation) do
     Class.new(ROM::HTTP::Relation) do
       dataset :users
+
+      view :base, [:id, :name] do
+        self
+      end
 
       def by_id(id)
         append_path(id.to_s)
@@ -17,8 +24,8 @@ RSpec.describe ROM::HTTP::Relation do
     end
   end
 
-  let(:response) { double }
-  let(:tuples) { [] }
+  let(:response) { tuples.to_json }
+  let(:tuples) { [{ id: 1337, name: 'John' }] }
   let(:id) { 1337 }
   let(:params) { { filters: { first_name: 'John' } } }
 
@@ -49,5 +56,21 @@ RSpec.describe ROM::HTTP::Relation do
 
     expect(request_handler).to have_received(:call).with(dataset).once
     expect(response_handler).to have_received(:call).with(response, dataset).once
+  end
+
+  context 'using a repo' do
+    let(:repo) do
+      Class.new(ROM::Repository) { relations :users }.new(container)
+    end
+
+    it 'returns structs' do
+      user = repo.users.by_id(1337).filter(params).one
+
+      expect(user.id).to be(1337)
+      expect(user.name).to eql('John')
+
+      expect(request_handler).to have_received(:call).with(dataset).once
+      expect(response_handler).to have_received(:call).with(response, dataset).once
+    end
   end
 end
