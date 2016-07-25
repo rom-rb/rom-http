@@ -5,6 +5,10 @@ Bundler.setup
 
 require 'rom-http'
 
+begin
+require 'byebug'
+rescue LoadError; end
+
 root = Pathname(__FILE__).dirname
 
 Dir[root.join('support/**/*.rb').to_s].each { |file| require file }

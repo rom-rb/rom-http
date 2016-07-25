@@ -10,6 +10,7 @@ group :test do
 end
 
 group :tools do
+  gem 'byebug'
   gem 'guard'
   gem 'guard-rspec'
   gem 'guard-rubocop'
