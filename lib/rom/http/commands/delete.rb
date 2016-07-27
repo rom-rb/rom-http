@@ -1,9 +1,15 @@
 module ROM
   module HTTP
     module Commands
+      # HTTP Delete command
+      #
+      # @api public
       class Delete < ROM::Commands::Delete
         adapter :http
 
+        # Sends an HTTP delete to the dataset path
+        #
+        # @api public
         def execute
           relation.delete
         end
