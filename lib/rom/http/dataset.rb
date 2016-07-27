@@ -270,6 +270,13 @@ module ROM
         response.each(&block)
       end
 
+      # Perform an insert over HTTP Post
+      #
+      # @params [Hash] params The request parameters to send
+      #
+      # @return [Array<Hash>]
+      #
+      # @api public
       def insert(params)
         with_options(
           request_method: :post,
@@ -277,6 +284,13 @@ module ROM
         ).response
       end
 
+      # Perform an update over HTTP Put
+      #
+      # @params [Hash] params The request parameters to send
+      #
+      # @return [Array<Hash>]
+      #
+      # @api public
       def update(params)
         with_options(
           request_method: :put,
@@ -284,12 +298,23 @@ module ROM
         ).response
       end
 
+      # Perform an delete over HTTP Delete
+      #
+      #
+      # @return [Array<Hash>]
+      #
+      # @api public
       def delete
         with_options(
           request_method: :delete
         ).response
       end
 
+      # Execute the current dataset
+      #
+      # @return [Array<hash>]
+      #
+      # @api public
       def response
         response_transformer.call(
           response_handler.call(request_handler.call(self), self),
