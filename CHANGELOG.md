@@ -1,3 +1,11 @@
+# v0.5.0 2016-08-08
+### Changed
+  - Removed ruby 2.0 support
+  - Use `schema` API from ROM::Core.  Replaces old schema (solnic)
+  - Now works out of the box with `rom-repository` (solnic)
+
+[Compare v0.4.0...v0.5.0](https://github.com/rom-rb/rom-http/compare/v0.4.0...v0.5.0)
+
 # v0.4.0 2016-04-30
 ### Changed
   - updated to depend on the forthcoming rom 2.0 (cflipse)
