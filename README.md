@@ -172,6 +172,7 @@ configuration = ROM::Configuration.new(:my_adapter, {
 
 class Users < ROM::Relation[:my_adapter]
   dataset :users
+  register_as :users
 
   def by_id(id)
     with_path(id.to_s)
