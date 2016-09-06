@@ -80,12 +80,12 @@ class Users < ROM::Relation[:http]
   # which will use dry-types' Dry::Types['hash']
   # coercion to pre-process your data
   schema do
-    attribute 'id', 'strict.int'
-    attribute 'name', 'strict.string'
-    attribute 'username', 'strict.string'
-    attribute 'email', 'strict.string'
-    attribute 'phone', 'strict.string'
-    attribute 'website', 'strict.string'
+    attribute 'id', ROM::Types::Int
+    attribute 'name', ROM::Types::String
+    attribute 'username', ROM::Types::String
+    attribute 'email', ROM::Types::String
+    attribute 'phone', ROM::Types::String
+    attribute 'website', ROM::Types::String
   end
 
   def by_id(id)
