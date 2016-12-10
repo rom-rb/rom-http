@@ -8,10 +8,9 @@ RSpec.describe ROM::HTTP::Relation do
 
   let(:relation) do
     Class.new(ROM::HTTP::Relation) do
-      dataset :users
-
-      view :base, [:id, :name] do
-        self
+      schema(:users) do
+        attribute :id, ROM::Types::Int
+        attribute :name, ROM::Types::String
       end
 
       def by_id(id)
