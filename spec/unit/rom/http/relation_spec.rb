@@ -38,6 +38,31 @@ RSpec.describe ROM::HTTP::Relation do
     end
   end
 
+  describe '#primary_key' do
+    subject { relation.primary_key }
+
+    context 'with no primary key defined in schema' do
+      it 'defaults to :id' do
+        is_expected.to eq(:id)
+      end
+    end
+
+    context 'with primary key defined in schema' do
+      let(:relation_klass) do
+        Class.new(ROM::HTTP::Relation) do
+          schema do
+            attribute :id, ROM::Types::Strict::Int
+            attribute :name, ROM::Types::Strict::String.meta(primary_key: true)
+          end
+        end
+      end
+
+      it 'returns the attribute name of the primary key' do
+        is_expected.to eq(:name)
+      end
+    end
+  end
+
   describe '#project' do
     subject { relation.project(:id).to_a }
 
@@ -107,21 +132,41 @@ RSpec.describe ROM::HTTP::Relation do
   end
 
   describe '#to_a' do
-    let(:relation_klass) do
-      Class.new(ROM::HTTP::Relation) do
-        schema do
-          attribute :id, ROM::Types::Strict::Int
+    subject { relation.to_a }
+
+    context 'with standard schema' do
+      let(:relation_klass) do
+        Class.new(ROM::HTTP::Relation) do
+          schema do
+            attribute :id, ROM::Types::Strict::Int
+          end
         end
+      end
+
+      it 'applies the schema and returns the materialized results' do
+        is_expected.to match_array([
+          { id: 1 },
+          { id: 2 }
+        ])
       end
     end
 
-    subject { relation.to_a }
+    context 'with aliased schema' do
+      let(:relation_klass) do
+        Class.new(ROM::HTTP::Relation) do
+          schema do
+            attribute :id, ROM::Types::Strict::Int
+            attribute :name, ROM::Types::Strict::String.meta(alias: :username)
+          end
+        end
+      end
 
-    it 'applies the schema and returns the materialized results' do
-      is_expected.to match_array([
-        { id: 1 },
-        { id: 2 }
-      ])
+      it 'applies the schema and returns the materialized results' do
+        is_expected.to match_array([
+          { id: 1, username: 'John' },
+          { id: 2, username: 'Jill' }
+        ])
+      end
     end
   end
 end

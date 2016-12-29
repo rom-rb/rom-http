@@ -53,7 +53,7 @@ require 'net/http'
 class RequestHandler
   def call(dataset)
     uri = URI(dataset.uri)
-    uri.path = "/#{dataset.name}/#{dataset.path}"
+    uri.path = dataset.absolute_path
     uri.query = URI.encode_www_form(dataset.params)
 
     http = Net::HTTP.new(uri.host, uri.port)
@@ -117,7 +117,7 @@ module ROM
     class Dataset < ROM::HTTP::Dataset
       default_request_handler ->(dataset) do
         uri = URI(dataset.uri)
-        uri.path = "/#{dataset.name}/#{dataset.path}"
+        uri.path = dataset.absolute_path
         uri.query = URI.encode_www_form(dataset.params)
 
         http = Net::HTTP.new(uri.host, uri.port)

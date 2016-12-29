@@ -29,6 +29,16 @@ module ROM
         ) unless schema?
       end
 
+      def primary_key
+        attribute = schema.find { |attr| attr.meta[:primary_key] }
+
+        if attribute
+          attribute.name
+        else
+          :id
+        end
+      end
+
       def project(*names)
         with(schema: schema.project(*names.flatten))
       end

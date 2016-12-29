@@ -6,6 +6,9 @@ module ROM
     #
     # @api public
     class Dataset
+      PATH_SEPARATOR = '/'.freeze
+      STRIP_PATH = ->(path) { path.sub(%r{\A/}, '') }.freeze
+
       include Enumerable
       include Dry::Equalizer(:config, :options)
       include ROM::Options
@@ -13,7 +16,8 @@ module ROM
       attr_reader :config
 
       option :request_method, type: ::Symbol, default: :get, reader: true
-      option :path, type: ::String, default: ''
+      option :base_path, type: ::String, default: '', coercer: STRIP_PATH
+      option :path, type: ::String, default: '', coercer: STRIP_PATH
       option :params, type: ::Hash, default: {}, reader: true
       option :headers, type: ::Hash, default: {}
 
@@ -85,6 +89,19 @@ module ROM
         config[:name].to_s
       end
 
+      # Return the base path
+      #
+      # @example
+      #   Dataset.new(config, base_path: '/users').base_path
+      #   # => 'users'
+      #
+      # @return [String] the dataset path, without a leading slash
+      #
+      # @api public
+      def base_path
+        options[:base_path].empty? ? name : options[:base_path]
+      end
+
       # Return the dataset path
       #
       # @example
@@ -95,7 +112,7 @@ module ROM
       #
       # @api public
       def path
-        options[:path].to_s.sub(%r{\A/}, '')
+        join_path(base_path, options[:path])
       end
 
       # Return the dataset path
@@ -108,7 +125,7 @@ module ROM
       #
       # @api public
       def absolute_path
-        '/' + path
+        PATH_SEPARATOR + path
       end
 
       # Return a new dataset with given headers
@@ -158,6 +175,21 @@ module ROM
         __new__(config, options.merge(opts))
       end
 
+      # Return a new dataset with a different base path
+      #
+      # @param base_path [String] the new base request path
+      #
+      # @example
+      #   users.with_base_path('/profiles').base_path
+      #   # => 'profiles'
+      #
+      # @return [Dataset]
+      #
+      # @api public
+      def with_base_path(base_path)
+        with_options(base_path: base_path)
+      end
+
       # Return a new dataset with a different path
       #
       # @param path [String] the new request path
@@ -185,7 +217,7 @@ module ROM
       #
       # @api public
       def append_path(path)
-        with_options(path: options[:path] + '/' + path)
+        with_options(path: join_path(options[:path], path))
       end
 
       # Return a new dataset with a different request method
@@ -296,6 +328,10 @@ module ROM
 
       def __new__(*args, &block)
         self.class.new(*args, &block)
+      end
+
+      def join_path(*paths)
+        paths.reject(&:empty?).join(PATH_SEPARATOR)
       end
     end
   end

@@ -37,6 +37,7 @@ RSpec.describe ROM::HTTP::Dataset do
 
         it do
           is_expected.to eq(
+            base_path: '',
             request_method: :put,
             path: '',
             params: {},
@@ -50,6 +51,7 @@ RSpec.describe ROM::HTTP::Dataset do
       context 'with no options passed' do
         it do
           is_expected.to eq(
+            base_path: '',
             request_method: :get,
             path: '',
             params: {},
@@ -183,6 +185,51 @@ RSpec.describe ROM::HTTP::Dataset do
     end
   end
 
+  describe '#base_path' do
+    subject { dataset.base_path }
+
+    context 'with no base_path option' do
+      context 'when dataset name is set' do
+        let(:config) do
+          {
+            uri: uri,
+            request_handler: request_handler,
+            response_handler: response_handler,
+            name: :users
+          }
+        end
+
+        it 'returns the dataset name as a string' do
+          is_expected.to eq('users')
+        end
+      end
+
+      context 'when dataset name is not set' do
+        it 'returns an empty string' do
+          is_expected.to eq('')
+        end
+      end
+    end
+
+    context 'with base_path option' do
+      context 'when base_path is absolute' do
+        let(:base_path) { '/users' }
+        let(:options) { { base_path: base_path } }
+
+        it 'removes the leading /' do
+          is_expected.to eq('users')
+        end
+      end
+
+      context 'when base_path is not absolute' do
+        let(:base_path) { 'users' }
+        let(:options) { { base_path: base_path } }
+
+        it { is_expected.to eq(base_path) }
+      end
+    end
+  end
+
   describe '#path' do
     subject { dataset.path }
 
@@ -272,6 +319,7 @@ RSpec.describe ROM::HTTP::Dataset do
     it { expect(new_dataset.config).to eq(config) }
     it do
       expect(new_dataset.options).to eq(
+        base_path: '',
         request_method: :get,
         path: '',
         params: {},
@@ -326,6 +374,7 @@ RSpec.describe ROM::HTTP::Dataset do
     it { expect(new_dataset.config).to eq(config) }
     it do
       expect(new_dataset.options).to eq(
+        base_path: '',
         request_method: :get,
         path: '',
         params: {
@@ -336,6 +385,20 @@ RSpec.describe ROM::HTTP::Dataset do
     end
     it { is_expected.to_not be(dataset) }
     it { is_expected.to be_a(ROM::HTTP::Dataset) }
+  end
+
+  describe '#with_base_path' do
+    let(:base_path) { '/users/tasks' }
+    let(:new_dataset) { double(ROM::HTTP::Dataset) }
+
+    before do
+      allow(dataset).to receive(:with_options).and_return(new_dataset)
+    end
+
+    subject! { dataset.with_base_path(base_path) }
+
+    it { expect(dataset).to have_received(:with_options).with(base_path: base_path) }
+    it { is_expected.to eq(new_dataset) }
   end
 
   describe '#with_path' do
@@ -363,14 +426,14 @@ RSpec.describe ROM::HTTP::Dataset do
     subject! { dataset.append_path(path) }
 
     context 'without existing path' do
-      it { expect(dataset).to have_received(:with_options).with(path: '/tasks') }
+      it { expect(dataset).to have_received(:with_options).with(path: 'tasks') }
       it { is_expected.to eq(new_dataset) }
     end
 
     context 'with existing path' do
       let(:options) { { path: '/users' } }
 
-      it { expect(dataset).to have_received(:with_options).with(path: '/users/tasks') }
+      it { expect(dataset).to have_received(:with_options).with(path: 'users/tasks') }
       it { is_expected.to eq(new_dataset) }
     end
   end
