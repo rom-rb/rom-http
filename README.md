@@ -7,7 +7,7 @@
 [rom]:  https://github.com/rom-rb/rom
 
 
-# ROM-http [![Gitter chat](https://badges.gitter.im/rom-rb/chat.svg)][gitter]
+# rom-http [![Gitter chat](https://badges.gitter.im/rom-rb/chat.svg)][gitter]
 
 [![Gem Version](https://badge.fury.io/rb/rom-http.svg)][gem]
 [![Build Status](https://travis-ci.org/rom-rb/rom-http.svg?branch=master)][travis]
@@ -45,6 +45,7 @@ See `LICENSE` file.
 ## Synopsis
 
 ```ruby
+require 'inflecto'
 require 'json'
 require 'uri'
 require 'net/http'
@@ -56,7 +57,7 @@ class RequestHandler
     uri.query = URI.encode_www_form(dataset.params)
 
     http = Net::HTTP.new(uri.host, uri.port)
-    request_klass = Net::HTTP.const_get(ROM::Inflector.classify(dataset.request_method))
+    request_klass = Net::HTTP.const_get(Inflecto.classify(dataset.request_method))
 
     request = request_klass.new(uri.request_uri)
     dataset.headers.each_with_object(request) do |(header, value), request|
@@ -69,23 +70,18 @@ end
 
 class ResponseHandler
   def call(response, dataset)
-    Array([JSON.parse(response.body)]).flatten
+    Array([JSON.parse(response.body, symbolize_names: true)]).flatten
   end
 end
 
 class Users < ROM::Relation[:http]
-  dataset :users
-
-  # You can also define a schema block
-  # which will use dry-types' Dry::Types['hash']
-  # coercion to pre-process your data
-  schema do
-    attribute 'id', ROM::Types::Int
-    attribute 'name', ROM::Types::String
-    attribute 'username', ROM::Types::String
-    attribute 'email', ROM::Types::String
-    attribute 'phone', ROM::Types::String
-    attribute 'website', ROM::Types::String
+  schema(:users) do
+    attribute :id, ROM::Types::Int
+    attribute :name, ROM::Types::String
+    attribute :username, ROM::Types::String
+    attribute :email, ROM::Types::String
+    attribute :phone, ROM::Types::String
+    attribute :website, ROM::Types::String
   end
 
   def by_id(id)
@@ -111,6 +107,7 @@ container.relation(:users).by_id(1).to_a
 ### Extending
 
 ```ruby
+require 'inflecto'
 require 'json'
 require 'uri'
 require 'net/http'
@@ -124,7 +121,7 @@ module ROM
         uri.query = URI.encode_www_form(dataset.params)
 
         http = Net::HTTP.new(uri.host, uri.port)
-        request_klass = Net::HTTP.const_get(ROM::Inflector.classify(dataset.request_method))
+        request_klass = Net::HTTP.const_get(Inflecto.classify(dataset.request_method))
 
         request = request_klass.new(uri.request_uri)
         dataset.headers.each_with_object(request) do |(header, value), request|
@@ -135,7 +132,7 @@ module ROM
       end
 
       default_response_handler ->(response, dataset) do
-        Array([JSON.parse(response.body)]).flatten
+        Array([JSON.parse(response.body, symbolize_names: true)]).flatten
       end
     end
 
@@ -171,8 +168,14 @@ configuration = ROM::Configuration.new(:my_adapter, {
 })
 
 class Users < ROM::Relation[:my_adapter]
-  dataset :users
-  register_as :users
+  schema(:users) do
+    attribute :id, ROM::Types::Int
+    attribute :name, ROM::Types::String
+    attribute :username, ROM::Types::String
+    attribute :email, ROM::Types::String
+    attribute :phone, ROM::Types::String
+    attribute :website, ROM::Types::String
+  end
 
   def by_id(id)
     with_path(id.to_s)

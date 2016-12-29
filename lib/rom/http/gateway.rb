@@ -1,4 +1,4 @@
-require 'thread_safe'
+require 'concurrent'
 require 'rom/http/dataset'
 
 module ROM
@@ -29,7 +29,7 @@ module ROM
       #
       # @api public
       def initialize(config)
-        @datasets = ThreadSafe::Cache.new
+        @datasets = Concurrent::Map.new
         @config = config
       end
 

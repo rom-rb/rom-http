@@ -13,7 +13,6 @@ module ROM
         def execute(tuples)
           Array([tuples]).flatten.map do |tuple|
             attributes = input[tuple]
-            validator.call(attributes)
             relation.update(attributes.to_h)
           end.to_a
         end

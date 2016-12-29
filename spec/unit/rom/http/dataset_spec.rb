@@ -39,7 +39,6 @@ RSpec.describe ROM::HTTP::Dataset do
           is_expected.to eq(
             request_method: :put,
             path: '',
-            projections: [],
             params: {},
             headers: {
               'Accept' => 'application/json'
@@ -53,7 +52,6 @@ RSpec.describe ROM::HTTP::Dataset do
           is_expected.to eq(
             request_method: :get,
             path: '',
-            projections: [],
             params: {},
             headers: {}
           )
@@ -106,40 +104,6 @@ RSpec.describe ROM::HTTP::Dataset do
 
       it 'returns the default response handler' do
         expect(Test::Dataset.default_response_handler).to eq response_handler
-      end
-    end
-  end
-
-  describe '#response_transformer' do
-    context 'with argument' do
-      let(:transformer) { double('ResponseTransformer') }
-
-      subject! { dataset.response_transformer(transformer) }
-
-      it do
-        expect(dataset.instance_variable_get(:@response_transformer))
-          .to eq(transformer)
-      end
-      it { is_expected.to eq(transformer) }
-    end
-
-    context 'without argument' do
-      context 'when transformer not set' do
-        subject! { dataset.response_transformer }
-
-        it { is_expected.to be_a(ROM::HTTP::Dataset::ResponseTransformers::Schemaless) }
-      end
-
-      context 'when transformer set' do
-        let(:transformer) { double('ResponseTransformer') }
-
-        before do
-          dataset.response_transformer(transformer)
-        end
-
-        subject! { dataset.response_transformer }
-
-        it { is_expected.to eq(transformer) }
       end
     end
   end
@@ -310,7 +274,6 @@ RSpec.describe ROM::HTTP::Dataset do
       expect(new_dataset.options).to eq(
         request_method: :get,
         path: '',
-        projections: [],
         params: {},
         headers: headers
       )
@@ -365,7 +328,6 @@ RSpec.describe ROM::HTTP::Dataset do
       expect(new_dataset.options).to eq(
         request_method: :get,
         path: '',
-        projections: [],
         params: {
           name: name
         },
@@ -374,54 +336,6 @@ RSpec.describe ROM::HTTP::Dataset do
     end
     it { is_expected.to_not be(dataset) }
     it { is_expected.to be_a(ROM::HTTP::Dataset) }
-  end
-
-  describe '#project' do
-    let(:data) do
-      [
-        { id: 1, name: 'John', email: 'john@hotmail.com' },
-        { id: 2, name: 'Jill', email: 'jill@hotmail.com' }
-      ]
-    end
-
-    before do
-      allow(request_handler).to receive(:call)
-      allow(response_handler).to receive(:call).and_return(data)
-    end
-
-    subject! { dataset.project(*projections).to_a }
-
-    context 'with projections' do
-      context 'with a list of arguments' do
-        let(:projections) { [:id, :name] }
-
-        it 'applies the projections to the result set' do
-          is_expected.to match_array([
-            { id: 1, name: 'John' },
-            { id: 2, name: 'Jill' }
-          ])
-        end
-      end
-
-      context 'with a single array argument' do
-        let(:projections) { [[:id, :name]] }
-
-        it 'applies the projections to the result set' do
-          is_expected.to match_array([
-            { id: 1, name: 'John' },
-            { id: 2, name: 'Jill' }
-          ])
-        end
-      end
-    end
-
-    context 'without projections' do
-      let(:projections) { [] }
-
-      it 'returns the original data' do
-        is_expected.to match_array(data)
-      end
-    end
   end
 
   describe '#with_path' do

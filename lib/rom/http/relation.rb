@@ -1,28 +1,66 @@
-require 'rom/plugins/relation/view'
+require 'dry/core/cache'
 require 'rom/plugins/relation/key_inference'
+require 'rom/http/transformer'
 
 module ROM
   module HTTP
     # HTTP-specific relation extensions
     #
     class Relation < ROM::Relation
+      extend Dry::Core::Cache
       include Enumerable
 
       adapter :http
 
-      use :view
       use :key_inference
 
-      forward :with_request_method, :with_path, :append_path, :with_options,
-              :with_params, :clear_params, :project
+      option :transformer, reader: true, default: proc { ::ROM::HTTP::Transformer.new }
 
-      # @api private
+      forward :with_request_method, :with_path, :append_path, :with_options,
+              :with_params, :clear_params
+
+
       def initialize(*)
         super
-        if schema?
-          dataset.response_transformer(
-            Dataset::ResponseTransformers::Schemad.new(schema.to_h)
-          )
+
+        raise(
+          SchemaNotDefinedError,
+          "You must define a schema for #{self.class.register_as} relation"
+        ) unless schema?
+      end
+
+      def project(*names)
+        with(schema: schema.project(*names.flatten))
+      end
+
+      def exclude(*names)
+        with(schema: schema.exclude(*names.flatten))
+      end
+
+      def rename(mapping)
+        with(
+          schema: schema.rename(mapping),
+          transformer: transformer.rename(mapping)
+        )
+      end
+
+      def prefix(prefix)
+        with(
+          schema: schema.prefix(prefix),
+          transformer: transformer.prefix(prefix)
+        )
+      end
+
+      def wrap(prefix = dataset.name)
+        with(
+          schema: schema.wrap(prefix),
+          transformer: transformer.prefix(prefix)
+        )
+      end
+
+      def to_a
+        with_schema_proc do |proc|
+          transformer[super.map { |data| proc[data] }]
         end
       end
 
@@ -40,6 +78,16 @@ module ROM
       # @see Dataset#delete
       def delete
         dataset.delete
+      end
+
+      private
+
+      def with_schema_proc(&block)
+        schema_proc = fetch_or_store(schema) do
+          Types::Coercible::Hash.schema(schema.to_h)
+        end
+
+        block.call(schema_proc)
       end
     end
   end
