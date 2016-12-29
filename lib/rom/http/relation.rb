@@ -14,7 +14,7 @@ module ROM
 
       use :key_inference
 
-      option :transformer, reader: true, default: proc { ::ROM::HTTP::Transformer.new }
+      option :transformer, reader: true, default: ::ROM::HTTP::Transformer
 
       forward :with_request_method, :with_path, :append_path, :with_options,
               :with_params, :clear_params
@@ -38,29 +38,20 @@ module ROM
       end
 
       def rename(mapping)
-        with(
-          schema: schema.rename(mapping),
-          transformer: transformer.rename(mapping)
-        )
+        with(schema: schema.rename(mapping))
       end
 
       def prefix(prefix)
-        with(
-          schema: schema.prefix(prefix),
-          transformer: transformer.prefix(prefix)
-        )
+        with(schema: schema.prefix(prefix))
       end
 
       def wrap(prefix = dataset.name)
-        with(
-          schema: schema.wrap(prefix),
-          transformer: transformer.prefix(prefix)
-        )
+        with(schema: schema.wrap(prefix))
       end
 
       def to_a
         with_schema_proc do |proc|
-          transformer[super.map { |data| proc[data] }]
+          transformer_proc[super.map { |data| proc[data] }]
         end
       end
 
@@ -88,6 +79,24 @@ module ROM
         end
 
         block.call(schema_proc)
+      end
+
+      def transformer_proc
+        if mapped?
+          transformer[:map_array, transformer[:rename_keys, mapping]]
+        else
+          transformer[:identity]
+        end
+      end
+
+      def mapped?
+        mapping.any?
+      end
+
+      def mapping
+        schema.each_with_object({}) do |attr, mapping|
+          mapping[attr.meta[:name]] = attr.meta[:alias] if attr.meta[:alias]
+        end
       end
     end
   end
