@@ -2,7 +2,9 @@ RSpec.shared_context 'users and tasks' do
   include_context 'setup'
   let(:users_relation) do
     Class.new(ROM::HTTP::Relation) do
-      dataset :users
+      schema(:users) do
+        attribute :id, ROM::Types::Int
+      end
 
       def by_id(id)
         with_params(id: id)
@@ -11,7 +13,9 @@ RSpec.shared_context 'users and tasks' do
   end
   let(:tasks_relation) do
     Class.new(ROM::HTTP::Relation) do
-      dataset :tasks
+      schema(:tasks) do
+        attribute :id, ROM::Types::Int
+      end
 
       def by_id(id)
         with_params(id: id)

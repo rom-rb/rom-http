@@ -1,6 +1,3 @@
-require 'rom/http/dataset/response_transformers/schemad'
-require 'rom/http/dataset/response_transformers/schemaless'
-
 module ROM
   module HTTP
     # HTTP Dataset
@@ -15,7 +12,6 @@ module ROM
 
       attr_reader :config
 
-      option :projections, type: ::Array, default: [], reader: true
       option :request_method, type: ::Symbol, default: :get, reader: true
       option :path, type: ::String, default: ''
       option :params, type: ::Hash, default: {}, reader: true
@@ -48,22 +44,7 @@ module ROM
       # @api public
       def initialize(config, options = {})
         @config = config
-        @response_transformer = ResponseTransformers::Schemaless.new
         super(options)
-      end
-
-      # @overload response_transformer
-      #   Return the current response transformer
-      #
-      # @overload response_transformer(transformer)
-      #   Set a new response transformer
-      #
-      #   @param transformer [#call] The new response transformer
-      #
-      # @api private
-      def response_transformer(transformer = Undefined)
-        return @response_transformer if Undefined === transformer
-        @response_transformer = transformer
       end
 
       # Return the gateway's URI
@@ -175,26 +156,6 @@ module ROM
       # @api public
       def with_options(opts)
         __new__(config, options.merge(opts))
-      end
-
-      # Add a new set projection to the result set
-      #
-      # @param [Array, *args] projections the keys to add to the projections
-      #
-      # @example
-      #   users = Dataset.new(config, projections: [:login])
-      #   users.project(:email, :name).projections
-      #   # => [:login, :email, :name]
-      #
-      # @return [Dataset]
-      #
-      # @api public
-      def project(*args)
-        projections = args.first.is_a?(::Array) ? args.first : args
-
-        with_options(
-          projections: (self.projections + projections)
-        )
       end
 
       # Return a new dataset with a different path
@@ -316,10 +277,7 @@ module ROM
       #
       # @api public
       def response
-        response_transformer.call(
-          response_handler.call(request_handler.call(self), self),
-          self
-        )
+        response_handler.call(request_handler.call(self), self)
       end
 
       private

@@ -2,7 +2,13 @@ RSpec.describe ROM::HTTP::Commands::Delete do
   include_context 'setup'
   let(:relation) do
     Class.new(ROM::HTTP::Relation) do
-      dataset :users
+      schema(:users) do
+        attribute :id, ROM::Types::Int
+      end
+
+      def by_id(id)
+        with_params(id: id)
+      end
     end
   end
   let(:response) { double }
