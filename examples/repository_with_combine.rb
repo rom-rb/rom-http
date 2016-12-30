@@ -1,5 +1,3 @@
-# NOTE: This does not work at the moment
-
 require 'inflecto'
 require 'json'
 require 'uri'
@@ -68,6 +66,10 @@ end
 class UserRepository < ROM::Repository[:users]
   relations :posts
 
+  def find(id)
+    users.by_id(id).first
+  end
+
   def find_with_posts(user_id)
     users.by_id(user_id).combine_children(many: posts.for_user).first
   end
@@ -86,37 +88,63 @@ configuration.register_relation(Posts)
 container = ROM.container(configuration)
 
 UserRepository.new(container).find_with_posts(1)
-# Dry::Struct::Error: [ROM::Struct[Post].new] :userId is missing in Hash input
-#   from /home/andy/.rbenv/versions/2.3.0/lib/ruby/gems/2.3.0/gems/dry-struct-0.1.1/lib/dry/struct/class_interface.rb:80:in `rescue in new'
-#   from /home/andy/.rbenv/versions/2.3.0/lib/ruby/gems/2.3.0/gems/dry-struct-0.1.1/lib/dry/struct/class_interface.rb:74:in `new'
-#   from /home/andy/.rbenv/versions/2.3.0/lib/ruby/gems/2.3.0/gems/transproc-0.4.1/lib/transproc/class.rb:30:in `constructor_inject'
-#   from /home/andy/.rbenv/versions/2.3.0/lib/ruby/gems/2.3.0/gems/transproc-0.4.1/lib/transproc/function.rb:47:in `call'
-#   from /home/andy/.rbenv/versions/2.3.0/lib/ruby/gems/2.3.0/gems/transproc-0.4.1/lib/transproc/function.rb:47:in `call'
-#   from /home/andy/.rbenv/versions/2.3.0/lib/ruby/gems/2.3.0/gems/transproc-0.4.1/lib/transproc/array.rb:50:in `block in map_array!'
-#   from /home/andy/.rbenv/versions/2.3.0/lib/ruby/gems/2.3.0/gems/transproc-0.4.1/lib/transproc/array.rb:50:in `map!'
-#   from /home/andy/.rbenv/versions/2.3.0/lib/ruby/gems/2.3.0/gems/transproc-0.4.1/lib/transproc/array.rb:50:in `map_array!'
-#   from /home/andy/.rbenv/versions/2.3.0/lib/ruby/gems/2.3.0/gems/transproc-0.4.1/lib/transproc/array.rb:41:in `map_array'
-#   from /home/andy/.rbenv/versions/2.3.0/lib/ruby/gems/2.3.0/gems/transproc-0.4.1/lib/transproc/function.rb:47:in `call'
-#   from /home/andy/.rbenv/versions/2.3.0/lib/ruby/gems/2.3.0/gems/transproc-0.4.1/lib/transproc/function.rb:47:in `call'
-#   from /home/andy/.rbenv/versions/2.3.0/lib/ruby/gems/2.3.0/gems/transproc-0.4.1/lib/transproc/hash.rb:270:in `map_value'
-#   from /home/andy/.rbenv/versions/2.3.0/lib/ruby/gems/2.3.0/gems/transproc-0.4.1/lib/transproc/function.rb:47:in `call'
-#   from /home/andy/.rbenv/versions/2.3.0/lib/ruby/gems/2.3.0/gems/transproc-0.4.1/lib/transproc/function.rb:47:in `call'
-#   from /home/andy/.rbenv/versions/2.3.0/lib/ruby/gems/2.3.0/gems/transproc-0.4.1/lib/transproc/composite.rb:30:in `call'
-#   from /home/andy/.rbenv/versions/2.3.0/lib/ruby/gems/2.3.0/gems/transproc-0.4.1/lib/transproc/array.rb:50:in `block in map_array!'
-# ... 12 levels...
-#   from /home/andy/.rbenv/versions/2.3.0/lib/ruby/gems/2.3.0/bundler/gems/rom-5b338e873884/lib/rom/relation/materializable.rb:20:in `to_a'
-#   from /home/andy/.rbenv/versions/2.3.0/lib/ruby/gems/2.3.0/bundler/gems/rom-5b338e873884/lib/rom/relation/materializable.rb:62:in `first'
-#   from (irb):72:in `find_with_posts'
-#   from (irb):88
-#   from /home/andy/.rbenv/versions/2.3.0/lib/ruby/gems/2.3.0/gems/bundler-1.12.2/lib/bundler/cli/console.rb:15:in `run'
-#   from /home/andy/.rbenv/versions/2.3.0/lib/ruby/gems/2.3.0/gems/bundler-1.12.2/lib/bundler/cli.rb:333:in `console'
-#   from /home/andy/.rbenv/versions/2.3.0/lib/ruby/gems/2.3.0/gems/bundler-1.12.2/lib/bundler/vendor/thor/lib/thor/command.rb:27:in `run'
-#   from /home/andy/.rbenv/versions/2.3.0/lib/ruby/gems/2.3.0/gems/bundler-1.12.2/lib/bundler/vendor/thor/lib/thor/invocation.rb:126:in `invoke_command'
-#   from /home/andy/.rbenv/versions/2.3.0/lib/ruby/gems/2.3.0/gems/bundler-1.12.2/lib/bundler/vendor/thor/lib/thor.rb:359:in `dispatch'
-#   from /home/andy/.rbenv/versions/2.3.0/lib/ruby/gems/2.3.0/gems/bundler-1.12.2/lib/bundler/vendor/thor/lib/thor/base.rb:440:in `start'
-#   from /home/andy/.rbenv/versions/2.3.0/lib/ruby/gems/2.3.0/gems/bundler-1.12.2/lib/bundler/cli.rb:11:in `start'
-#   from /home/andy/.rbenv/versions/2.3.0/lib/ruby/gems/2.3.0/gems/bundler-1.12.2/exe/bundle:27:in `block in <top (required)>'
-#   from /home/andy/.rbenv/versions/2.3.0/lib/ruby/gems/2.3.0/gems/bundler-1.12.2/lib/bundler/friendly_errors.rb:98:in `with_friendly_errors'
-#   from /home/andy/.rbenv/versions/2.3.0/lib/ruby/gems/2.3.0/gems/bundler-1.12.2/exe/bundle:19:in `<top (required)>'
-#   from /home/andy/.rbenv/versions/2.3.0/bin/bundle:23:in `load'
-#   from /home/andy/.rbenv/versions/2.3.0/bin/bundle:23:in `<main>'irb(main):089:0>
+# =>
+# #<ROM::Struct[User]
+#   id=1
+#   name="Leanne Graham"
+#   username="Bret"
+#   email="Sincere@april.biz"
+#   phone="1-770-736-8031 x56442"
+#   website="hildegard.org"
+#   posts=[
+#     #<ROM::Struct[Post]
+#       id=1
+#       user_id=1
+#       title="sunt aut facere repellat provident occaecati excepturi optio reprehenderit"
+#       body="quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto">,
+#     #<ROM::Struct[Post]
+#       id=2
+#       user_id=1
+#       title="qui est esse"
+#       body="est rerum tempore vitae\nsequi sint nihil reprehenderit dolor beatae ea dolores neque\nfugiat blanditiis voluptate porro vel nihil molestiae ut reiciendis\nqui aperiam non debitis possimus qui neque nisi nulla">,
+#     #<ROM::Struct[Post]
+#       id=3
+#       user_id=1
+#       title="ea molestias quasi exercitationem repellat qui ipsa sit aut"
+#       body="et iusto sed quo iure\nvoluptatem occaecati omnis eligendi aut ad\nvoluptatem doloribus vel accusantium quis pariatur\nmolestiae porro eius odio et labore et velit aut">,
+#     #<ROM::Struct[Post]
+#       id=4
+#       user_id=1
+#       title="eum et est occaecati"
+#       body="ullam et saepe reiciendis voluptatem adipisci\nsit amet autem assumenda provident rerum culpa\nquis hic commodi nesciunt rem tenetur doloremque ipsam iure\nquis sunt voluptatem rerum illo velit">,
+#     #<ROM::Struct[Post]
+#       id=5
+#       user_id=1
+#       title="nesciunt quas odio"
+#       body="repudiandae veniam quaerat sunt sed\nalias aut fugiat sit autem sed est\nvoluptatem omnis possimus esse voluptatibus quis\nest aut tenetur dolor neque">,
+#     #<ROM::Struct[Post]
+#       id=6
+#       user_id=1
+#       title="dolorem eum magni eos aperiam quia"
+#       body="ut aspernatur corporis harum nihil quis provident sequi\nmollitia nobis aliquid molestiae\nperspiciatis et ea nemo ab reprehenderit accusantium quas\nvoluptate dolores velit et doloremque molestiae">,
+#     #<ROM::Struct[Post]
+#       id=7
+#       user_id=1
+#       title="magnam facilis autem"
+#       body="dolore placeat quibusdam ea quo vitae\nmagni quis enim qui quis quo nemo aut saepe\nquidem repellat excepturi ut quia\nsunt ut sequi eos ea sed quas">,
+#     #<ROM::Struct[Post]
+#       id=8
+#       user_id=1
+#       title="dolorem dolore est ipsam"
+#       body="dignissimos aperiam dolorem qui eum\nfacilis quibusdam animi sint suscipit qui sint possimus cum\nquaerat magni maiores excepturi\nipsam ut commodi dolor voluptatum modi aut vitae">,
+#     #<ROM::Struct[Post]
+#       id=9
+#       user_id=1
+#       title="nesciunt iure omnis dolorem tempora et accusantium"
+#       body="consectetur animi nesciunt iure dolore\nenim quia ad\nveniam autem ut quam aut nobis\net est aut quod aut provident voluptas autem voluptas">,
+#     #<ROM::Struct[Post]
+#       id=10
+#       user_id=1
+#       title="optio molestias id quia eum"
+#       body="quo et expedita modi cum officia vel magni\ndoloribus qui repudiandae\nvero nisi sit\nquos veniam quod sed accusamus veritatis error">
+#   ]>
