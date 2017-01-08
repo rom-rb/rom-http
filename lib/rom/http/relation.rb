@@ -32,7 +32,7 @@ module ROM
       end
 
       def primary_key
-        attribute = schema.find { |attr| attr.primary_key? }
+        attribute = schema.find(&:primary_key?)
 
         if attribute
           attribute.alias || attribute.name
