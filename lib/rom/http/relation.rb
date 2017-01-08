@@ -32,10 +32,10 @@ module ROM
       end
 
       def primary_key
-        attribute = schema.find { |attr| attr.meta[:primary_key] }
+        attribute = schema.find { |attr| attr.primary_key? }
 
         if attribute
-          attribute.name
+          attribute.alias || attribute.name
         else
           :id
         end
@@ -107,7 +107,7 @@ module ROM
 
       def mapping
         schema.each_with_object({}) do |attr, mapping|
-          mapping[attr.meta[:name]] = attr.meta[:alias] if attr.meta[:alias]
+          mapping[attr.name] = attr.alias if attr.alias
         end
       end
     end

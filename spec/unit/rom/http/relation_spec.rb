@@ -48,17 +48,34 @@ RSpec.describe ROM::HTTP::Relation do
     end
 
     context 'with primary key defined in schema' do
-      let(:relation_klass) do
-        Class.new(ROM::HTTP::Relation) do
-          schema do
-            attribute :id, ROM::Types::Strict::Int
-            attribute :name, ROM::Types::Strict::String.meta(primary_key: true)
+      context 'without alias' do
+        let(:relation_klass) do
+          Class.new(ROM::HTTP::Relation) do
+            schema do
+              attribute :id, ROM::Types::Strict::Int
+              attribute :name, ROM::Types::Strict::String.meta(primary_key: true)
+            end
           end
+        end
+
+        it 'returns the attribute name of the primary key' do
+          is_expected.to eq(:name)
         end
       end
 
-      it 'returns the attribute name of the primary key' do
-        is_expected.to eq(:name)
+      context 'with alias' do
+        let(:relation_klass) do
+          Class.new(ROM::HTTP::Relation) do
+            schema do
+              attribute :id, ROM::Types::Strict::Int.meta(primary_key: true, alias: :ident)
+              attribute :name, ROM::Types::Strict::String
+            end
+          end
+        end
+
+        it 'returns the attribute name of the primary key' do
+          is_expected.to eq(:ident)
+        end
       end
     end
   end
