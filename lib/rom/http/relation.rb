@@ -1,4 +1,5 @@
 require 'dry/core/cache'
+require 'rom/initializer'
 require 'rom/plugins/relation/key_inference'
 require 'rom/http/transformer'
 
@@ -8,13 +9,14 @@ module ROM
     #
     class Relation < ROM::Relation
       extend Dry::Core::Cache
+      extend ::ROM::Initializer
       include Enumerable
 
       adapter :http
 
       use :key_inference
 
-      option :transformer, reader: true, default: ::ROM::HTTP::Transformer
+      option :transformer, reader: true, default: proc { ::ROM::HTTP::Transformer }
 
       forward :with_request_method, :with_path, :append_path, :with_options,
               :with_params, :clear_params

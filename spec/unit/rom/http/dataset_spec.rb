@@ -22,8 +22,8 @@ RSpec.describe ROM::HTTP::Dataset do
       it { is_expected.to eq(config) }
     end
 
-    describe '#options' do
-      subject { dataset.options }
+    describe 'options' do
+      subject { dataset }
 
       context 'with options passed' do
         let(:options) do
@@ -35,29 +35,19 @@ RSpec.describe ROM::HTTP::Dataset do
           }
         end
 
-        it do
-          is_expected.to eq(
-            base_path: '',
-            request_method: :put,
-            path: '',
-            params: {},
-            headers: {
-              'Accept' => 'application/json'
-            }
-          )
-        end
+        its(:base_path) { is_expected.to eq('') }
+        its(:request_method) { is_expected.to eq(:put) }
+        its(:path) { is_expected.to eq('') }
+        its(:params) { is_expected.to eq({}) }
+        its(:headers) { is_expected.to eq('Accept' => 'application/json') }
       end
 
       context 'with no options passed' do
-        it do
-          is_expected.to eq(
-            base_path: '',
-            request_method: :get,
-            path: '',
-            params: {},
-            headers: {}
-          )
-        end
+        its(:base_path) { is_expected.to eq('') }
+        its(:request_method) { is_expected.to eq(:get) }
+        its(:path) { is_expected.to eq('') }
+        its(:params) { is_expected.to eq({}) }
+        its(:headers) { is_expected.to eq({}) }
       end
     end
   end
@@ -316,16 +306,13 @@ RSpec.describe ROM::HTTP::Dataset do
 
     subject! { new_dataset }
 
-    it { expect(new_dataset.config).to eq(config) }
-    it do
-      expect(new_dataset.options).to eq(
-        base_path: '',
-        request_method: :get,
-        path: '',
-        params: {},
-        headers: headers
-      )
-    end
+    its(:config) { is_expected.to eq(config) }
+    its(:base_path) { is_expected.to eq('') }
+    its(:request_method) { is_expected.to eq(:get) }
+    its(:path) { is_expected.to eq('') }
+    its(:params) { is_expected.to eq({}) }
+    its(:headers) { is_expected.to eq(headers) }
+
     it { is_expected.to_not be(dataset) }
     it { is_expected.to be_a(ROM::HTTP::Dataset) }
   end
@@ -371,18 +358,13 @@ RSpec.describe ROM::HTTP::Dataset do
 
     subject! { new_dataset }
 
-    it { expect(new_dataset.config).to eq(config) }
-    it do
-      expect(new_dataset.options).to eq(
-        base_path: '',
-        request_method: :get,
-        path: '',
-        params: {
-          name: name
-        },
-        headers: {}
-      )
-    end
+    its(:config) { is_expected.to eq(config) }
+    its(:base_path) { is_expected.to eq('') }
+    its(:request_method) { is_expected.to eq(:get) }
+    its(:path) { is_expected.to eq('') }
+    its(:params) { is_expected.to eq(name: name) }
+    its(:headers) { is_expected.to eq({}) }
+
     it { is_expected.to_not be(dataset) }
     it { is_expected.to be_a(ROM::HTTP::Dataset) }
   end

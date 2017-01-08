@@ -37,8 +37,7 @@ RSpec.describe ROM::HTTP::Relation do
         response_handler: response_handler,
         name: :users
       },
-      request_method: :get,
-      path: "/#{id}",
+      path: "users/#{id}",
       params: params
     )
   end

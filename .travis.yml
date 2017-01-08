@@ -5,7 +5,6 @@ cache: bundler
 bundler_args: --without sql benchmarks console tools
 script: "bundle exec rake ci"
 rvm:
-  - 2.1
   - 2.2
   - 2.3.1
   - rbx-3
