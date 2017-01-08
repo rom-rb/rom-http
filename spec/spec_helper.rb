@@ -4,6 +4,7 @@ require 'bundler'
 Bundler.setup
 
 require 'rom-http'
+require 'rspec/its'
 
 begin
 require 'byebug'

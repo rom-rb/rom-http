@@ -1,3 +1,5 @@
+require 'rom/initializer'
+
 module ROM
   module HTTP
     # HTTP Dataset
@@ -11,15 +13,15 @@ module ROM
 
       include Enumerable
       include Dry::Equalizer(:config, :options)
-      include ROM::Options
+      extend ::ROM::Initializer
 
-      attr_reader :config
+      param :config
 
-      option :request_method, type: ::Symbol, default: :get, reader: true
-      option :base_path, type: ::String, default: '', coercer: STRIP_PATH
-      option :path, type: ::String, default: '', coercer: STRIP_PATH
-      option :params, type: ::Hash, default: {}, reader: true
-      option :headers, type: ::Hash, default: {}
+      option :request_method, type: Types::Symbol, default: proc { :get }, reader: true
+      option :base_path, type: Types::String, default: proc { name }
+      option :path, type: Types::String, default: proc { '' }
+      option :params, type: Types::Hash, default: proc { {} }, reader: true
+      option :headers, type: Types::Hash, default: proc { {} }
 
       class << self
         def default_request_handler(handler = Undefined)
@@ -31,24 +33,6 @@ module ROM
           return @default_response_handler if Undefined === handler
           @default_response_handler = handler
         end
-      end
-
-
-      # HTTP Dataset interface
-      #
-      # @param [Hash] config the Gateway's HTTP server configuration
-      #
-      # @param [Hash] options dataset configuration options
-      # @option options [Symbol] :request_method (:get) The HTTP verb to use
-      # @option options [Array]  :projections ([]) Keys to select from response tuple
-      # @option options [String] :path ('') URI request path
-      # @option options [Hash] :headers ({}) Additional request headers
-      # @option options [Hash] :params ({}) HTTP request parameters
-      #
-      # @api public
-      def initialize(config, options = {})
-        @config = config
-        super(options)
       end
 
       # Return the gateway's URI
@@ -99,7 +83,7 @@ module ROM
       #
       # @api public
       def base_path
-        options[:base_path].empty? ? name : options[:base_path]
+        STRIP_PATH.call(super)
       end
 
       # Return the dataset path
@@ -112,7 +96,7 @@ module ROM
       #
       # @api public
       def path
-        join_path(base_path, options[:path])
+        STRIP_PATH.call(join_path(base_path, super))
       end
 
       # Return the dataset path
@@ -216,8 +200,8 @@ module ROM
       # @return [Dataset]
       #
       # @api public
-      def append_path(path)
-        with_options(path: join_path(options[:path], path))
+      def append_path(append_path)
+        with_options(path: join_path(path, append_path))
       end
 
       # Return a new dataset with a different request method
