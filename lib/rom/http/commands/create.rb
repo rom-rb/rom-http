@@ -11,10 +11,10 @@ module ROM
         #
         # @api public
         def execute(tuples)
-          Array([tuples]).flatten.map do |tuple|
+          Array([tuples]).flatten(1).map do |tuple|
             attributes = input[tuple]
             relation.insert(attributes.to_h)
-          end.to_a
+          end.flatten(1)
         end
       end
     end
