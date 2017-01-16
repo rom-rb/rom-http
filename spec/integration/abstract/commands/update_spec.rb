@@ -4,6 +4,8 @@ RSpec.describe ROM::HTTP::Commands::Update do
     Class.new(ROM::HTTP::Relation) do
       schema(:users) do
         attribute :id, ROM::Types::Int
+        attribute :first_name, ROM::Types::String
+        attribute :last_name, ROM::Types::String
       end
 
       def by_id(id)
@@ -14,8 +16,8 @@ RSpec.describe ROM::HTTP::Commands::Update do
 
   context 'with single tuple' do
     let(:response) { double }
-    let(:tuple) { double }
     let(:attributes) { { first_name: 'John', last_name: 'Jackson' } }
+    let(:tuple) { attributes.merge(id: 1) }
     let(:command) do
       Class.new(ROM::HTTP::Commands::Update) do
         register_as :update
@@ -57,10 +59,10 @@ RSpec.describe ROM::HTTP::Commands::Update do
   context 'with a collection' do
     let(:response_1) { double }
     let(:response_2) { double }
-    let(:tuple_1) { double }
-    let(:tuple_2) { double }
     let(:attributes_1) { { first_name: 'John', last_name: 'Jackson' } }
     let(:attributes_2) { { first_name: 'Jill', last_name: 'Smith' } }
+    let(:tuple_1) { attributes_1.merge(id: 1) }
+    let(:tuple_2) { attributes_2.merge(id: 2) }
     let(:attributes) { [attributes_1, attributes_2] }
     let(:command) do
       Class.new(ROM::HTTP::Commands::Update) do

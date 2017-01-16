@@ -62,20 +62,18 @@ module ROM
       end
 
       def to_a
-        with_schema_proc do |proc|
-          transformer_proc[super.map { |data| proc[data] }]
-        end
+        with_transformation { super }
       end
 
       # @see Dataset#insert
       def insert(*args)
-        dataset.insert(*args)
+        with_transformation { dataset.insert(*args) }
       end
       alias_method :<<, :insert
 
       # @see Dataset#update
       def update(*args)
-        dataset.update(*args)
+        with_transformation { dataset.update(*args) }
       end
 
       # @see Dataset#delete
@@ -84,6 +82,16 @@ module ROM
       end
 
       private
+
+      def with_transformation(&block)
+        tuples = block.call
+
+        transformed = with_schema_proc do |proc|
+          transformer_proc[Array([tuples]).flatten(1).map(&proc.method(:call))]
+        end
+
+        tuples.kind_of?(Array) ? transformed : transformed.first
+      end
 
       def with_schema_proc(&block)
         schema_proc = fetch_or_store(schema) do

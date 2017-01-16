@@ -186,4 +186,95 @@ RSpec.describe ROM::HTTP::Relation do
       end
     end
   end
+
+  %i[insert update].each do |method_name|
+    describe "##{method_name}" do
+      subject { relation.send(method_name, name: 'John') }
+
+      before do
+        allow(dataset).to receive(method_name).and_return(data)
+      end
+
+      context 'with standard schema' do
+        let(:relation_klass) do
+          Class.new(ROM::HTTP::Relation) do
+            schema do
+              attribute :id, ROM::Types::Strict::Int
+            end
+          end
+        end
+
+        context 'when respond with single tuple' do
+          let(:data) { { id: 1, name: 'John' } }
+
+          it 'applies the schema and returns the materialized results' do
+            is_expected.to eq(id: 1)
+          end
+        end
+
+        context 'when respond with multiple tuples' do
+          let(:data) do
+            [
+              {
+                id: 1,
+                name: 'John'
+              },
+              {
+                id: 2,
+                name: 'Jill'
+              }
+            ]
+          end
+
+          it 'applies the schema and returns the materialized results' do
+            is_expected.to match_array([
+              { id: 1 },
+              { id: 2 }
+            ])
+          end
+        end
+      end
+
+      context 'with aliased schema' do
+        let(:relation_klass) do
+          Class.new(ROM::HTTP::Relation) do
+            schema do
+              attribute :id, ROM::Types::Strict::Int
+              attribute :name, ROM::Types::Strict::String.meta(alias: :username)
+            end
+          end
+        end
+
+        context 'when respond with single tuple' do
+          let(:data) { { id: 1, name: 'John' } }
+
+          it 'applies the schema and returns the materialized results' do
+            is_expected.to eq(id: 1, username: 'John')
+          end
+        end
+
+        context 'when respond with multiple tuples' do
+          let(:data) do
+            [
+              {
+                id: 1,
+                name: 'John'
+              },
+              {
+                id: 2,
+                name: 'Jill'
+              }
+            ]
+          end
+
+          it 'applies the schema and returns the materialized results' do
+            is_expected.to match_array([
+              { id: 1, username: 'John' },
+              { id: 2, username: 'Jill' }
+            ])
+          end
+        end
+      end
+    end
+  end
 end
