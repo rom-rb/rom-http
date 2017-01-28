@@ -20,7 +20,7 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency 'concurrent-ruby'
   spec.add_runtime_dependency 'rom', '~> 3.0.0.rc'
-  spec.add_runtime_dependency 'dry-core'
+  spec.add_runtime_dependency 'dry-core', '~> 0.2', '>= 0.2.3'
   spec.add_runtime_dependency 'dry-equalizer'
 
   spec.add_development_dependency 'bundler'
