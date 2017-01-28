@@ -18,9 +18,19 @@ module ROM
 
       option :transformer, reader: true, default: proc { ::ROM::HTTP::Transformer }
 
+      defines :base_path
+
       forward :with_request_method, :with_path, :append_path, :with_options,
               :with_params, :clear_params
 
+
+      class << self
+        def dataset_options
+          @dataset_options ||= {
+            base_path: base_path
+          }
+        end
+      end
 
       def initialize(*)
         super

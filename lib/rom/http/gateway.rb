@@ -51,9 +51,9 @@ module ROM
       # @return [Dataset]
       #
       # @api public
-      def dataset(name)
+      def dataset(name, config_options)
         dataset_klass = namespace.const_defined?(:Dataset) ? namespace.const_get(:Dataset) : Dataset
-        datasets[name] = dataset_klass.new(config.merge(name: name))
+        datasets[name] = dataset_klass.new(config.merge(name: name).merge(config_options))
       end
 
       # Check if dataset exists

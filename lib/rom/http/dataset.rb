@@ -83,7 +83,7 @@ module ROM
       #
       # @api public
       def base_path
-        STRIP_PATH.call(super)
+        STRIP_PATH.call(config[:base_path] || super)
       end
 
       # Return the dataset path
