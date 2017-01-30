@@ -8,6 +8,7 @@
   - Removed ruby 2.1 support (maximderbin)
   - Fix Relation#primary_key when schema defines alias (AMHOL)
   - Transform keys on insert and update (maximderbin)
+  - Remove `rom-support` dependency (maximderbin)
 
 [Compare v0.5.0...v0.6.0](https://github.com/rom-rb/rom-http/compare/v0.5.0...master)
 

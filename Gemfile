@@ -6,7 +6,6 @@ gem 'rom-repository', github: 'rom-rb/rom-repository', branch: 'master'
 
 group :test do
   gem 'rom', github: 'rom-rb/rom', branch: 'master'
-  gem 'rom-support', github: 'rom-rb/rom-support', branch: 'master'
   gem 'faraday'
   gem 'inflecto'
 end
