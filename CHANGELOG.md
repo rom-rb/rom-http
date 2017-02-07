@@ -1,16 +1,16 @@
-# v0.6.0 to-be-released
-# Changed
+# v0.6.0 2017-02-06
+### Changed
   - Make schemas mandatory and use schema API from ROM core (AMHOL)
   - Generate transformer using schema (AMHOL)
   - Removed rbx-2 support (solnic)
   - Add Dataset#base_path and Relation#primary_key (AMHOL)
-  - Updated to work with ROM 3.0.beta (maximderbin)
+  - Updated to work with ROM 3.0 (maximderbin)
   - Removed ruby 2.1 support (maximderbin)
   - Fix Relation#primary_key when schema defines alias (AMHOL)
   - Transform keys on insert and update (maximderbin)
   - Remove `rom-support` dependency (maximderbin)
 
-[Compare v0.5.0...v0.6.0](https://github.com/rom-rb/rom-http/compare/v0.5.0...master)
+[Compare v0.5.0...v0.6.0](https://github.com/rom-rb/rom-http/compare/v0.5.0...v0.6.0)
 
 # v0.5.0 2016-08-08
 ### Changed
