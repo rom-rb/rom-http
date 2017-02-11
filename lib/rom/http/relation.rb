@@ -83,8 +83,8 @@ module ROM
 
       private
 
-      def with_transformation(&block)
-        tuples = block.call
+      def with_transformation
+        tuples = yield
 
         transformed = with_schema_proc do |proc|
           transformer_proc[Array([tuples]).flatten(1).map(&proc.method(:call))]
@@ -93,12 +93,12 @@ module ROM
         tuples.kind_of?(Array) ? transformed : transformed.first
       end
 
-      def with_schema_proc(&block)
+      def with_schema_proc
         schema_proc = fetch_or_store(schema) do
           Types::Coercible::Hash.schema(schema.to_h)
         end
 
-        block.call(schema_proc)
+        yield(schema_proc)
       end
 
       def transformer_proc
