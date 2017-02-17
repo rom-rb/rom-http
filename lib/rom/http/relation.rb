@@ -18,8 +18,9 @@ module ROM
 
       option :transformer, reader: true, default: proc { ::ROM::HTTP::Transformer }
 
-      forward :with_request_method, :with_path, :append_path, :with_options,
-              :with_params, :clear_params
+      forward :with_headers, :add_header, :with_options,
+              :with_base_path, :with_path, :append_path,
+              :with_request_method, :with_params, :add_params
 
 
       def initialize(*)
