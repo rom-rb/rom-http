@@ -119,27 +119,29 @@ require 'net/http'
 module ROM
   module MyAdapter
     class Dataset < ROM::HTTP::Dataset
-      default_request_handler ->(dataset) do
-        uri = URI(dataset.uri)
-        uri.path = dataset.absolute_path
-        uri.query = URI.encode_www_form(dataset.params)
+      configure do |config|
+        config.default_request_handler = ->(dataset) do
+          uri = URI(dataset.uri)
+          uri.path = dataset.absolute_path
+          uri.query = URI.encode_www_form(dataset.params)
 
-        http = Net::HTTP.new(uri.host, uri.port)
-        request_klass = Net::HTTP.const_get(Inflecto.classify(dataset.request_method))
+          http = Net::HTTP.new(uri.host, uri.port)
+          request_klass = Net::HTTP.const_get(Inflecto.classify(dataset.request_method))
 
-        request = request_klass.new(uri.request_uri)
-        dataset.headers.each_with_object(request) do |(header, value), request|
-          request[header.to_s] = value
+          request = request_klass.new(uri.request_uri)
+          dataset.headers.each_with_object(request) do |(header, value), request|
+            request[header.to_s] = value
+          end
+
+          response = http.request(request)
         end
 
-        response = http.request(request)
-      end
-
-      default_response_handler ->(response, dataset) do
-        if %i(post put patch).include?(dataset.request_method)
-          JSON.parse(response.body, symbolize_names: true)
-        else
-          Array([JSON.parse(response.body, symbolize_names: true)]).flatten
+        config.default_response_handler = ->(response, dataset) do
+          if %i(post put patch).include?(dataset.request_method)
+            JSON.parse(response.body, symbolize_names: true)
+          else
+            Array([JSON.parse(response.body, symbolize_names: true)]).flatten
+          end
         end
       end
     end

@@ -13,7 +13,24 @@ RSpec.describe ROM::HTTP::Dataset do
   let(:request_handler) { double(Proc) }
   let(:response_handler) { double(Proc) }
 
-  it { expect(dataset).to be_kind_of(Enumerable) }
+  it { expect(klass).to be_kind_of(::Dry::Configurable) }
+  it { expect(dataset).to be_kind_of(::Enumerable) }
+
+  before { klass.enable_test_interface }
+
+  describe 'settings' do
+    describe 'default_request_handler' do
+      it 'defaults to nil' do
+        expect(klass.config.default_request_handler).to be nil
+      end
+    end
+
+    describe 'default_response_handler' do
+      it 'defaults to nil' do
+        expect(klass.config.default_response_handler).to be nil
+      end
+    end
+  end
 
   describe 'defaults' do
     describe '#config' do
@@ -57,11 +74,21 @@ RSpec.describe ROM::HTTP::Dataset do
       module Test
         class Dataset < ROM::HTTP::Dataset; end
       end
+
+      allow(Dry::Core::Deprecations).to receive(:announce)
     end
 
+    after { Test::Dataset.reset_config }
+
     context 'when no default_request_handler set' do
+      subject! { Test::Dataset.default_request_handler }
+
       it 'returns nil' do
-        expect(klass.default_request_handler).to be nil
+        expect(Dry::Core::Deprecations).to have_received(:announce).with(
+          :default_request_handler,
+          'use configuration instead'
+        )
+        is_expected.to be nil
       end
     end
 
@@ -70,8 +97,14 @@ RSpec.describe ROM::HTTP::Dataset do
         Test::Dataset.default_request_handler(request_handler)
       end
 
+      subject! { Test::Dataset.default_request_handler }
+
       it 'returns the default request handler' do
-        expect(Test::Dataset.default_request_handler).to eq request_handler
+        expect(Dry::Core::Deprecations).to have_received(:announce).with(
+          :default_request_handler,
+          'use configuration instead'
+        ).twice
+        is_expected.to eq request_handler
       end
     end
   end
@@ -81,11 +114,21 @@ RSpec.describe ROM::HTTP::Dataset do
       module Test
         class Dataset < ROM::HTTP::Dataset; end
       end
+
+      allow(Dry::Core::Deprecations).to receive(:announce)
     end
 
+    after { Test::Dataset.reset_config }
+
     context 'when no default_response_handler set' do
+      subject! { Test::Dataset.default_response_handler }
+
       it 'returns nil' do
-        expect(klass.default_response_handler).to be nil
+        expect(Dry::Core::Deprecations).to have_received(:announce).with(
+          :default_response_handler,
+          'use configuration instead'
+        )
+        is_expected.to be nil
       end
     end
 
@@ -94,8 +137,14 @@ RSpec.describe ROM::HTTP::Dataset do
         Test::Dataset.default_response_handler(response_handler)
       end
 
+      subject! { Test::Dataset.default_response_handler }
+
       it 'returns the default response handler' do
-        expect(Test::Dataset.default_response_handler).to eq response_handler
+        expect(Dry::Core::Deprecations).to have_received(:announce).with(
+          :default_response_handler,
+          'use configuration instead'
+        ).twice
+        is_expected.to eq response_handler
       end
     end
   end

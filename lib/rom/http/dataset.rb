@@ -1,3 +1,5 @@
+require 'dry-configurable'
+require 'dry/core/deprecations'
 require 'rom/initializer'
 
 module ROM
@@ -11,9 +13,13 @@ module ROM
       PATH_SEPARATOR = '/'.freeze
       STRIP_PATH = ->(path) { path.sub(%r{\A/}, '') }.freeze
 
-      include Enumerable
-      include Dry::Equalizer(:config, :options)
       extend ::ROM::Initializer
+      extend ::Dry::Configurable
+      include ::Enumerable
+      include ::Dry::Equalizer(:config, :options)
+
+      setting :default_request_handler
+      setting :default_response_handler
 
       param :config
 
@@ -24,14 +30,24 @@ module ROM
       option :headers, type: Types::Hash, default: proc { {} }
 
       class << self
+        # TODO: Remove in favour of configuration
         def default_request_handler(handler = Undefined)
-          return @default_request_handler if Undefined === handler
-          @default_request_handler = handler
+          ::Dry::Core::Deprecations.announce(
+            __method__,
+            'use configuration instead'
+          )
+          return config.default_request_handler if Undefined === handler
+          config.default_request_handler = handler
         end
 
+        # TODO: Remove in favour of configuration
         def default_response_handler(handler = Undefined)
-          return @default_response_handler if Undefined === handler
-          @default_response_handler = handler
+          ::Dry::Core::Deprecations.announce(
+            __method__,
+            'use configuration instead'
+          )
+          return config.default_response_handler if Undefined === handler
+          config.default_response_handler = handler
         end
       end
 
@@ -299,13 +315,19 @@ module ROM
       private
 
       def response_handler
-        response_handler = config.fetch(:response_handler, self.class.default_response_handler)
+        response_handler = config.fetch(
+          :response_handler,
+          self.class.config.default_response_handler
+        )
         fail Error, ':response_handler configuration missing' if response_handler.nil?
         response_handler
       end
 
       def request_handler
-        request_handler = config.fetch(:request_handler, self.class.default_request_handler)
+        request_handler = config.fetch(
+          :request_handler,
+          self.class.config.default_request_handler
+        )
         fail Error, ':response_handler configuration missing' if request_handler.nil?
         request_handler
       end
