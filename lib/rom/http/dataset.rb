@@ -250,6 +250,25 @@ module ROM
         with_options(params: params)
       end
 
+      # Return a new dataset with merged request parameters
+      #
+      # @param [Hash] params the new request parameters to add
+      #
+      # @example
+      #   users = Dataset.new(config, params: { uid: 33 })
+      #   users.add_params(login: 'jdoe').params
+      #   # => { uid: 33, :login => 'jdoe' }
+      #
+      # @return [Dataset]
+      #
+      # @api public
+      def add_params(new_params)
+        # TODO: Should we merge arrays?
+        with_options(
+          params: ::ROM::HTTP::Transformer[:deep_merge][params, new_params]
+        )
+      end
+
       # Iterate over each response value
       #
       # @yield [Hash] a dataset tuple

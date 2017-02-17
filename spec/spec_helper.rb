@@ -7,6 +7,8 @@ require 'rom-http'
 require 'rspec/its'
 require 'dry/configurable/test_interface'
 
+ROM::HTTP::Dataset.enable_test_interface
+
 begin
 require 'byebug'
 rescue LoadError; end

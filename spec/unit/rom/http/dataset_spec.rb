@@ -16,8 +16,6 @@ RSpec.describe ROM::HTTP::Dataset do
   it { expect(klass).to be_kind_of(::Dry::Configurable) }
   it { expect(dataset).to be_kind_of(::Enumerable) }
 
-  before { klass.enable_test_interface }
-
   describe 'settings' do
     describe 'default_request_handler' do
       it 'defaults to nil' do
@@ -498,6 +496,36 @@ RSpec.describe ROM::HTTP::Dataset do
     it { is_expected.to eq(new_dataset) }
   end
 
+  describe '#add_params' do
+    let(:options) do
+      {
+        params: {
+          user: {
+            uid: 3
+          }
+        }
+      }
+    end
+    let(:params) { { user: { name: 'Jack' } } }
+    let(:new_dataset) { double(ROM::HTTP::Dataset) }
+
+    before do
+      allow(dataset).to receive(:with_options).and_return(new_dataset)
+    end
+
+    subject! { dataset.add_params(params) }
+
+    it do
+      expect(dataset).to have_received(:with_options).with(params: {
+        user: {
+          uid: 3,
+          name: 'Jack'
+        }
+      })
+    end
+    it { is_expected.to eq(new_dataset) }
+  end
+
   describe '#each' do
     let(:response) { double(Array) }
     let(:block) { proc {} }
@@ -609,7 +637,7 @@ RSpec.describe ROM::HTTP::Dataset do
     end
 
     context 'when request_handler and response_handler configured' do
-      let(:klass) { Test::Dataset }
+      let(:dataset) { Test::Dataset.new(config, options) }
       let(:config) { {} }
 
       before do
@@ -623,6 +651,8 @@ RSpec.describe ROM::HTTP::Dataset do
         allow(request_handler).to receive(:call).and_return(response)
         allow(response_handler).to receive(:call).and_return(result)
       end
+
+      after { Test::Dataset.reset_config }
 
       subject! { dataset.response }
 
