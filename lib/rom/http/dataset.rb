@@ -338,7 +338,7 @@ module ROM
           :response_handler,
           self.class.config.default_response_handler
         )
-        fail Error, ':response_handler configuration missing' if response_handler.nil?
+        fail Error, '+default_response_handler+ configuration missing' if response_handler.nil?
         response_handler
       end
 
@@ -347,7 +347,7 @@ module ROM
           :request_handler,
           self.class.config.default_request_handler
         )
-        fail Error, ':response_handler configuration missing' if request_handler.nil?
+        fail Error, '+default_response_handler+ configuration missing' if request_handler.nil?
         request_handler
       end
 
