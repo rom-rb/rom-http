@@ -271,24 +271,68 @@ RSpec.describe ROM::HTTP::Dataset do
     subject { dataset.path }
 
     context 'with no path option' do
-      it { is_expected.to eq('') }
+      context 'without dataset name' do
+        it { is_expected.to eq('') }
+      end
+
+      context 'with dataset name' do
+        let(:config) { super().merge(name: :users) }
+        it { is_expected.to eq('users') }
+      end
+
+      context 'with base path' do
+        let(:options) { { base_path: '/users' } }
+        it { is_expected.to eq('users') }
+      end
     end
 
     context 'with path option' do
       context 'when path is absolute' do
         let(:path) { '/users' }
-        let(:options) { { path: path } }
 
-        it 'removes the leading /' do
-          is_expected.to eq('users')
+        context 'without dataset name' do
+          let(:options) { { path: path } }
+
+          it 'removes the leading /' do
+            is_expected.to eq('users')
+          end
+        end
+
+        context 'with dataset name' do
+          let(:config) { super().merge(name: :blog) }
+          let(:options) { { path: path } }
+
+          it { is_expected.to eq('blog/users') }
+        end
+
+        context 'with base path' do
+          let(:options) { { base_path: '/blog', path: path } }
+
+          it { is_expected.to eq('blog/users') }
         end
       end
 
       context 'when path is not absolute' do
         let(:path) { 'users' }
-        let(:options) { { path: path } }
 
-        it { is_expected.to eq(path) }
+        context 'without dataset name' do
+          let(:options) { { path: path } }
+
+          it { is_expected.to eq(path) }
+        end
+
+        context 'with dataset name' do
+          let(:config) { super().merge(name: :blog) }
+          let(:options) { { path: path } }
+
+          it { is_expected.to eq('blog/users') }
+        end
+
+        context 'with base path' do
+          let(:options) { { base_path: '/blog', path: path } }
+
+          it { is_expected.to eq('blog/users') }
+        end
       end
     end
   end

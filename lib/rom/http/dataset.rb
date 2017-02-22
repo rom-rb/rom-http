@@ -1,6 +1,7 @@
 require 'dry-configurable'
 require 'dry/core/deprecations'
 require 'rom/initializer'
+require 'rom/http/dataset/class_interface'
 
 module ROM
   module HTTP
@@ -11,10 +12,10 @@ module ROM
     # @api public
     class Dataset
       PATH_SEPARATOR = '/'.freeze
-      STRIP_PATH = ->(path) { path.sub(%r{\A/}, '') }.freeze
 
       extend ::ROM::Initializer
       extend ::Dry::Configurable
+      extend ::ROM::HTTP::Dataset::ClassInterface
       include ::Enumerable
       include ::Dry::Equalizer(:config, :options)
 
@@ -25,31 +26,9 @@ module ROM
 
       option :request_method, type: Types::Symbol, default: proc { :get }, reader: true
       option :base_path, type: Types::String, default: proc { name }
-      option :path, type: Types::String, default: proc { '' }
+      option :path, type: Types::String, default: proc { '' }, reader: false
       option :params, type: Types::Hash, default: proc { {} }, reader: true
       option :headers, type: Types::Hash, default: proc { {} }
-
-      class << self
-        # TODO: Remove in favour of configuration
-        def default_request_handler(handler = Undefined)
-          ::Dry::Core::Deprecations.announce(
-            __method__,
-            'use configuration instead'
-          )
-          return config.default_request_handler if Undefined === handler
-          config.default_request_handler = handler
-        end
-
-        # TODO: Remove in favour of configuration
-        def default_response_handler(handler = Undefined)
-          ::Dry::Core::Deprecations.announce(
-            __method__,
-            'use configuration instead'
-          )
-          return config.default_response_handler if Undefined === handler
-          config.default_response_handler = handler
-        end
-      end
 
       # Return the gateway's URI
       #
@@ -99,7 +78,7 @@ module ROM
       #
       # @api public
       def base_path
-        STRIP_PATH.call(super)
+        strip_path(super)
       end
 
       # Return the dataset path
@@ -112,7 +91,7 @@ module ROM
       #
       # @api public
       def path
-        STRIP_PATH.call(join_path(base_path, super))
+        join_path(base_path, strip_path(options[:path].to_s))
       end
 
       # Return the dataset path
@@ -357,6 +336,10 @@ module ROM
 
       def join_path(*paths)
         paths.reject(&:empty?).join(PATH_SEPARATOR)
+      end
+
+      def strip_path(path)
+        path.sub(%r{\A/}, '')
       end
     end
   end
