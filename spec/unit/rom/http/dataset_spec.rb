@@ -157,7 +157,107 @@ RSpec.describe ROM::HTTP::Dataset do
     end
 
     context 'when uri configured' do
-      it { expect(dataset.uri).to eq(uri) }
+      subject! { dataset.uri }
+
+      context 'when request method is GET' do
+        context 'with params' do
+          let(:options) do
+            {
+              params: {
+                username: 'John',
+                role: 'admin'
+              }
+            }
+          end
+          let(:expected_uri) { URI("#{uri}?username=John&role=admin") }
+
+          it { is_expected.to eq(expected_uri) }
+        end
+      end
+
+      context 'when request method is not GET' do
+        context 'with params' do
+          let(:options) do
+            {
+              request_method: :post,
+              params: {
+                username: 'John',
+                role: 'admin'
+              }
+            }
+          end
+          let(:expected_uri) { URI(uri) }
+
+          it { is_expected.to eq(expected_uri) }
+        end
+      end
+
+      context 'without dataset name' do
+        context 'with no path' do
+          let(:expected_uri) { URI(uri) }
+
+          it { is_expected.to eq(expected_uri) }
+        end
+
+        context 'with path' do
+          context 'without custom base_path' do
+            let(:options) { { path: '/users' } }
+            let(:expected_uri) { URI("#{uri}/users") }
+
+            it { is_expected.to eq(expected_uri) }
+          end
+
+          context 'with custom base_path' do
+            let(:options) { { base_path: '/blog', path: '/users' } }
+            let(:expected_uri) { URI("#{uri}/blog/users") }
+
+            it { is_expected.to eq(expected_uri) }
+          end
+        end
+      end
+
+      context 'with dataset name' do
+        let(:config) { super().merge(name: :blog) }
+
+        context 'with no path' do
+          let(:expected_uri) { URI("#{uri}/blog") }
+
+          it { is_expected.to eq(expected_uri) }
+        end
+
+        context 'with path' do
+          context 'without custom base_path' do
+            let(:options) { { path: '/users' } }
+            let(:expected_uri) { URI("#{uri}/blog/users") }
+
+            it { is_expected.to eq(expected_uri) }
+          end
+
+          context 'with custom base_path' do
+            let(:options) { { base_path: '/bloggers', path: '/users' } }
+            let(:expected_uri) { URI("#{uri}/bloggers/users") }
+
+            it { is_expected.to eq(expected_uri) }
+          end
+        end
+      end
+
+      context 'with custom base_path' do
+        let(:config) { super().merge(name: :blog) }
+
+        context 'with no path' do
+          let(:expected_uri) { URI("#{uri}/blog") }
+
+          it { is_expected.to eq(expected_uri) }
+        end
+
+        context 'with path' do
+          let(:options) { { path: '/users' } }
+          let(:expected_uri) { URI("#{uri}/blog/users") }
+
+          it { is_expected.to eq(expected_uri) }
+        end
+      end
     end
   end
 

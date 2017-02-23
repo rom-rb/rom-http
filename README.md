@@ -52,10 +52,7 @@ require 'net/http'
 
 class RequestHandler
   def call(dataset)
-    uri = URI(dataset.uri)
-    uri.path = dataset.absolute_path
-    uri.query = URI.encode_www_form(dataset.params)
-
+    uri = dataset.uri
     http = Net::HTTP.new(uri.host, uri.port)
     request_klass = Net::HTTP.const_get(Inflecto.classify(dataset.request_method))
 
@@ -121,9 +118,7 @@ module ROM
     class Dataset < ROM::HTTP::Dataset
       configure do |config|
         config.default_request_handler = ->(dataset) do
-          uri = URI(dataset.uri)
-          uri.path = dataset.absolute_path
-          uri.query = URI.encode_www_form(dataset.params)
+          uri = dataset.uri
 
           http = Net::HTTP.new(uri.host, uri.port)
           request_klass = Net::HTTP.const_get(Inflecto.classify(dataset.request_method))

@@ -1,3 +1,4 @@
+require 'uri'
 require 'dry-configurable'
 require 'dry/core/deprecations'
 require 'rom/initializer'
@@ -21,6 +22,7 @@ module ROM
 
       setting :default_request_handler
       setting :default_response_handler
+      setting :param_encoder, ->(params) { URI.encode_www_form(params) }
 
       param :config
 
@@ -38,7 +40,13 @@ module ROM
       #
       # @api public
       def uri
-        config.fetch(:uri) { fail Error, '+uri+ configuration missing' }
+        uri = config.fetch(:uri) { fail Error, '+uri+ configuration missing' }
+        uri = URI(join_path(uri, path))
+        if request_method == :get && params.any?
+          uri.query = self.class.config.param_encoder.call(params)
+        end
+
+        uri
       end
 
       # Return request headers
