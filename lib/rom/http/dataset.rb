@@ -38,7 +38,7 @@ module ROM
       #
       # @api public
       def uri
-        config.fetch(:uri) { fail Error, ':uri configuration missing' }
+        config.fetch(:uri) { fail Error, '+uri+ configuration missing' }
       end
 
       # Return request headers
