@@ -16,6 +16,8 @@ module ROM
     #
     # @api public
     class Gateway < ROM::Gateway
+      adapter :http
+
       attr_reader :datasets, :config
       private :datasets, :config
 
