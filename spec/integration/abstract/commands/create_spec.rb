@@ -44,7 +44,7 @@ RSpec.describe ROM::HTTP::Commands::Create do
       configuration.register_command(command)
 
       allow(request_handler).to receive(:call).and_return(response)
-      allow(response_handler).to receive(:call).and_return(tuple)
+      allow(response_handler).to receive(:call).and_return([tuple])
     end
 
     subject! { container.command(:users).create.call(attributes) }
