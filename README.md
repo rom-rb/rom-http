@@ -52,7 +52,7 @@ require 'net/http'
 
 class RequestHandler
   def call(dataset)
-    uri = dataset.uri
+    uri = URI(dataset.uri)
     http = Net::HTTP.new(uri.host, uri.port)
     request_klass = Net::HTTP.const_get(Inflecto.classify(dataset.request_method))
 
@@ -166,7 +166,7 @@ end
 ROM.register_adapter(:my_adapter, ROM::MyAdapter)
 
 configuration = ROM::Configuration.new(:my_adapter, {
-  uri: 'http://jsonplaceholder.typicode.com',
+  uri: 'http://jsonplaceholder.typicode.com/users',
   headers: {
     Accept: 'application/json'
   }
