@@ -1,8 +1,10 @@
+#!/usr/bin/env ruby
 require 'inflecto'
 require 'json'
 require 'uri'
 require 'net/http'
 require 'rom-repository'
+require 'rom-http'
 
 class RequestHandler
   def call(dataset)
