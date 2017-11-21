@@ -2,7 +2,7 @@ require 'json'
 require 'rom-repository'
 
 RSpec.describe ROM::HTTP::Relation do
-  subject(:users) { container.relation(:users).by_id(id).filter(params) }
+  subject(:users) { container.relations[:users].by_id(id).filter(params) }
 
   include_context 'setup'
 
@@ -58,11 +58,15 @@ RSpec.describe ROM::HTTP::Relation do
 
   context 'using a repo' do
     let(:repo) do
-      Class.new(ROM::Repository) { relations :users }.new(container)
+      Class.new(ROM::Repository) do
+        def self.to_s
+          'UserRepo'
+        end
+      end.new(container)
     end
 
     it 'returns structs' do
-      user = repo.users.by_id(1337).filter(params).one
+      user = repo.users.by_id(1337).filter(params).first
 
       expect(user.id).to be(1337)
       expect(user.name).to eql('John')

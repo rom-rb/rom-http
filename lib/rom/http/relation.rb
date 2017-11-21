@@ -1,6 +1,5 @@
 require 'dry/core/cache'
 require 'rom/initializer'
-require 'rom/plugins/relation/key_inference'
 require 'rom/http/transformer'
 
 module ROM
@@ -14,23 +13,11 @@ module ROM
 
       adapter :http
 
-      use :key_inference
-
       option :transformer, reader: true, default: proc { ::ROM::HTTP::Transformer }
 
       forward :with_headers, :add_header, :with_options,
               :with_base_path, :with_path, :append_path,
               :with_request_method, :with_params, :add_params
-
-
-      def initialize(*)
-        super
-
-        raise(
-          SchemaNotDefinedError,
-          "You must define a schema for #{self.class.register_as} relation"
-        ) unless schema?
-      end
 
       def primary_key
         attribute = schema.find(&:primary_key?)

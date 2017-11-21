@@ -42,7 +42,7 @@ RSpec.describe ROM::HTTP::Commands::Delete do
     allow(response_handler).to receive(:call).and_return(tuples)
   end
 
-  subject! { container.command(:users).delete.call }
+  subject! { container.commands[:users].delete.call }
 
   it do
     expect(request_handler).to have_received(:call).with(dataset)
