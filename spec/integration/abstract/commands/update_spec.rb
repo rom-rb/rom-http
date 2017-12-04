@@ -47,7 +47,7 @@ RSpec.describe ROM::HTTP::Commands::Update do
       allow(response_handler).to receive(:call).and_return(tuple)
     end
 
-    subject! { container.command(:users).update.call(attributes) }
+    subject! { container.commands[:users].update.call(attributes) }
 
     it do
       expect(request_handler).to have_received(:call).with(dataset)
@@ -106,7 +106,7 @@ RSpec.describe ROM::HTTP::Commands::Update do
       allow(response_handler).to receive(:call).and_return(tuple_1, tuple_2)
     end
 
-    subject! { container.command(:users).update.call(attributes) }
+    subject! { container.commands[:users].update.call(attributes) }
 
     it do
       expect(request_handler).to have_received(:call).with(dataset_1)

@@ -26,18 +26,6 @@ RSpec.describe ROM::HTTP::Relation do
     allow(dataset).to receive(:response).and_return(data)
   end
 
-  describe '#initialize' do
-    context 'when initialized without a schema defined' do
-      let(:relation_klass) do
-        Class.new(ROM::HTTP::Relation)
-      end
-
-      it do
-        expect { relation }.to raise_error(::ROM::HTTP::SchemaNotDefinedError)
-      end
-    end
-  end
-
   describe '#primary_key' do
     subject { relation.primary_key }
 

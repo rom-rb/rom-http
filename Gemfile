@@ -2,10 +2,10 @@ source 'https://rubygems.org'
 
 gemspec
 
-gem 'rom-repository', github: 'rom-rb/rom-repository', branch: 'master'
+gem 'rom-repository', '~> 2.0'
 
 group :test do
-  gem 'rom', github: 'rom-rb/rom', branch: 'master'
+  gem 'rom', '~> 4.0'
   gem 'faraday'
   gem 'inflecto'
 end

@@ -5,17 +5,12 @@ cache: bundler
 bundler_args: --without sql benchmarks console tools
 script: "bundle exec rake ci"
 rvm:
-  - 2.2.6
-  - 2.3.3
-  - 2.4.0
-  - rbx-3
-  - jruby-9.1.6.0
+  - 2.3.4
+  - 2.4.1
+  - jruby-9.1.13.0
 env:
   global:
     - JRUBY_OPTS='--dev -J-Xmx1024M'
-matrix:
-  allow_failures:
-    - rvm: rbx-3
 notifications:
   webhooks:
     urls:
