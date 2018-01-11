@@ -1,3 +1,18 @@
+# v0.7.0 2018-01-11
+
+### Added
+  - Add Dataset#add_params(AMHOL)
+
+### Changed
+  - Updated error messages (AMHOL)
+  - updated to depend on ROM 4.0 (maximderbin)
+  - Removed ruby 2.1 support (maximderbin)
+  - Removed rbx-3 support (maximderbin)
+
+
+
+[Compare v0.5.0...v0.6.0](https://github.com/rom-rb/rom-http/compare/v0.6.0...v0.7.0)
+
 # v0.6.0 2017-02-06
 ### Changed
   - Make schemas mandatory and use schema API from ROM core (AMHOL)
