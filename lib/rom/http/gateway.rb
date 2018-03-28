@@ -1,5 +1,7 @@
 require 'concurrent'
+
 require 'rom/http/dataset'
+require 'rom/http/mapper_compiler'
 
 module ROM
   module HTTP
@@ -17,6 +19,8 @@ module ROM
     # @api public
     class Gateway < ROM::Gateway
       adapter :http
+
+      mapper_compiler HTTP::MapperCompiler
 
       attr_reader :datasets, :config
       private :datasets, :config

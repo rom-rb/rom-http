@@ -2,13 +2,16 @@ RSpec.describe ROM::HTTP::Relation do
   let(:relation_klass) do
     Class.new(ROM::HTTP::Relation) do
       schema do
-        attribute :id, ROM::Types::Strict::Int
+        attribute :id, ROM::Types::Strict::Int.meta(primary_key: true)
         attribute :name, ROM::Types::Strict::String
       end
     end
   end
+
   let(:relation) { relation_klass.new(dataset) }
+
   let(:dataset) { ROM::HTTP::Dataset.new({ name: 'test' }, {}) }
+
   let(:data) do
     [
       {
@@ -62,7 +65,7 @@ RSpec.describe ROM::HTTP::Relation do
         end
 
         it 'returns the attribute name of the primary key' do
-          is_expected.to eq(:ident)
+          is_expected.to eq(:id)
         end
       end
     end
@@ -109,30 +112,6 @@ RSpec.describe ROM::HTTP::Relation do
         { user_id: 1, user_name: 'John' },
         { user_id: 2, user_name: 'Jill' }
       ])
-    end
-  end
-
-  describe '#wrap' do
-    context 'when called without a prefix' do
-      subject { relation.wrap.to_a }
-
-      it 'returns the data with keys prefixed by dataset name' do
-        is_expected.to match_array([
-          { test_id: 1, test_name: 'John' },
-          { test_id: 2, test_name: 'Jill' }
-        ])
-      end
-    end
-
-    context 'when called with a prefix' do
-      subject { relation.wrap('user').to_a }
-
-      it 'returns the data with keys prefixed by the given prefix' do
-        is_expected.to match_array([
-          { user_id: 1, user_name: 'John' },
-          { user_id: 2, user_name: 'Jill' }
-        ])
-      end
     end
   end
 
@@ -188,6 +167,7 @@ RSpec.describe ROM::HTTP::Relation do
           Class.new(ROM::HTTP::Relation) do
             schema do
               attribute :id, ROM::Types::Strict::Int
+              attribute :name, ROM::Types::Strict::String
             end
           end
         end
@@ -196,7 +176,7 @@ RSpec.describe ROM::HTTP::Relation do
           let(:data) { { id: 1, name: 'John' } }
 
           it 'applies the schema and returns the materialized results' do
-            is_expected.to eq(id: 1)
+            is_expected.to eq(id: 1, name: 'John')
           end
         end
 
@@ -216,49 +196,8 @@ RSpec.describe ROM::HTTP::Relation do
 
           it 'applies the schema and returns the materialized results' do
             is_expected.to match_array([
-              { id: 1 },
-              { id: 2 }
-            ])
-          end
-        end
-      end
-
-      context 'with aliased schema' do
-        let(:relation_klass) do
-          Class.new(ROM::HTTP::Relation) do
-            schema do
-              attribute :id, ROM::Types::Strict::Int
-              attribute :name, ROM::Types::Strict::String.meta(alias: :username)
-            end
-          end
-        end
-
-        context 'when respond with single tuple' do
-          let(:data) { { id: 1, name: 'John' } }
-
-          it 'applies the schema and returns the materialized results' do
-            is_expected.to eq(id: 1, username: 'John')
-          end
-        end
-
-        context 'when respond with multiple tuples' do
-          let(:data) do
-            [
-              {
-                id: 1,
-                name: 'John'
-              },
-              {
-                id: 2,
-                name: 'Jill'
-              }
-            ]
-          end
-
-          it 'applies the schema and returns the materialized results' do
-            is_expected.to match_array([
-              { id: 1, username: 'John' },
-              { id: 2, username: 'Jill' }
+              { id: 1, name: 'John' },
+              { id: 2, name: 'Jill' }
             ])
           end
         end
