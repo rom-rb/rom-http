@@ -63,7 +63,7 @@ module ROM
       # Return the base path
       #
       # @example
-      #   Dataset.new(config, base_path: '/users').base_path
+      #   Dataset.new(base_path: '/users').base_path
       #   # => 'users'
       #
       # @return [String] the dataset path, without a leading slash
@@ -76,7 +76,7 @@ module ROM
       # Return the dataset path
       #
       # @example
-      #   Dataset.new(config, path: '/users').path
+      #   Dataset.new(path: '/users').path
       #   # => 'users'
       #
       # @return [String] the dataset path, without a leading slash
@@ -89,7 +89,7 @@ module ROM
       # Return the dataset path
       #
       # @example
-      #   Dataset.new(config, path: '/users').path
+      #   Dataset.new(path: '/users').path
       #   # => '/users'
       #
       # @return [string] the dataset path, with leading slash
@@ -107,7 +107,7 @@ module ROM
       #   To non-destructively add a new header, use `#add_header`
       #
       # @example
-      #   users = Dataset.new(config, headers: { Accept: 'application/json' })
+      #   users = Dataset.new(headers: { Accept: 'application/json' })
       #   users.with_headers(:'X-Api-Key' => '1234').headers
       #   # => { :'X-Api-Key' => '1234' }
       #
@@ -124,7 +124,7 @@ module ROM
       # @param value  [String] the header value
       #
       # @example
-      #   users = Dataset.new(config, headers: { Accept: 'application/json' })
+      #   users = Dataset.new(headers: { Accept: 'application/json' })
       #   users.add_header(:'X-Api-Key', '1234').headers
       #   # => { :Accept => 'application/json', :'X-Api-Key' => '1234' }
       #
@@ -210,7 +210,7 @@ module ROM
       # @param [Hash] params the new request parameters
       #
       # @example
-      #   users = Dataset.new(config, params: { uid: 33 })
+      #   users = Dataset.new(params: { uid: 33 })
       #   users.with_params(login: 'jdoe').params
       #   # => { :login => 'jdoe' }
       #
@@ -226,7 +226,7 @@ module ROM
       # @param [Hash] params the new request parameters to add
       #
       # @example
-      #   users = Dataset.new(config, params: { uid: 33 })
+      #   users = Dataset.new(params: { uid: 33 })
       #   users.add_params(login: 'jdoe').params
       #   # => { uid: 33, :login => 'jdoe' }
       #
