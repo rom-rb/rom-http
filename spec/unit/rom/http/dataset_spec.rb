@@ -177,16 +177,56 @@ RSpec.describe ROM::HTTP::Dataset do
     end
   end
 
+  describe '#get?' do
+    it 'returns true when request method is set to :get' do
+      expect(dataset).to be_get
+    end
+
+    it 'returns false when request method is not set to :get' do
+      expect(dataset.with_request_method(:put)).to_not be_get
+    end
+  end
+
+  describe '#post?' do
+    it 'returns true when request method is set to :post' do
+      expect(dataset.with_request_method(:post)).to be_post
+    end
+
+    it 'returns false when request method is not set to :post' do
+      expect(dataset.with_request_method(:put)).to_not be_post
+    end
+  end
+
+  describe '#put?' do
+    it 'returns true when request method is set to :put' do
+      expect(dataset.with_request_method(:put)).to be_put
+    end
+
+    it 'returns false when request method is not set to :put' do
+      expect(dataset.with_request_method(:get)).to_not be_put
+    end
+  end
+
+  describe '#delete?' do
+    it 'returns true when request method is set to :delete' do
+      expect(dataset.with_request_method(:delete)).to be_delete
+    end
+
+    it 'returns false when request method is not set to :delete' do
+      expect(dataset.with_request_method(:get)).to_not be_delete
+    end
+  end
+
   describe '#request_method' do
     it 'returns default method' do
-      expect(dataset.request_method).to be(:get)
+      expect(dataset).to be_get
     end
 
     context 'with request_method option' do
       let(:options) { { uri: uri, request_method: :put } }
 
       it 'returns provided method' do
-        expect(dataset.request_method).to be(:put)
+        expect(dataset).to be_put
       end
     end
   end

@@ -53,11 +53,47 @@ module ROM
       def uri
         uri = URI(join_path(options[:uri], path))
 
-        if request_method == :get && params.any?
+        if get? && params.any?
           uri.query = self.class.config.param_encoder.call(params)
         end
 
         uri
+      end
+
+      # Return true if request method is set to :get
+      #
+      # @return [Boolean]
+      #
+      # @api public
+      def get?
+        request_method.equal?(:get)
+      end
+
+      # Return true if request method is set to :post
+      #
+      # @return [Boolean]
+      #
+      # @api public
+      def post?
+        request_method.equal?(:post)
+      end
+
+      # Return true if request method is set to :put
+      #
+      # @return [Boolean]
+      #
+      # @api public
+      def put?
+        request_method.equal?(:put)
+      end
+
+      # Return true if request method is set to :delete
+      #
+      # @return [Boolean]
+      #
+      # @api public
+      def delete?
+        request_method.equal?(:delete)
       end
 
       # Return the base path
