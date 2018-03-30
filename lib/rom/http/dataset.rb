@@ -7,7 +7,6 @@ require 'rom/types'
 require 'rom/constants'
 require 'rom/initializer'
 require 'rom/http/transformer'
-require 'rom/http/dataset/class_interface'
 
 module ROM
   module HTTP
@@ -21,7 +20,6 @@ module ROM
 
       extend ::ROM::Initializer
       extend ::Dry::Configurable
-      extend ::ROM::HTTP::Dataset::ClassInterface
       include ::Enumerable
       include ::Dry::Equalizer(:options)
 
