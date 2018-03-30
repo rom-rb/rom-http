@@ -4,6 +4,7 @@ require 'dry/configurable'
 require 'dry/core/deprecations'
 
 require 'rom/types'
+require 'rom/constants'
 require 'rom/initializer'
 require 'rom/http/transformer'
 require 'rom/http/dataset/class_interface'
@@ -22,18 +23,26 @@ module ROM
       extend ::Dry::Configurable
       extend ::ROM::HTTP::Dataset::ClassInterface
       include ::Enumerable
-      include ::Dry::Equalizer(:config, :options)
+      include ::Dry::Equalizer(:options)
 
-      setting :default_request_handler
-      setting :default_response_handler
+      setting :default_request_handler, reader: true
+      setting :default_response_handler, reader: true
       setting :param_encoder, ->(params) { URI.encode_www_form(params) }
 
-      param :config
+      option :request_handler, default: proc { self.class.default_request_handler }
+
+      option :response_handler, default: proc { self.class.default_response_handler }
+
+      option :uri, type: Types::String, reader: false
 
       option :request_method, type: Types::Symbol, default: proc { :get }, reader: true
-      option :base_path, type: Types::String, default: proc { name }
+
+      option :base_path, type: Types::Coercible::String, default: proc { EMPTY_STRING }
+
       option :path, type: Types::String, default: proc { '' }, reader: false
+
       option :params, type: Types::Hash, default: proc { {} }, reader: true
+
       option :headers, type: Types::Hash, default: proc { {} }
 
       # Return the gateway's URI
@@ -44,40 +53,13 @@ module ROM
       #
       # @api public
       def uri
-        uri = config.fetch(:uri) { fail Error, '+uri+ configuration missing' }
-        uri = URI(join_path(uri, path))
+        uri = URI(join_path(options[:uri], path))
+
         if request_method == :get && params.any?
           uri.query = self.class.config.param_encoder.call(params)
         end
 
         uri
-      end
-
-      # Return request headers
-      #
-      # Merges default headers from the Gateway configuration and the
-      # current Dataset
-      #
-      # @example
-      #   config = { Accepts: 'application/json' }
-      #   users  = Dataset.new(config, headers: { 'Cache-Control': 'no-cache' }
-      #   users.headers
-      #   # => {:Accepts => "application/json", :'Cache-Control' => 'no-cache'}
-      #
-      # @return [Hash]
-      #
-      # @api public
-      def headers
-        config.fetch(:headers, {}).merge(options.fetch(:headers, {}))
-      end
-
-      # Return the dataset name
-      #
-      # @return [String]
-      #
-      # @api public
-      def name
-        config[:name].to_s
       end
 
       # Return the base path
@@ -135,7 +117,7 @@ module ROM
       #
       # @api public
       def with_headers(headers)
-        __new__(config, options.merge(headers: headers))
+        __new__(options.merge(headers: headers))
       end
 
       # Return a new dataset with additional header
@@ -163,7 +145,7 @@ module ROM
       #
       # @api public
       def with_options(opts)
-        __new__(config, options.merge(opts))
+        __new__(options.merge(opts))
       end
 
       # Return a new dataset with a different base path
@@ -323,24 +305,6 @@ module ROM
       end
 
       private
-
-      def response_handler
-        response_handler = config.fetch(
-          :response_handler,
-          self.class.config.default_response_handler
-        )
-        fail Error, '+default_response_handler+ configuration missing' if response_handler.nil?
-        response_handler
-      end
-
-      def request_handler
-        request_handler = config.fetch(
-          :request_handler,
-          self.class.config.default_request_handler
-        )
-        fail Error, '+default_response_handler+ configuration missing' if request_handler.nil?
-        request_handler
-      end
 
       def __new__(*args, &block)
         self.class.new(*args, &block)

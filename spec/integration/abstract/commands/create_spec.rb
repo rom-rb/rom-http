@@ -30,13 +30,11 @@ RSpec.describe ROM::HTTP::Commands::Create do
 
     let(:dataset) do
       ROM::HTTP::Dataset.new(
-        {
-          uri: uri,
-          headers: headers,
-          request_handler: request_handler,
-          response_handler: response_handler,
-          name: :users
-        },
+        uri: uri,
+        headers: headers,
+        request_handler: request_handler,
+        response_handler: response_handler,
+        base_path: :users,
         request_method: :post,
         params: attributes
       )
@@ -78,13 +76,11 @@ RSpec.describe ROM::HTTP::Commands::Create do
 
     let(:dataset_1) do
       ROM::HTTP::Dataset.new(
-        {
-          uri: uri,
-          headers: headers,
-          request_handler: request_handler,
-          response_handler: response_handler,
-          name: :users
-        },
+        uri: uri,
+        headers: headers,
+        request_handler: request_handler,
+        response_handler: response_handler,
+        base_path: :users,
         request_method: :post,
         params: attributes_1
       )
@@ -92,13 +88,11 @@ RSpec.describe ROM::HTTP::Commands::Create do
 
     let(:dataset_2) do
       ROM::HTTP::Dataset.new(
-        {
-          uri: uri,
-          headers: headers,
-          request_handler: request_handler,
-          response_handler: response_handler,
-          name: :users
-        },
+        uri: uri,
+        headers: headers,
+        request_handler: request_handler,
+        response_handler: response_handler,
+        base_path: :users,
         request_method: :post,
         params: attributes_2
       )

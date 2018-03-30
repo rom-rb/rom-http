@@ -59,7 +59,7 @@ module ROM
       # @api public
       def dataset(name)
         dataset_klass = namespace.const_defined?(:Dataset) ? namespace.const_get(:Dataset) : Dataset
-        datasets[name] = dataset_klass.new(config.merge(name: name))
+        datasets[name] = dataset_klass.new(config.merge(uri: uri, base_path: name))
       end
 
       # Check if dataset exists
@@ -72,6 +72,11 @@ module ROM
       end
 
       private
+
+      # @api private
+      def uri
+        config.fetch(:uri) { fail Error, '+uri+ configuration missing' }
+      end
 
       def namespace
         self.class.to_s[/(.*)(?=::)/].split('::').inject(::Object) do |constant, const_name|

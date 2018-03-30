@@ -1,5 +1,6 @@
 RSpec.describe ROM::HTTP::Commands::Delete do
   include_context 'setup'
+
   let(:relation) do
     Class.new(ROM::HTTP::Relation) do
       schema(:users) do
@@ -11,9 +12,13 @@ RSpec.describe ROM::HTTP::Commands::Delete do
       end
     end
   end
+
   let(:response) { double }
+
   let(:tuple) { double }
+
   let(:tuples) { double(first: tuple) }
+
   let(:command) do
     Class.new(ROM::HTTP::Commands::Delete) do
       register_as :delete
@@ -21,15 +26,14 @@ RSpec.describe ROM::HTTP::Commands::Delete do
       result :one
     end
   end
+
   let(:dataset) do
     ROM::HTTP::Dataset.new(
-      {
-        uri: uri,
-        headers: headers,
-        request_handler: request_handler,
-        response_handler: response_handler,
-        name: :users
-      },
+      uri: uri,
+      headers: headers,
+      request_handler: request_handler,
+      response_handler: response_handler,
+      base_path: :users,
       request_method: :delete
     )
   end

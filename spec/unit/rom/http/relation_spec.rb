@@ -10,7 +10,7 @@ RSpec.describe ROM::HTTP::Relation do
 
   let(:relation) { relation_klass.new(dataset) }
 
-  let(:dataset) { ROM::HTTP::Dataset.new({ name: 'test' }, {}) }
+  let(:dataset) { ROM::HTTP::Dataset.new(uri: 'test') }
 
   let(:data) do
     [
