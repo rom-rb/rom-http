@@ -3,6 +3,7 @@ require 'uri'
 require 'dry/configurable'
 require 'dry/core/deprecations'
 
+require 'rom/types'
 require 'rom/initializer'
 require 'rom/http/transformer'
 require 'rom/http/dataset/class_interface'
