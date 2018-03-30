@@ -3,6 +3,7 @@ require 'uri'
 require 'dry/configurable'
 require 'dry/core/deprecations'
 
+require 'rom/support/memoizable'
 require 'rom/types'
 require 'rom/constants'
 require 'rom/initializer'
@@ -20,6 +21,7 @@ module ROM
 
       extend ::ROM::Initializer
       extend ::Dry::Configurable
+      include ::ROM::Memoizable
       include ::Enumerable
       include ::Dry::Equalizer(:options)
 
@@ -337,6 +339,8 @@ module ROM
       def response
         response_handler.call(request_handler.call(self), self)
       end
+
+      memoize :uri, :base_path, :path, :absolute_path
 
       private
 
