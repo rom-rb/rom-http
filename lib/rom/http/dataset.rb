@@ -4,9 +4,9 @@ require 'dry/configurable'
 require 'dry/core/deprecations'
 
 require 'rom/support/memoizable'
-require 'rom/types'
 require 'rom/constants'
 require 'rom/initializer'
+require 'rom/http/types'
 require 'rom/http/transformer'
 
 module ROM
