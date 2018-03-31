@@ -33,13 +33,8 @@ RSpec.describe ROM::HTTP::Relation do
   end
 
   describe '#project' do
-    subject { relation.project(:id).to_a }
-
     it 'returns the projected data' do
-      is_expected.to match_array([
-        { id: 1 },
-        { id: 2 }
-      ])
+      expect(relation.project(:id).to_a).to eql([{ id: 1 }, { id: 2 }])
     end
   end
 
@@ -47,10 +42,7 @@ RSpec.describe ROM::HTTP::Relation do
     subject { relation.exclude(:id).to_a }
 
     it 'returns the data with specified keys excluded' do
-      is_expected.to match_array([
-        { name: 'John' },
-        { name: 'Jill' }
-      ])
+      expect(relation.exclude(:id).to_a).to eql([{ name: 'John' }, { name: 'Jill' }])
     end
   end
 
@@ -58,27 +50,19 @@ RSpec.describe ROM::HTTP::Relation do
     subject { relation.rename(id: :identity).to_a }
 
     it 'returns the data with keys renamed according to mapping' do
-      is_expected.to match_array([
-        { name: 'John', identity: 1 },
-        { name: 'Jill', identity: 2 }
-      ])
+      expect(relation.rename(id: :identity).to_a)
+        .to eql([{ name: 'John', identity: 1 }, { name: 'Jill', identity: 2 }])
     end
   end
 
   describe '#prefix' do
-    subject { relation.prefix('user').to_a }
-
     it 'returns the data with prefixed keys' do
-      is_expected.to match_array([
-        { user_id: 1, user_name: 'John' },
-        { user_id: 2, user_name: 'Jill' }
-      ])
+      expect(relation.prefix('user').to_a)
+        .to match_array([{ user_id: 1, user_name: 'John' }, { user_id: 2, user_name: 'Jill' }])
     end
   end
 
   describe '#to_a' do
-    subject { relation.to_a }
-
     context 'with standard schema' do
       let(:relation_klass) do
         Class.new(ROM::HTTP::Relation) do
@@ -89,10 +73,7 @@ RSpec.describe ROM::HTTP::Relation do
       end
 
       it 'applies the schema and returns the materialized results' do
-        is_expected.to match_array([
-          { id: 1 },
-          { id: 2 }
-        ])
+        expect(relation.to_a).to eql([{ id: 1 }, { id: 2 }])
       end
     end
 
@@ -107,10 +88,7 @@ RSpec.describe ROM::HTTP::Relation do
       end
 
       it 'applies the schema and returns the materialized results' do
-        is_expected.to match_array([
-          { id: 1, username: 'John' },
-          { id: 2, username: 'Jill' }
-        ])
+        expect(relation.to_a).to eql([{ id: 1, username: 'John' }, { id: 2, username: 'Jill' }])
       end
     end
   end
