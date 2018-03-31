@@ -116,9 +116,9 @@ module ROM
       #   @api public
       option :uri, type: Types::String
 
-      # Return the gateway's URI
+      # Return the dataset's URI
       #
-      # @return [String]
+      # @return [URI::HTTP]
       #
       # @api public
       def uri
