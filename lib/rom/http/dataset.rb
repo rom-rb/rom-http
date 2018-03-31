@@ -83,34 +83,37 @@ module ROM
       # @!attribute [r] request_method
       #   @return [Symbol]
       #   @api public
-      option :request_method, type: Types::Symbol, default: proc { :get }, reader: true
+      option :request_method, type: Types::Symbol, default: proc { :get }
 
       # @!attribute [r] base_path
       #   @return [String]
       #   @api public
-      option :base_path, type: Types::Coercible::String, default: proc { EMPTY_STRING }
+      option :base_path, type: Types::Path, default: proc { EMPTY_STRING }
 
       # @!attribute [r] path
       #   @return [String]
       #   @api public
-      option :path, type: Types::String, default: proc { '' }, reader: false
+      option :path, type: Types::Path, default: proc { EMPTY_STRING }
 
       # @!attribute [r] params
       #   @return [Hash]
       #   @api public
-      option :params, type: Types::Hash, default: proc { {} }, reader: true
+      option :params, type: Types::Hash, default: proc { EMPTY_HASH }
 
       # @!attribute [r] headers
       #   @return [Hash]
       #   @api public
-      option :headers, type: Types::Hash, default: proc { {} }
+      option :headers, type: Types::Hash, default: proc { EMPTY_HASH }
 
       # @!attribute [r] headers
       #   @return [Hash]
       #   @api public
       option :param_encoder, default: proc { self.class.param_encoder }
 
-      option :uri, type: Types::String, reader: false
+      # @!attribute [r] uri
+      #   @return [String]
+      #   @api public
+      option :uri, type: Types::String
 
       # Return the gateway's URI
       #
@@ -118,7 +121,7 @@ module ROM
       #
       # @api public
       def uri
-        uri = URI(join_path(options[:uri], path))
+        uri = URI(join_path(super, path))
 
         if get? && params.any?
           uri.query = param_encoder.call(params)
@@ -163,19 +166,6 @@ module ROM
         request_method.equal?(:delete)
       end
 
-      # Return the base path
-      #
-      # @example
-      #   Dataset.new(base_path: '/users').base_path
-      #   # => 'users'
-      #
-      # @return [String] the dataset path, without a leading slash
-      #
-      # @api public
-      def base_path
-        strip_path(super)
-      end
-
       # Return the dataset path
       #
       # @example
@@ -186,7 +176,7 @@ module ROM
       #
       # @api public
       def path
-        join_path(base_path, strip_path(options[:path].to_s))
+        join_path(base_path, super)
       end
 
       # Return the dataset path
@@ -394,7 +384,7 @@ module ROM
         response_handler.call(request_handler.call(self), self)
       end
 
-      memoize :uri, :base_path, :path, :absolute_path
+      memoize :uri, :absolute_path
 
       private
 
@@ -406,11 +396,6 @@ module ROM
       # @api private
       def join_path(*paths)
         paths.reject(&:empty?).join(PATH_SEPARATOR)
-      end
-
-      # @api private
-      def strip_path(path)
-        path.sub(%r{\A/}, '')
       end
     end
   end
