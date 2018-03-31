@@ -32,3 +32,19 @@ root = Pathname(__FILE__).dirname
 
 Dir[root.join('support/**/*.rb').to_s].each { |file| require file }
 Dir[root.join('shared/**/*.rb').to_s].each { |file| require file }
+
+# Namespace holding all objects created during specs
+module Test
+  def self.remove_constants
+    constants.each(&method(:remove_const))
+  end
+end
+
+RSpec.configure do |config|
+  config.after do
+    Test.remove_constants
+  end
+
+  config.disable_monkey_patching!
+  config.warnings = true
+end
