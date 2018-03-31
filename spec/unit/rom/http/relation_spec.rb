@@ -10,18 +10,17 @@ RSpec.describe ROM::HTTP::Relation do
     end
   end
 
-  let(:dataset) { ROM::HTTP::Dataset.new(uri: 'test') }
+  let(:dataset) { instance_double(ROM::HTTP::Dataset, response: data, map: data) }
 
   let(:data) do
     [{ id: 1, name: 'John' }, { id: 2, name: 'Jill' }]
   end
 
-  before do
-    allow(dataset).to receive(:response).and_return(data)
-    relation.schema.finalize_attributes!
-  end
-
   describe '#primary_key' do
+    before do
+      relation.schema.finalize_attributes!
+    end
+
     it 'returns configured primary key name' do
       expect(relation.primary_key).to be(:id)
     end
@@ -98,14 +97,11 @@ RSpec.describe ROM::HTTP::Relation do
       relation.insert(name: 'John')
     end
 
-    before do
-      allow(dataset).to receive(:insert).and_return(data)
-    end
-
     context 'with single tuple' do
       let(:data) { { id: 1, name: 'John' } }
 
       it 'applies the schema and returns the materialized results' do
+        expect(dataset).to receive(:insert).and_return(data)
         expect(result).to eql(id: 1, name: 'John')
       end
     end
@@ -116,6 +112,7 @@ RSpec.describe ROM::HTTP::Relation do
       end
 
       it 'applies the schema and returns the materialized results' do
+        expect(dataset).to receive(:insert).and_return(data)
         expect(result).to eql([{ id: 1, name: 'John' }, { id: 2, name: 'Jill' }])
       end
     end
@@ -126,14 +123,11 @@ RSpec.describe ROM::HTTP::Relation do
       relation.update(name: 'John')
     end
 
-    before do
-      allow(dataset).to receive(:update).and_return(data)
-    end
-
     context 'with single tuple' do
       let(:data) { { id: 1, name: 'John' } }
 
       it 'applies the schema and returns the materialized results' do
+        expect(dataset).to receive(:update).and_return(data)
         expect(result).to eql(id: 1, name: 'John')
       end
     end
@@ -144,6 +138,7 @@ RSpec.describe ROM::HTTP::Relation do
       end
 
       it 'applies the schema and returns the materialized results' do
+        expect(dataset).to receive(:update).and_return(data)
         expect(result).to eql([{ id: 1, name: 'John' }, { id: 2, name: 'Jill' }])
       end
     end
