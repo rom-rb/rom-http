@@ -22,11 +22,12 @@ module ROM
     class Dataset
       PATH_SEPARATOR = '/'.freeze
 
-      extend ::ROM::Initializer
-      extend ::Dry::Configurable
-      include ::ROM::Memoizable
-      include ::Enumerable
-      include ::Dry::Equalizer(:options)
+      extend Dry::Configurable
+      extend ROM::Initializer
+
+      include ROM::Memoizable
+      include Enumerable
+      include Dry::Equalizer(:options)
 
       # @!method self.default_request_handler
       #   Return configured default request handler
