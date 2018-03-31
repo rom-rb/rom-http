@@ -1,368 +1,110 @@
 RSpec.describe ROM::HTTP::Dataset do
-  let(:klass) { ROM::HTTP::Dataset }
-  let(:dataset) { klass.new(config, options) }
-  let(:config) do
-    {
-      uri: uri,
-      request_handler: request_handler,
-      response_handler: response_handler
-    }
+  subject(:dataset) { ROM::HTTP::Dataset.new({ uri: uri }.merge(options)) }
+
+  let(:options) do
+    { uri: uri }
   end
-  let(:options) { {} }
+
   let(:uri) { 'http://localhost:3000' }
-  let(:request_handler) { double(Proc) }
-  let(:response_handler) { double(Proc) }
-
-  it { expect(klass).to be_kind_of(::Dry::Configurable) }
-  it { expect(dataset).to be_kind_of(::Enumerable) }
-
-  describe 'settings' do
-    describe 'default_request_handler' do
-      it 'defaults to nil' do
-        expect(klass.config.default_request_handler).to be nil
-      end
-    end
-
-    describe 'default_response_handler' do
-      it 'defaults to nil' do
-        expect(klass.config.default_response_handler).to be nil
-      end
-    end
-  end
-
-  describe 'defaults' do
-    describe '#config' do
-      subject { dataset.config }
-
-      it { is_expected.to eq(config) }
-    end
-
-    describe 'options' do
-      subject { dataset }
-
-      context 'with options passed' do
-        let(:options) do
-          {
-            request_method: :put,
-            headers: {
-              'Accept' => 'application/json'
-            }
-          }
-        end
-
-        its(:base_path) { is_expected.to eq('') }
-        its(:request_method) { is_expected.to eq(:put) }
-        its(:path) { is_expected.to eq('') }
-        its(:params) { is_expected.to eq({}) }
-        its(:headers) { is_expected.to eq('Accept' => 'application/json') }
-      end
-
-      context 'with no options passed' do
-        its(:base_path) { is_expected.to eq('') }
-        its(:request_method) { is_expected.to eq(:get) }
-        its(:path) { is_expected.to eq('') }
-        its(:params) { is_expected.to eq({}) }
-        its(:headers) { is_expected.to eq({}) }
-      end
-    end
-  end
-
-  describe '.default_request_handler' do
-    before do
-      module Test
-        class Dataset < ROM::HTTP::Dataset; end
-      end
-
-      allow(Dry::Core::Deprecations).to receive(:announce)
-    end
-
-    after { Test::Dataset.reset_config }
-
-    context 'when no default_request_handler set' do
-      subject! { Test::Dataset.default_request_handler }
-
-      it 'returns nil' do
-        expect(Dry::Core::Deprecations).to have_received(:announce).with(
-          :default_request_handler,
-          'use configuration instead'
-        )
-        is_expected.to be nil
-      end
-    end
-
-    context 'when default_request_handler set' do
-      before do
-        Test::Dataset.default_request_handler(request_handler)
-      end
-
-      subject! { Test::Dataset.default_request_handler }
-
-      it 'returns the default request handler' do
-        expect(Dry::Core::Deprecations).to have_received(:announce).with(
-          :default_request_handler,
-          'use configuration instead'
-        ).twice
-        is_expected.to eq request_handler
-      end
-    end
-  end
-
-  describe '.default_response_handler' do
-    before do
-      module Test
-        class Dataset < ROM::HTTP::Dataset; end
-      end
-
-      allow(Dry::Core::Deprecations).to receive(:announce)
-    end
-
-    after { Test::Dataset.reset_config }
-
-    context 'when no default_response_handler set' do
-      subject! { Test::Dataset.default_response_handler }
-
-      it 'returns nil' do
-        expect(Dry::Core::Deprecations).to have_received(:announce).with(
-          :default_response_handler,
-          'use configuration instead'
-        )
-        is_expected.to be nil
-      end
-    end
-
-    context 'when default_response_handler set' do
-      before do
-        Test::Dataset.default_response_handler(response_handler)
-      end
-
-      subject! { Test::Dataset.default_response_handler }
-
-      it 'returns the default response handler' do
-        expect(Dry::Core::Deprecations).to have_received(:announce).with(
-          :default_response_handler,
-          'use configuration instead'
-        ).twice
-        is_expected.to eq response_handler
-      end
-    end
-  end
 
   describe '#uri' do
     context 'when no uri configured' do
-      let(:config) { {} }
-
-      it do
-        expect { dataset.uri }.to raise_error(ROM::HTTP::Error)
+      specify do
+        expect { ROM::HTTP::Dataset.new }.to raise_error(KeyError, /uri/)
       end
     end
 
     context 'when uri configured' do
-      subject! { dataset.uri }
-
       context 'when request method is GET' do
         context 'with params' do
           let(:options) do
-            {
-              params: {
-                username: 'John',
-                role: 'admin'
-              }
-            }
+            { uri: uri, params: { username: 'John', role: 'admin' } }
           end
-          let(:expected_uri) { URI("#{uri}?username=John&role=admin") }
 
-          it { is_expected.to eq(expected_uri) }
+          it 'returns a valid URI with a query' do
+            expect(dataset.uri).to eql(URI("#{uri}?username=John&role=admin"))
+          end
         end
       end
 
       context 'when request method is not GET' do
         context 'with params' do
           let(:options) do
-            {
-              request_method: :post,
-              params: {
-                username: 'John',
-                role: 'admin'
-              }
-            }
-          end
-          let(:expected_uri) { URI(uri) }
-
-          it { is_expected.to eq(expected_uri) }
-        end
-      end
-
-      context 'without dataset name' do
-        context 'with no path' do
-          let(:expected_uri) { URI(uri) }
-
-          it { is_expected.to eq(expected_uri) }
-        end
-
-        context 'with path' do
-          context 'without custom base_path' do
-            let(:options) { { path: '/users' } }
-            let(:expected_uri) { URI("#{uri}/users") }
-
-            it { is_expected.to eq(expected_uri) }
+            { uri: uri, request_method: :post, params: { username: 'John', role: 'admin' } }
           end
 
-          context 'with custom base_path' do
-            let(:options) { { base_path: '/blog', path: '/users' } }
-            let(:expected_uri) { URI("#{uri}/blog/users") }
-
-            it { is_expected.to eq(expected_uri) }
+          it 'returns a valid URI without a query' do
+            expect(dataset.uri).to eql(URI(uri))
           end
         end
       end
 
-      context 'with dataset name' do
-        let(:config) { super().merge(name: :blog) }
+      context 'with path' do
+        context 'without custom base_path' do
+          let(:options) { { uri: uri, path: '/users' } }
 
-        context 'with no path' do
-          let(:expected_uri) { URI("#{uri}/blog") }
-
-          it { is_expected.to eq(expected_uri) }
+          it 'returns a valid URI with path appended' do
+            expect(dataset.uri).to eql(URI("#{uri}/users"))
+          end
         end
 
-        context 'with path' do
-          context 'without custom base_path' do
-            let(:options) { { path: '/users' } }
-            let(:expected_uri) { URI("#{uri}/blog/users") }
+        context 'with custom base_path' do
+          let(:options) { { uri: uri, base_path: '/blog', path: '/users' } }
 
-            it { is_expected.to eq(expected_uri) }
-          end
-
-          context 'with custom base_path' do
-            let(:options) { { base_path: '/bloggers', path: '/users' } }
-            let(:expected_uri) { URI("#{uri}/bloggers/users") }
-
-            it { is_expected.to eq(expected_uri) }
+          it 'returns a valid URI with base_path and path appended' do
+            expect(dataset.uri).to eql(URI("#{uri}/blog/users"))
           end
         end
       end
 
       context 'with custom base_path' do
-        let(:config) { super().merge(name: :blog) }
+        let(:options) { { uri: uri, base_path: 'blog' } }
 
-        context 'with no path' do
-          let(:expected_uri) { URI("#{uri}/blog") }
-
-          it { is_expected.to eq(expected_uri) }
-        end
-
-        context 'with path' do
-          let(:options) { { path: '/users' } }
-          let(:expected_uri) { URI("#{uri}/blog/users") }
-
-          it { is_expected.to eq(expected_uri) }
+        it 'returns a valid URI with base path appended' do
+          expect(dataset.uri).to eql(URI("#{uri}/blog"))
         end
       end
     end
   end
 
   describe '#headers' do
-    subject { dataset.headers }
-
-    context 'with no headers configured' do
-      context 'with no headers option' do
-        it { is_expected.to eq({}) }
-      end
-
-      context 'with headers option' do
-        let(:headers) { { 'Accept' => 'application/json' } }
-        let(:options) { { headers: headers } }
-
-        it { is_expected.to eq(headers) }
-      end
+    it 'returns empty headers by default' do
+      expect(dataset.headers).to eql({})
     end
 
     context 'with headers configured' do
-      context 'with no headers option' do
-        let(:headers) { { 'Accept' => 'application/json' } }
-        let(:config) do
-          super().merge(headers: headers)
-        end
+      let(:headers) { { 'Accept' => 'application/json' } }
 
-        it { is_expected.to eq(headers) }
+      let(:options) do
+        { uri: uri, headers: headers }
       end
 
-      context 'with headers option' do
-        let(:config_headers) { { 'Content-Type' => 'application/json' } }
-        let(:config) do
-          super().merge(headers: config_headers)
-        end
-        let(:option_headers) { { 'Accept' => 'application/json' } }
-        let(:options) { { headers: option_headers } }
-
-        it do
-          is_expected.to eq(
-            'Content-Type' => 'application/json',
-            'Accept' => 'application/json'
-          )
-        end
+      it 'returns headers' do
+        expect(dataset.headers).to eql(headers)
       end
-    end
-  end
-
-  describe '#name' do
-    subject { dataset.name }
-
-    context 'with no name configured' do
-      it { is_expected.to eq('') }
-    end
-
-    context 'with name configured' do
-      let(:name) { 'users' }
-      let(:config) do
-        super().merge(name: name)
-      end
-
-      it { is_expected.to eq(name) }
     end
   end
 
   describe '#base_path' do
-    subject { dataset.base_path }
-
-    context 'with no base_path option' do
-      context 'when dataset name is set' do
-        let(:config) do
-          {
-            uri: uri,
-            request_handler: request_handler,
-            response_handler: response_handler,
-            name: :users
-          }
-        end
-
-        it 'returns the dataset name as a string' do
-          is_expected.to eq('users')
-        end
-      end
-
-      context 'when dataset name is not set' do
-        it 'returns an empty string' do
-          is_expected.to eq('')
-        end
-      end
+    it 'returns an empty string by default' do
+      expect(dataset.base_path).to eql('')
     end
 
     context 'with base_path option' do
       context 'when base_path is absolute' do
-        let(:base_path) { '/users' }
-        let(:options) { { base_path: base_path } }
+        let(:options) { { uri: uri, base_path: '/users' } }
 
         it 'removes the leading /' do
-          is_expected.to eq('users')
+          expect(dataset.base_path).to eql('users')
         end
       end
 
       context 'when base_path is not absolute' do
-        let(:base_path) { 'users' }
-        let(:options) { { base_path: base_path } }
+        let(:options) { { uri: uri, base_path: 'users' } }
 
-        it { is_expected.to eq(base_path) }
+        it 'returns provided base path' do
+          expect(dataset.base_path).to eql('users')
+        end
       end
     end
   end
@@ -370,304 +112,210 @@ RSpec.describe ROM::HTTP::Dataset do
   describe '#path' do
     subject { dataset.path }
 
-    context 'with no path option' do
-      context 'without dataset name' do
-        it { is_expected.to eq('') }
-      end
+    it 'returns empty path by default' do
+      expect(dataset.path).to eql('')
+    end
 
-      context 'with dataset name' do
-        let(:config) { super().merge(name: :users) }
-        it { is_expected.to eq('users') }
-      end
+    context 'with base path' do
+      let(:options) { { uri: uri, base_path: '/users' } }
 
-      context 'with base path' do
-        let(:options) { { base_path: '/users' } }
-        it { is_expected.to eq('users') }
+      it 'defaults to base_path' do
+        expect(dataset.path).to eql('users')
       end
     end
 
     context 'with path option' do
       context 'when path is absolute' do
-        let(:path) { '/users' }
+        let(:options) { { uri: uri, path: '/users' } }
 
-        context 'without dataset name' do
-          let(:options) { { path: path } }
-
-          it 'removes the leading /' do
-            is_expected.to eq('users')
-          end
+        it 'removes the leading /' do
+          is_expected.to eq('users')
         end
+      end
 
-        context 'with dataset name' do
-          let(:config) { super().merge(name: :blog) }
-          let(:options) { { path: path } }
+      context 'with base path' do
+        let(:options) { { uri: uri, base_path: '/blog', path: '/users' } }
 
-          it { is_expected.to eq('blog/users') }
-        end
-
-        context 'with base path' do
-          let(:options) { { base_path: '/blog', path: path } }
-
-          it { is_expected.to eq('blog/users') }
+        it 'prepends base path' do
+          expect(dataset.path).to eql('blog/users')
         end
       end
 
       context 'when path is not absolute' do
-        let(:path) { 'users' }
-
-        context 'without dataset name' do
-          let(:options) { { path: path } }
-
-          it { is_expected.to eq(path) }
-        end
-
-        context 'with dataset name' do
-          let(:config) { super().merge(name: :blog) }
-          let(:options) { { path: path } }
-
-          it { is_expected.to eq('blog/users') }
-        end
-
         context 'with base path' do
-          let(:options) { { base_path: '/blog', path: path } }
+          let(:options) { { uri: uri, base_path: '/blog', path: 'users' } }
 
-          it { is_expected.to eq('blog/users') }
+          it 'prepends base path' do
+            expect(dataset.path).to eql('blog/users')
+          end
         end
       end
     end
   end
 
   describe '#absolute_path' do
-    subject { dataset.absolute_path }
-
-    context 'with no path option' do
-      it { is_expected.to eq('/') }
+    it 'returns default path' do
+      expect(dataset.absolute_path).to eql('/')
     end
 
     context 'with path option' do
       context 'when path is absolute' do
-        let(:path) { '/users' }
-        let(:options) { { path: path } }
+        let(:options) { { uri: uri, path: '/users' } }
 
-        it { is_expected.to eq(path) }
+        it 'returns a valid absolute path' do
+          expect(dataset.absolute_path).to eql('/users')
+        end
       end
 
-      context 'when path is not absolute' do
-        let(:path) { 'users' }
-        let(:options) { { path: path } }
+      context 'when path is absolute' do
+        let(:options) { { uri: uri, path: 'users' } }
 
-        it { is_expected.to eq("/#{path}") }
+        it 'returns a valid absolute path' do
+          expect(dataset.absolute_path).to eql('/users')
+        end
       end
+    end
+  end
+
+  describe '#get?' do
+    it 'returns true when request method is set to :get' do
+      expect(dataset).to be_get
+    end
+
+    it 'returns false when request method is not set to :get' do
+      expect(dataset.with_request_method(:put)).to_not be_get
+    end
+  end
+
+  describe '#post?' do
+    it 'returns true when request method is set to :post' do
+      expect(dataset.with_request_method(:post)).to be_post
+    end
+
+    it 'returns false when request method is not set to :post' do
+      expect(dataset.with_request_method(:put)).to_not be_post
+    end
+  end
+
+  describe '#put?' do
+    it 'returns true when request method is set to :put' do
+      expect(dataset.with_request_method(:put)).to be_put
+    end
+
+    it 'returns false when request method is not set to :put' do
+      expect(dataset.with_request_method(:get)).to_not be_put
+    end
+  end
+
+  describe '#delete?' do
+    it 'returns true when request method is set to :delete' do
+      expect(dataset.with_request_method(:delete)).to be_delete
+    end
+
+    it 'returns false when request method is not set to :delete' do
+      expect(dataset.with_request_method(:get)).to_not be_delete
     end
   end
 
   describe '#request_method' do
-    subject { dataset.request_method }
-
-    context 'with no request_method option' do
-      it { is_expected.to eq(:get) }
+    it 'returns default method' do
+      expect(dataset).to be_get
     end
 
     context 'with request_method option' do
-      let(:request_method) { :put }
-      let(:options) { { request_method: request_method } }
+      let(:options) { { uri: uri, request_method: :put } }
 
-      it { is_expected.to eq(request_method) }
+      it 'returns provided method' do
+        expect(dataset).to be_put
+      end
     end
   end
 
   describe '#params' do
-    subject { dataset.params }
-
-    context 'with no params option' do
-      it { is_expected.to eq({}) }
+    it 'returns empty params by default' do
+      expect(dataset.params).to eql({})
     end
 
     context 'with params option' do
-      let(:params) { { name: 'Jack' } }
-      let(:options) { { params: params } }
+      let(:options) { { uri: uri, params: { name: 'Jack' } } }
 
-      it { is_expected.to eq(params) }
+      it 'returns provided params' do
+        expect(dataset.params).to eql(name: 'Jack')
+      end
     end
   end
 
   describe '#with_headers' do
-    let(:headers) { { 'Accept' => 'application/json' } }
-    let(:new_dataset) { dataset.with_headers(headers) }
-
-    subject! { new_dataset }
-
-    its(:config) { is_expected.to eq(config) }
-    its(:base_path) { is_expected.to eq('') }
-    its(:request_method) { is_expected.to eq(:get) }
-    its(:path) { is_expected.to eq('') }
-    its(:params) { is_expected.to eq({}) }
-    its(:headers) { is_expected.to eq(headers) }
-
-    it { is_expected.to_not be(dataset) }
-    it { is_expected.to be_a(ROM::HTTP::Dataset) }
+    it 'returns a new dataset with provided headers' do
+      expect(dataset.with_headers('Accept' => 'application/json').headers).to eql('Accept' => 'application/json')
+    end
   end
 
   describe '#add_header' do
-    let(:header_key) { 'Accept' }
-    let(:header_value) { 'application/json' }
-    let(:new_dataset) { double(ROM::HTTP::Dataset) }
-
-    before do
-      allow(dataset).to receive(:with_headers).and_return(new_dataset)
+    let(:options) do
+      { headers: { 'Accept' => 'application/json' } }
     end
 
-    subject! { dataset.add_header(header_key, header_value) }
-
-    context 'with existing headers configured' do
-      let(:config_headers) { { 'Content-Type' => 'application/json', 'Accept' => 'text/html' } }
-      let(:config) { super().merge(headers: config_headers) }
-
-      it do
-        expect(dataset).to have_received(:with_headers).with(
-          'Content-Type' => 'application/json',
-          header_key => header_value
-        )
-      end
-      it { is_expected.to eq(new_dataset) }
-    end
-
-    context 'without existing headers configured' do
-      it do
-        expect(dataset).to have_received(:with_headers).with(
-          header_key => header_value
-        )
-      end
-      it { is_expected.to eq(new_dataset) }
+    it 'returns a new dataset with new headers' do
+      expect(dataset.add_header('New', 'Header').headers)
+        .to eql('Accept' => 'application/json', 'New' => 'Header')
     end
   end
 
   describe '#with_options' do
-    let(:name) { 'Jill' }
-    let(:options) { { params: { name: name } } }
-    let(:new_dataset) { dataset.with_options(options) }
-
-    subject! { new_dataset }
-
-    its(:config) { is_expected.to eq(config) }
-    its(:base_path) { is_expected.to eq('') }
-    its(:request_method) { is_expected.to eq(:get) }
-    its(:path) { is_expected.to eq('') }
-    its(:params) { is_expected.to eq(name: name) }
-    its(:headers) { is_expected.to eq({}) }
-
-    it { is_expected.to_not be(dataset) }
-    it { is_expected.to be_a(ROM::HTTP::Dataset) }
+    it 'returns a new dataset with new options' do
+      expect(dataset.with_options(path: 'foo').path).to eql('foo')
+    end
   end
 
   describe '#with_base_path' do
-    let(:base_path) { '/users/tasks' }
-    let(:new_dataset) { double(ROM::HTTP::Dataset) }
-
-    before do
-      allow(dataset).to receive(:with_options).and_return(new_dataset)
+    it 'returns a new dataset with provided base_path' do
+      expect(dataset.with_base_path('/users/tasks').base_path).to eql('users/tasks')
     end
-
-    subject! { dataset.with_base_path(base_path) }
-
-    it { expect(dataset).to have_received(:with_options).with(base_path: base_path) }
-    it { is_expected.to eq(new_dataset) }
   end
 
   describe '#with_path' do
-    let(:path) { '/users/tasks' }
-    let(:new_dataset) { double(ROM::HTTP::Dataset) }
-
-    before do
-      allow(dataset).to receive(:with_options).and_return(new_dataset)
+    it 'returns a new dataset with provided path' do
+      expect(dataset.with_path('users').path).to eql('users')
     end
-
-    subject! { dataset.with_path(path) }
-
-    it { expect(dataset).to have_received(:with_options).with(path: path) }
-    it { is_expected.to eq(new_dataset) }
   end
 
   describe '#append_path' do
-    let(:path) { 'tasks' }
-    let(:new_dataset) { double(ROM::HTTP::Dataset) }
-
-    before do
-      allow(dataset).to receive(:with_options).and_return(new_dataset)
-    end
-
-    subject! { dataset.append_path(path) }
-
     context 'without existing path' do
-      it { expect(dataset).to have_received(:with_options).with(path: 'tasks') }
-      it { is_expected.to eq(new_dataset) }
+      it 'returns a new dataset with provided path' do
+        expect(dataset.append_path('users').path).to eql('users')
+      end
     end
 
     context 'with existing path' do
       let(:options) { { path: '/users' } }
 
-      it { expect(dataset).to have_received(:with_options).with(path: 'users/tasks') }
-      it { is_expected.to eq(new_dataset) }
+      it 'returns a new dataset with provided path appended to previous path' do
+        expect(dataset.append_path('tasks').path).to eql('users/tasks')
+      end
     end
   end
 
   describe '#with_request_method' do
-    let(:request_method) { :put }
-    let(:new_dataset) { double(ROM::HTTP::Dataset) }
-
-    before do
-      allow(dataset).to receive(:with_options).and_return(new_dataset)
+    it 'returns a new dataset with provided request method' do
+      expect(dataset.with_request_method(:put).request_method).to be(:put)
     end
-
-    subject! { dataset.with_request_method(request_method) }
-
-    it { expect(dataset).to have_received(:with_options).with(request_method: request_method) }
-    it { is_expected.to eq(new_dataset) }
   end
 
   describe '#with_params' do
-    let(:name) { 'Jack' }
-    let(:params) { { user: { name: name } } }
-    let(:new_dataset) { double(ROM::HTTP::Dataset) }
-
-    before do
-      allow(dataset).to receive(:with_options).and_return(new_dataset)
+    it 'returns a new dataset with new params' do
+      expect(dataset.with_params(admin: true).params).to eql(admin: true)
     end
-
-    subject! { dataset.with_params(params) }
-
-    it { expect(dataset).to have_received(:with_options).with(params: params) }
-    it { is_expected.to eq(new_dataset) }
   end
 
   describe '#add_params' do
     let(:options) do
-      {
-        params: {
-          user: {
-            uid: 3
-          }
-        }
-      }
-    end
-    let(:params) { { user: { name: 'Jack' } } }
-    let(:new_dataset) { double(ROM::HTTP::Dataset) }
-
-    before do
-      allow(dataset).to receive(:with_options).and_return(new_dataset)
+      { params: { age: 21 } }
     end
 
-    subject! { dataset.add_params(params) }
-
-    it do
-      expect(dataset).to have_received(:with_options).with(params: {
-        user: {
-          uid: 3,
-          name: 'Jack'
-        }
-      })
+    it 'returns a new dataset with params appended' do
+      expect(dataset.add_params(admin: true).params).to eql(age: 21, admin: true)
     end
-    it { is_expected.to eq(new_dataset) }
   end
 
   describe '#each' do
@@ -764,61 +412,23 @@ RSpec.describe ROM::HTTP::Dataset do
   end
 
   describe '#response' do
-    let(:response) { double }
-    let(:result) { double }
-
-    context 'when request_handler and response_handler configured' do
-      before do
-        allow(request_handler).to receive(:call).and_return(response)
-        allow(response_handler).to receive(:call).and_return(result)
-      end
-
-      subject! { dataset.response }
-
-      it { expect(request_handler).to have_received(:call).with(dataset) }
-      it { expect(response_handler).to have_received(:call).with(response, dataset) }
-      it { is_expected.to eq(result) }
+    let(:options) do
+      { request_handler: request_handler,
+        response_handler: response_handler,
+        path: 'test',
+        params: { ok: true } }
     end
 
-    context 'when request_handler and response_handler configured' do
-      let(:dataset) { Test::Dataset.new(config, options) }
-      let(:config) { {} }
-
-      before do
-        module Test
-          class Dataset < ROM::HTTP::Dataset; end
-        end
-
-        Test::Dataset.default_request_handler(request_handler)
-        Test::Dataset.default_response_handler(response_handler)
-
-        allow(request_handler).to receive(:call).and_return(response)
-        allow(response_handler).to receive(:call).and_return(result)
-      end
-
-      after { Test::Dataset.reset_config }
-
-      subject! { dataset.response }
-
-      it { expect(request_handler).to have_received(:call).with(dataset) }
-      it { expect(response_handler).to have_received(:call).with(response, dataset) }
-      it { is_expected.to eq(result) }
+    let(:request_handler) do
+      -> (ds) { ds.params }
     end
 
-    context 'when no request_handler configured and no default set' do
-      let(:config) { { response_handler: response_handler } }
-
-      it do
-        expect { dataset.response }.to raise_error(ROM::HTTP::Error)
-      end
+    let(:response_handler) do
+      -> (response, ds) { [response[:ok], ds.path] }
     end
 
-    context 'when no response_handler configured and no default set' do
-      let(:config) { { request_handler: request_handler } }
-
-      it do
-        expect { dataset.response }.to raise_error(ROM::HTTP::Error)
-      end
+    it 'issues a request via request handler and handles response via response handler' do
+      expect(dataset.response).to eql([true, 'test'])
     end
   end
 end

@@ -1,114 +1,192 @@
 require 'uri'
-require 'dry-configurable'
+
+require 'dry/configurable'
 require 'dry/core/deprecations'
+
+require 'rom/support/memoizable'
+require 'rom/constants'
 require 'rom/initializer'
-require 'rom/http/dataset/class_interface'
+require 'rom/http/types'
+require 'rom/http/transformer'
 
 module ROM
   module HTTP
     # HTTP Dataset
     #
-    # Represents a specific HTTP collection resource
+    # Represents a specific HTTP collection resource. This class can be
+    # subclassed in a specialized HTTP adapter to provide its own
+    # response/request handlers or any other configuration that should
+    # differ from the defaults.
     #
     # @api public
     class Dataset
       PATH_SEPARATOR = '/'.freeze
 
-      extend ::ROM::Initializer
-      extend ::Dry::Configurable
-      extend ::ROM::HTTP::Dataset::ClassInterface
-      include ::Enumerable
-      include ::Dry::Equalizer(:config, :options)
+      extend Dry::Configurable
+      extend ROM::Initializer
 
-      setting :default_request_handler
-      setting :default_response_handler
-      setting :param_encoder, ->(params) { URI.encode_www_form(params) }
+      include ROM::Memoizable
+      include Enumerable
+      include Dry::Equalizer(:options)
 
-      param :config
-
-      option :request_method, type: Types::Symbol, default: proc { :get }, reader: true
-      option :base_path, type: Types::String, default: proc { name }
-      option :path, type: Types::String, default: proc { '' }, reader: false
-      option :params, type: Types::Hash, default: proc { {} }, reader: true
-      option :headers, type: Types::Hash, default: proc { {} }
-
-      # Return the gateway's URI
+      # @!method self.default_request_handler
+      #   Return configured default request handler
       #
-      # @return [String]
+      #   @example
+      #     class MyDataset < ROM::HTTP::Dataset
+      #       configure do |config|
+      #         config.default_request_handler = MyRequestHandler
+      #       end
+      #     end
       #
-      # @raise [Error] if the configuration does not contain a URI
+      #     MyDataset.default_request_handler # MyRequestHandler
+      #     MyDataset.new(uri: "http://localhost").request_handler # MyRequestHandler
+      setting :default_request_handler, reader: true
+
+      # @!method self.default_response_handler
+      #   Return configured default response handler
+      #
+      #   @example
+      #     class MyDataset < ROM::HTTP::Dataset
+      #       configure do |config|
+      #         config.default_response_handler = MyResponseHandler
+      #       end
+      #     end
+      #
+      #     MyDataset.default_response_handler # MyResponseHandler
+      #     MyDataset.new(uri: "http://localhost").response_handler # MyResponseHandler
+      setting :default_response_handler, reader: true
+
+      # @!method self.param_encoder
+      #   Return configured param encoder
+      #
+      #   @example
+      #     class MyDataset < ROM::HTTP::Dataset
+      #       configure do |config|
+      #         config.param_encoder = MyParamEncoder
+      #       end
+      #     end
+      #
+      #     MyDataset.param_encoder # MyParamEncoder
+      #     MyDataset.new(uri: "http://localhost").param_encoder # MyParamEncoder
+      setting :param_encoder, URI.method(:encode_www_form), reader: true
+
+      # @!attribute [r] request_handler
+      #   @return [Object]
+      #   @api public
+      option :request_handler, default: proc { self.class.default_request_handler }
+
+      # @!attribute [r] response_handler
+      #   @return [Object]
+      #   @api public
+      option :response_handler, default: proc { self.class.default_response_handler }
+
+      # @!attribute [r] request_method
+      #   @return [Symbol]
+      #   @api public
+      option :request_method, type: Types::Symbol, default: proc { :get }
+
+      # @!attribute [r] base_path
+      #   @return [String]
+      #   @api public
+      option :base_path, type: Types::Path, default: proc { EMPTY_STRING }
+
+      # @!attribute [r] path
+      #   @return [String]
+      #   @api public
+      option :path, type: Types::Path, default: proc { EMPTY_STRING }
+
+      # @!attribute [r] params
+      #   @return [Hash]
+      #   @api public
+      option :params, type: Types::Hash, default: proc { EMPTY_HASH }
+
+      # @!attribute [r] headers
+      #   @return [Hash]
+      #   @api public
+      option :headers, type: Types::Hash, default: proc { EMPTY_HASH }
+
+      # @!attribute [r] headers
+      #   @return [Hash]
+      #   @api public
+      option :param_encoder, default: proc { self.class.param_encoder }
+
+      # @!attribute [r] uri
+      #   @return [String]
+      #   @api public
+      option :uri, type: Types::String
+
+      # Return the dataset's URI
+      #
+      # @return [URI::HTTP]
       #
       # @api public
       def uri
-        uri = config.fetch(:uri) { fail Error, '+uri+ configuration missing' }
-        uri = URI(join_path(uri, path))
-        if request_method == :get && params.any?
-          uri.query = self.class.config.param_encoder.call(params)
+        uri = URI(join_path(super, path))
+
+        if get? && params.any?
+          uri.query = param_encoder.call(params)
         end
 
         uri
       end
 
-      # Return request headers
+      # Return true if request method is set to :get
       #
-      # Merges default headers from the Gateway configuration and the
-      # current Dataset
-      #
-      # @example
-      #   config = { Accepts: 'application/json' }
-      #   users  = Dataset.new(config, headers: { 'Cache-Control': 'no-cache' }
-      #   users.headers
-      #   # => {:Accepts => "application/json", :'Cache-Control' => 'no-cache'}
-      #
-      # @return [Hash]
+      # @return [Boolean]
       #
       # @api public
-      def headers
-        config.fetch(:headers, {}).merge(options.fetch(:headers, {}))
+      def get?
+        request_method.equal?(:get)
       end
 
-      # Return the dataset name
+      # Return true if request method is set to :post
       #
-      # @return [String]
+      # @return [Boolean]
       #
       # @api public
-      def name
-        config[:name].to_s
+      def post?
+        request_method.equal?(:post)
       end
 
-      # Return the base path
+      # Return true if request method is set to :put
       #
-      # @example
-      #   Dataset.new(config, base_path: '/users').base_path
-      #   # => 'users'
-      #
-      # @return [String] the dataset path, without a leading slash
+      # @return [Boolean]
       #
       # @api public
-      def base_path
-        strip_path(super)
+      def put?
+        request_method.equal?(:put)
+      end
+
+      # Return true if request method is set to :delete
+      #
+      # @return [Boolean]
+      #
+      # @api public
+      def delete?
+        request_method.equal?(:delete)
       end
 
       # Return the dataset path
       #
       # @example
-      #   Dataset.new(config, path: '/users').path
+      #   Dataset.new(path: '/users').path
       #   # => 'users'
       #
       # @return [String] the dataset path, without a leading slash
       #
       # @api public
       def path
-        join_path(base_path, strip_path(options[:path].to_s))
+        join_path(base_path, super)
       end
 
       # Return the dataset path
       #
       # @example
-      #   Dataset.new(config, path: '/users').path
+      #   Dataset.new(path: '/users').path
       #   # => '/users'
       #
-      # @return [string] the dataset path, with leading slash
+      # @return [String] the dataset path, with leading slash
       #
       # @api public
       def absolute_path
@@ -123,7 +201,7 @@ module ROM
       #   To non-destructively add a new header, use `#add_header`
       #
       # @example
-      #   users = Dataset.new(config, headers: { Accept: 'application/json' })
+      #   users = Dataset.new(headers: { Accept: 'application/json' })
       #   users.with_headers(:'X-Api-Key' => '1234').headers
       #   # => { :'X-Api-Key' => '1234' }
       #
@@ -131,7 +209,7 @@ module ROM
       #
       # @api public
       def with_headers(headers)
-        __new__(config, options.merge(headers: headers))
+        with_options(headers: headers)
       end
 
       # Return a new dataset with additional header
@@ -140,7 +218,7 @@ module ROM
       # @param value  [String] the header value
       #
       # @example
-      #   users = Dataset.new(config, headers: { Accept: 'application/json' })
+      #   users = Dataset.new(headers: { Accept: 'application/json' })
       #   users.add_header(:'X-Api-Key', '1234').headers
       #   # => { :Accept => 'application/json', :'X-Api-Key' => '1234' }
       #
@@ -159,7 +237,7 @@ module ROM
       #
       # @api public
       def with_options(opts)
-        __new__(config, options.merge(opts))
+        __new__(options.merge(opts))
       end
 
       # Return a new dataset with a different base path
@@ -226,7 +304,7 @@ module ROM
       # @param [Hash] params the new request parameters
       #
       # @example
-      #   users = Dataset.new(config, params: { uid: 33 })
+      #   users = Dataset.new(params: { uid: 33 })
       #   users.with_params(login: 'jdoe').params
       #   # => { :login => 'jdoe' }
       #
@@ -242,7 +320,7 @@ module ROM
       # @param [Hash] params the new request parameters to add
       #
       # @example
-      #   users = Dataset.new(config, params: { uid: 33 })
+      #   users = Dataset.new(params: { uid: 33 })
       #   users.add_params(login: 'jdoe').params
       #   # => { uid: 33, :login => 'jdoe' }
       #
@@ -250,10 +328,7 @@ module ROM
       #
       # @api public
       def add_params(new_params)
-        # TODO: Should we merge arrays?
-        with_options(
-          params: ::ROM::HTTP::Transformer[:deep_merge][params, new_params]
-        )
+        with_options(params: ::ROM::HTTP::Transformer[:deep_merge][params, new_params])
       end
 
       # Iterate over each response value
@@ -277,10 +352,7 @@ module ROM
       #
       # @api public
       def insert(params)
-        with_options(
-          request_method: :post,
-          params: params
-        ).response
+        with_options(request_method: :post, params: params).response
       end
 
       # Perform an update over HTTP Put
@@ -291,10 +363,7 @@ module ROM
       #
       # @api public
       def update(params)
-        with_options(
-          request_method: :put,
-          params: params
-        ).response
+        with_options(request_method: :put, params: params).response
       end
 
       # Perform an delete over HTTP Delete
@@ -304,9 +373,7 @@ module ROM
       #
       # @api public
       def delete
-        with_options(
-          request_method: :delete
-        ).response
+        with_options(request_method: :delete).response
       end
 
       # Execute the current dataset
@@ -318,36 +385,18 @@ module ROM
         response_handler.call(request_handler.call(self), self)
       end
 
+      memoize :uri, :absolute_path
+
       private
 
-      def response_handler
-        response_handler = config.fetch(
-          :response_handler,
-          self.class.config.default_response_handler
-        )
-        fail Error, '+default_response_handler+ configuration missing' if response_handler.nil?
-        response_handler
-      end
-
-      def request_handler
-        request_handler = config.fetch(
-          :request_handler,
-          self.class.config.default_request_handler
-        )
-        fail Error, '+default_response_handler+ configuration missing' if request_handler.nil?
-        request_handler
-      end
-
+      # @api private
       def __new__(*args, &block)
         self.class.new(*args, &block)
       end
 
+      # @api private
       def join_path(*paths)
         paths.reject(&:empty?).join(PATH_SEPARATOR)
-      end
-
-      def strip_path(path)
-        path.sub(%r{\A/}, '')
       end
     end
   end

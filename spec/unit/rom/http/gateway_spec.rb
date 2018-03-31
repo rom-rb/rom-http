@@ -5,7 +5,9 @@ RSpec.describe ROM::HTTP::Gateway do
 
   it_behaves_like 'a rom gateway' do
     let(:identifier) { :http }
+
     let(:gateway) { ROM::HTTP::Gateway }
+
     let(:options) do
       {
         uri: 'http://localhost:3000',
@@ -13,8 +15,6 @@ RSpec.describe ROM::HTTP::Gateway do
         response_handler: response_handler
       }
     end
-    # H4xz0rz
-    let(:uri) { options }
   end
 
   describe '#dataset?' do
@@ -28,10 +28,8 @@ RSpec.describe ROM::HTTP::Gateway do
   end
 
   describe '#dataset' do
-    subject { gateway.dataset(:name) }
-
     context 'when extended' do
-      let(:gateway) { Test::Gateway.new({}) }
+      subject(:gateway) { Test::Gateway.new(uri: 'test') }
 
       before do
         module Test
@@ -41,7 +39,7 @@ RSpec.describe ROM::HTTP::Gateway do
 
       context 'when no Dataset defined in the same namespace' do
         it 'returns ROM::HTTP::Dataset' do
-          is_expected.to be_kind_of(ROM::HTTP::Dataset)
+          expect(gateway.dataset(:test)).to be_instance_of(ROM::HTTP::Dataset)
         end
       end
 
@@ -53,16 +51,16 @@ RSpec.describe ROM::HTTP::Gateway do
         end
 
         it 'returns ROM::HTTP::Dataset' do
-          is_expected.to be_kind_of(Test::Dataset)
+          expect(gateway.dataset(:test)).to be_instance_of(Test::Dataset)
         end
       end
     end
 
     context 'when not extended' do
-      let(:gateway) { ROM::HTTP::Gateway.new({}) }
+      subject(:gateway) { ROM::HTTP::Gateway.new(uri: 'test') }
 
       it 'returns ROM::HTTP::Dataset' do
-        is_expected.to be_kind_of(ROM::HTTP::Dataset)
+        expect(gateway.dataset(:test)).to be_instance_of(ROM::HTTP::Dataset)
       end
     end
   end

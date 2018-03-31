@@ -30,13 +30,11 @@ RSpec.describe ROM::HTTP::Relation do
 
   let(:dataset) do
     ROM::HTTP::Dataset.new(
-      {
-        uri: uri,
-        headers: headers,
-        request_handler: request_handler,
-        response_handler: response_handler,
-        name: :users
-      },
+      uri: uri,
+      headers: headers,
+      request_handler: request_handler,
+      response_handler: response_handler,
+      base_path: :users,
       path: "users/#{id}",
       params: params
     )

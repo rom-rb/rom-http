@@ -1,81 +1,39 @@
 RSpec.describe ROM::HTTP::Relation do
+  subject(:relation) { relation_klass.new(dataset) }
+
   let(:relation_klass) do
     Class.new(ROM::HTTP::Relation) do
       schema do
-        attribute :id, ROM::Types::Strict::Int
-        attribute :name, ROM::Types::Strict::String
+        attribute :id, ROM::Types::Int.meta(primary_key: true)
+        attribute :name, ROM::Types::String
       end
     end
   end
-  let(:relation) { relation_klass.new(dataset) }
-  let(:dataset) { ROM::HTTP::Dataset.new({ name: 'test' }, {}) }
-  let(:data) do
-    [
-      {
-        id: 1,
-        name: 'John'
-      },
-      {
-        id: 2,
-        name: 'Jill'
-      }
-    ]
-  end
 
-  before do
-    allow(dataset).to receive(:response).and_return(data)
+  let(:dataset) { instance_double(ROM::HTTP::Dataset, response: data, map: data) }
+
+  let(:data) do
+    [{ id: 1, name: 'John' }, { id: 2, name: 'Jill' }]
   end
 
   describe '#primary_key' do
-    subject { relation.primary_key }
-
-    context 'with no primary key defined in schema' do
-      it 'defaults to :id' do
-        is_expected.to eq(:id)
-      end
+    before do
+      relation.schema.finalize_attributes!
     end
 
-    context 'with primary key defined in schema' do
-      context 'without alias' do
-        let(:relation_klass) do
-          Class.new(ROM::HTTP::Relation) do
-            schema do
-              attribute :id, ROM::Types::Strict::Int
-              attribute :name, ROM::Types::Strict::String.meta(primary_key: true)
-            end
-          end
-        end
+    it 'returns configured primary key name' do
+      expect(relation.primary_key).to be(:id)
+    end
 
-        it 'returns the attribute name of the primary key' do
-          is_expected.to eq(:name)
-        end
-      end
-
-      context 'with alias' do
-        let(:relation_klass) do
-          Class.new(ROM::HTTP::Relation) do
-            schema do
-              attribute :id, ROM::Types::Strict::Int.meta(primary_key: true, alias: :ident)
-              attribute :name, ROM::Types::Strict::String
-            end
-          end
-        end
-
-        it 'returns the attribute name of the primary key' do
-          is_expected.to eq(:ident)
-        end
-      end
+    it 'returns nil when primary key was not defined' do
+      relation = Class.new(ROM::HTTP::Relation) { schema {} }.new([])
+      expect(relation.primary_key).to be(nil)
     end
   end
 
   describe '#project' do
-    subject { relation.project(:id).to_a }
-
     it 'returns the projected data' do
-      is_expected.to match_array([
-        { id: 1 },
-        { id: 2 }
-      ])
+      expect(relation.project(:id).to_a).to eql([{ id: 1 }, { id: 2 }])
     end
   end
 
@@ -83,10 +41,7 @@ RSpec.describe ROM::HTTP::Relation do
     subject { relation.exclude(:id).to_a }
 
     it 'returns the data with specified keys excluded' do
-      is_expected.to match_array([
-        { name: 'John' },
-        { name: 'Jill' }
-      ])
+      expect(relation.exclude(:id).to_a).to eql([{ name: 'John' }, { name: 'Jill' }])
     end
   end
 
@@ -94,51 +49,19 @@ RSpec.describe ROM::HTTP::Relation do
     subject { relation.rename(id: :identity).to_a }
 
     it 'returns the data with keys renamed according to mapping' do
-      is_expected.to match_array([
-        { name: 'John', identity: 1 },
-        { name: 'Jill', identity: 2 }
-      ])
+      expect(relation.rename(id: :identity).to_a)
+        .to eql([{ name: 'John', identity: 1 }, { name: 'Jill', identity: 2 }])
     end
   end
 
   describe '#prefix' do
-    subject { relation.prefix('user').to_a }
-
     it 'returns the data with prefixed keys' do
-      is_expected.to match_array([
-        { user_id: 1, user_name: 'John' },
-        { user_id: 2, user_name: 'Jill' }
-      ])
-    end
-  end
-
-  describe '#wrap' do
-    context 'when called without a prefix' do
-      subject { relation.wrap.to_a }
-
-      it 'returns the data with keys prefixed by dataset name' do
-        is_expected.to match_array([
-          { test_id: 1, test_name: 'John' },
-          { test_id: 2, test_name: 'Jill' }
-        ])
-      end
-    end
-
-    context 'when called with a prefix' do
-      subject { relation.wrap('user').to_a }
-
-      it 'returns the data with keys prefixed by the given prefix' do
-        is_expected.to match_array([
-          { user_id: 1, user_name: 'John' },
-          { user_id: 2, user_name: 'Jill' }
-        ])
-      end
+      expect(relation.prefix('user').to_a)
+        .to match_array([{ user_id: 1, user_name: 'John' }, { user_id: 2, user_name: 'Jill' }])
     end
   end
 
   describe '#to_a' do
-    subject { relation.to_a }
-
     context 'with standard schema' do
       let(:relation_klass) do
         Class.new(ROM::HTTP::Relation) do
@@ -149,10 +72,7 @@ RSpec.describe ROM::HTTP::Relation do
       end
 
       it 'applies the schema and returns the materialized results' do
-        is_expected.to match_array([
-          { id: 1 },
-          { id: 2 }
-        ])
+        expect(relation.to_a).to eql([{ id: 1 }, { id: 2 }])
       end
     end
 
@@ -167,102 +87,71 @@ RSpec.describe ROM::HTTP::Relation do
       end
 
       it 'applies the schema and returns the materialized results' do
-        is_expected.to match_array([
-          { id: 1, username: 'John' },
-          { id: 2, username: 'Jill' }
-        ])
+        expect(relation.to_a).to eql([{ id: 1, username: 'John' }, { id: 2, username: 'Jill' }])
       end
     end
   end
 
-  %i[insert update].each do |method_name|
-    describe "##{method_name}" do
-      subject { relation.send(method_name, name: 'John') }
+  describe "#insert" do
+    let(:result) do
+      relation.insert(name: 'John')
+    end
 
-      before do
-        allow(dataset).to receive(method_name).and_return(data)
+    context 'with single tuple' do
+      let(:data) { { id: 1, name: 'John' } }
+
+      it 'applies the schema and returns the materialized results' do
+        expect(dataset).to receive(:insert).and_return(data)
+        expect(result).to eql(id: 1, name: 'John')
+      end
+    end
+
+    context 'with many tuples' do
+      let(:data) do
+        [{ id: 1, name: 'John' }, { id: 2, name: 'Jill' }]
       end
 
-      context 'with standard schema' do
-        let(:relation_klass) do
-          Class.new(ROM::HTTP::Relation) do
-            schema do
-              attribute :id, ROM::Types::Strict::Int
-            end
-          end
-        end
+      it 'applies the schema and returns the materialized results' do
+        expect(dataset).to receive(:insert).and_return(data)
+        expect(result).to eql([{ id: 1, name: 'John' }, { id: 2, name: 'Jill' }])
+      end
+    end
+  end
 
-        context 'when respond with single tuple' do
-          let(:data) { { id: 1, name: 'John' } }
+  describe "#update" do
+    let(:result) do
+      relation.update(name: 'John')
+    end
 
-          it 'applies the schema and returns the materialized results' do
-            is_expected.to eq(id: 1)
-          end
-        end
+    context 'with single tuple' do
+      let(:data) { { id: 1, name: 'John' } }
 
-        context 'when respond with multiple tuples' do
-          let(:data) do
-            [
-              {
-                id: 1,
-                name: 'John'
-              },
-              {
-                id: 2,
-                name: 'Jill'
-              }
-            ]
-          end
+      it 'applies the schema and returns the materialized results' do
+        expect(dataset).to receive(:update).and_return(data)
+        expect(result).to eql(id: 1, name: 'John')
+      end
+    end
 
-          it 'applies the schema and returns the materialized results' do
-            is_expected.to match_array([
-              { id: 1 },
-              { id: 2 }
-            ])
-          end
-        end
+    context 'with many tuples' do
+      let(:data) do
+        [{ id: 1, name: 'John' }, { id: 2, name: 'Jill' }]
       end
 
-      context 'with aliased schema' do
-        let(:relation_klass) do
-          Class.new(ROM::HTTP::Relation) do
-            schema do
-              attribute :id, ROM::Types::Strict::Int
-              attribute :name, ROM::Types::Strict::String.meta(alias: :username)
-            end
-          end
-        end
-
-        context 'when respond with single tuple' do
-          let(:data) { { id: 1, name: 'John' } }
-
-          it 'applies the schema and returns the materialized results' do
-            is_expected.to eq(id: 1, username: 'John')
-          end
-        end
-
-        context 'when respond with multiple tuples' do
-          let(:data) do
-            [
-              {
-                id: 1,
-                name: 'John'
-              },
-              {
-                id: 2,
-                name: 'Jill'
-              }
-            ]
-          end
-
-          it 'applies the schema and returns the materialized results' do
-            is_expected.to match_array([
-              { id: 1, username: 'John' },
-              { id: 2, username: 'Jill' }
-            ])
-          end
-        end
+      it 'applies the schema and returns the materialized results' do
+        expect(dataset).to receive(:update).and_return(data)
+        expect(result).to eql([{ id: 1, name: 'John' }, { id: 2, name: 'Jill' }])
       end
+    end
+  end
+
+  describe "#delete" do
+    let(:result) do
+      relation.delete
+    end
+
+    it 'forwards to its dataset' do
+      expect(dataset).to receive(:delete).and_return(data)
+      expect(relation.delete).to eql(data)
     end
   end
 end
