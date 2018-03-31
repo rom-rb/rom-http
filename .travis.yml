@@ -2,6 +2,8 @@ language: ruby
 cache: bundler
 bundler_args: --without benchmarks console tools
 script: "bundle exec rake ci"
+after_success:
+  - '[ -d coverage ] && codeclimate-test-reporter'
 rvm:
   - 2.5.0
   - 2.4.3
