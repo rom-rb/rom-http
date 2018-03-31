@@ -20,7 +20,7 @@ module ROM
               :with_request_method, :with_params, :add_params
 
       def primary_key
-        schema.primary_key[0].name
+        schema.primary_key_name
       end
 
       def project(*names)

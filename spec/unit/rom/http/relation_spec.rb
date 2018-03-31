@@ -1,73 +1,34 @@
 RSpec.describe ROM::HTTP::Relation do
+  subject(:relation) { relation_klass.new(dataset) }
+
   let(:relation_klass) do
     Class.new(ROM::HTTP::Relation) do
       schema do
-        attribute :id, ROM::Types::Strict::Int.meta(primary_key: true)
-        attribute :name, ROM::Types::Strict::String
+        attribute :id, ROM::Types::Int.meta(primary_key: true)
+        attribute :name, ROM::Types::String
       end
     end
   end
-
-  let(:relation) { relation_klass.new(dataset) }
 
   let(:dataset) { ROM::HTTP::Dataset.new(uri: 'test') }
 
   let(:data) do
-    [
-      {
-        id: 1,
-        name: 'John'
-      },
-      {
-        id: 2,
-        name: 'Jill'
-      }
-    ]
+    [{ id: 1, name: 'John' }, { id: 2, name: 'Jill' }]
   end
 
   before do
     allow(dataset).to receive(:response).and_return(data)
+    relation.schema.finalize_attributes!
   end
 
   describe '#primary_key' do
-    subject { relation.primary_key }
-
-    context 'with no primary key defined in schema' do
-      it 'defaults to :id' do
-        is_expected.to eq(:id)
-      end
+    it 'returns configured primary key name' do
+      expect(relation.primary_key).to be(:id)
     end
 
-    context 'with primary key defined in schema' do
-      context 'without alias' do
-        let(:relation_klass) do
-          Class.new(ROM::HTTP::Relation) do
-            schema do
-              attribute :id, ROM::Types::Strict::Int
-              attribute :name, ROM::Types::Strict::String.meta(primary_key: true)
-            end
-          end
-        end
-
-        it 'returns the attribute name of the primary key' do
-          is_expected.to eq(:name)
-        end
-      end
-
-      context 'with alias' do
-        let(:relation_klass) do
-          Class.new(ROM::HTTP::Relation) do
-            schema do
-              attribute :id, ROM::Types::Strict::Int.meta(primary_key: true, alias: :ident)
-              attribute :name, ROM::Types::Strict::String
-            end
-          end
-        end
-
-        it 'returns the attribute name of the primary key' do
-          is_expected.to eq(:id)
-        end
-      end
+    it 'returns nil when primary key was not defined' do
+      relation = Class.new(ROM::HTTP::Relation) { schema {} }.new([])
+      expect(relation.primary_key).to be(nil)
     end
   end
 
