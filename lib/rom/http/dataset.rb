@@ -13,7 +13,10 @@ module ROM
   module HTTP
     # HTTP Dataset
     #
-    # Represents a specific HTTP collection resource
+    # Represents a specific HTTP collection resource. This class can be
+    # subclassed in a specialized HTTP adapter to provide its own
+    # response/request handlers or any other configuration that should
+    # differ from the defaults.
     #
     # @api public
     class Dataset
@@ -25,31 +28,76 @@ module ROM
       include ::Enumerable
       include ::Dry::Equalizer(:options)
 
+      # @!method self.default_request_handler
+      #   Return configured default request handler
+      #
+      #   @example
+      #     class MyDataset < ROM::HTTP::Dataset
+      #       configure do |config|
+      #         config.default_request_handler = MyRequestHandler
+      #       end
+      #     end
+      #
+      #     MyDataset.default_request_handler # MyRequestHandler
+      #     MyDataset.new(uri: "http://localhost").request_handler # MyRequestHandler
       setting :default_request_handler, reader: true
+
+      # @!method self.default_response_handler
+      #   Return configured default response handler
+      #
+      #   @example
+      #     class MyDataset < ROM::HTTP::Dataset
+      #       configure do |config|
+      #         config.default_response_handler = MyResponseHandler
+      #       end
+      #     end
+      #
+      #     MyDataset.default_response_handler # MyResponseHandler
+      #     MyDataset.new(uri: "http://localhost").response_handler # MyResponseHandler
       setting :default_response_handler, reader: true
+
       setting :param_encoder, ->(params) { URI.encode_www_form(params) }
 
+      # @!attribute [r] request_handler
+      #   @return [Object]
+      #   @api public
       option :request_handler, default: proc { self.class.default_request_handler }
 
+      # @!attribute [r] response_handler
+      #   @return [Object]
+      #   @api public
       option :response_handler, default: proc { self.class.default_response_handler }
 
-      option :uri, type: Types::String, reader: false
-
+      # @!attribute [r] request_method
+      #   @return [Symbol]
+      #   @api public
       option :request_method, type: Types::Symbol, default: proc { :get }, reader: true
 
+      # @!attribute [r] base_path
+      #   @return [String]
+      #   @api public
       option :base_path, type: Types::Coercible::String, default: proc { EMPTY_STRING }
 
+      # @!attribute [r] path
+      #   @return [String]
+      #   @api public
       option :path, type: Types::String, default: proc { '' }, reader: false
 
+      # @!attribute [r] params
+      #   @return [Hash]
+      #   @api public
       option :params, type: Types::Hash, default: proc { {} }, reader: true
 
+      # @!attribute [r] headers
+      #   @return [Hash]
+      #   @api public
       option :headers, type: Types::Hash, default: proc { {} }
+
+      option :uri, type: Types::String, reader: false
 
       # Return the gateway's URI
       #
       # @return [String]
-      #
-      # @raise [Error] if the configuration does not contain a URI
       #
       # @api public
       def uri
@@ -130,7 +178,7 @@ module ROM
       #   Dataset.new(path: '/users').path
       #   # => '/users'
       #
-      # @return [string] the dataset path, with leading slash
+      # @return [String] the dataset path, with leading slash
       #
       # @api public
       def absolute_path
@@ -272,7 +320,6 @@ module ROM
       #
       # @api public
       def add_params(new_params)
-        # TODO: Should we merge arrays?
         with_options(params: ::ROM::HTTP::Transformer[:deep_merge][params, new_params])
       end
 
@@ -334,14 +381,17 @@ module ROM
 
       private
 
+      # @api private
       def __new__(*args, &block)
         self.class.new(*args, &block)
       end
 
+      # @api private
       def join_path(*paths)
         paths.reject(&:empty?).join(PATH_SEPARATOR)
       end
 
+      # @api private
       def strip_path(path)
         path.sub(%r{\A/}, '')
       end
