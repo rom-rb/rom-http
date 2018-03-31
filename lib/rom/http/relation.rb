@@ -1,7 +1,7 @@
 require 'rom/initializer'
 
 require 'rom/http/attribute'
-require 'rom/http/schema/dsl'
+require 'rom/http/schema'
 require 'rom/http/schema/dsl'
 
 module ROM
