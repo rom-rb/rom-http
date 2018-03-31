@@ -1,16 +1,15 @@
 language: ruby
-dist: trusty
-sudo: required
 cache: bundler
-bundler_args: --without sql benchmarks console tools
+bundler_args: --without benchmarks console tools
 script: "bundle exec rake ci"
 rvm:
-  - 2.3.4
-  - 2.4.1
+  - 2.5.0
+  - 2.4.3
+  - 2.3.6
   - jruby-9.1.13.0
 env:
   global:
-    - JRUBY_OPTS='--dev -J-Xmx1024M'
+    - COVERAGE="true"
 notifications:
   webhooks:
     urls:
