@@ -143,4 +143,15 @@ RSpec.describe ROM::HTTP::Relation do
       end
     end
   end
+
+  describe "#delete" do
+    let(:result) do
+      relation.delete
+    end
+
+    it 'forwards to its dataset' do
+      expect(dataset).to receive(:delete).and_return(data)
+      expect(relation.delete).to eql(data)
+    end
+  end
 end
