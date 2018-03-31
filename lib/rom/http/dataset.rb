@@ -56,7 +56,19 @@ module ROM
       #     MyDataset.new(uri: "http://localhost").response_handler # MyResponseHandler
       setting :default_response_handler, reader: true
 
-      setting :param_encoder, ->(params) { URI.encode_www_form(params) }
+      # @!method self.param_encoder
+      #   Return configured param encoder
+      #
+      #   @example
+      #     class MyDataset < ROM::HTTP::Dataset
+      #       configure do |config|
+      #         config.param_encoder = MyParamEncoder
+      #       end
+      #     end
+      #
+      #     MyDataset.param_encoder # MyParamEncoder
+      #     MyDataset.new(uri: "http://localhost").param_encoder # MyParamEncoder
+      setting :param_encoder, URI.method(:encode_www_form), reader: true
 
       # @!attribute [r] request_handler
       #   @return [Object]
@@ -93,6 +105,11 @@ module ROM
       #   @api public
       option :headers, type: Types::Hash, default: proc { {} }
 
+      # @!attribute [r] headers
+      #   @return [Hash]
+      #   @api public
+      option :param_encoder, default: proc { self.class.param_encoder }
+
       option :uri, type: Types::String, reader: false
 
       # Return the gateway's URI
@@ -104,7 +121,7 @@ module ROM
         uri = URI(join_path(options[:uri], path))
 
         if get? && params.any?
-          uri.query = self.class.config.param_encoder.call(params)
+          uri.query = param_encoder.call(params)
         end
 
         uri
