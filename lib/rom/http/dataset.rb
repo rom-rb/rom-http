@@ -153,7 +153,7 @@ module ROM
       #
       # @api public
       def with_headers(headers)
-        __new__(options.merge(headers: headers))
+        with_options(headers: headers)
       end
 
       # Return a new dataset with additional header
@@ -273,9 +273,7 @@ module ROM
       # @api public
       def add_params(new_params)
         # TODO: Should we merge arrays?
-        with_options(
-          params: ::ROM::HTTP::Transformer[:deep_merge][params, new_params]
-        )
+        with_options(params: ::ROM::HTTP::Transformer[:deep_merge][params, new_params])
       end
 
       # Iterate over each response value
@@ -299,10 +297,7 @@ module ROM
       #
       # @api public
       def insert(params)
-        with_options(
-          request_method: :post,
-          params: params
-        ).response
+        with_options(request_method: :post, params: params).response
       end
 
       # Perform an update over HTTP Put
@@ -313,10 +308,7 @@ module ROM
       #
       # @api public
       def update(params)
-        with_options(
-          request_method: :put,
-          params: params
-        ).response
+        with_options(request_method: :put, params: params).response
       end
 
       # Perform an delete over HTTP Delete
@@ -326,9 +318,7 @@ module ROM
       #
       # @api public
       def delete
-        with_options(
-          request_method: :delete
-        ).response
+        with_options(request_method: :delete).response
       end
 
       # Execute the current dataset
