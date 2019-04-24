@@ -4,7 +4,7 @@ RSpec.describe ROM::HTTP::Commands::Delete do
   let(:relation) do
     Class.new(ROM::HTTP::Relation) do
       schema(:users) do
-        attribute :id, ROM::Types::Int
+        attribute :id, ROM::Types::Integer
       end
 
       def by_id(id)
