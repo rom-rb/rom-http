@@ -5,9 +5,9 @@ script: "bundle exec rake ci"
 after_success:
   - '[ -d coverage ] && codeclimate-test-reporter'
 rvm:
-  - 2.5.0
-  - 2.4.3
-  - 2.3.6
+  - 2.6.3
+  - 2.5.5
+  - 2.4.6
   - jruby-9.1.13.0
 env:
   global:
