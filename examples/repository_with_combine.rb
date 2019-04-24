@@ -50,7 +50,7 @@ end
 class Posts < ROM::Relation[:http]
   schema(:posts) do
     attribute :id, ROM::Types::Integer.meta(primary_key: true)
-    attribute :userId, ROM::Types::Integer.meta(alias: :user_id)
+    attribute :userId, ROM::Types::Integer, alias: :user_id
     attribute :title, ROM::Types::String
     attribute :body, ROM::Types::String
   end

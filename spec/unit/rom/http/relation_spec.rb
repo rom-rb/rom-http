@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe ROM::HTTP::Relation do
   subject(:relation) { relation_klass.new(dataset) }
 
@@ -81,7 +83,7 @@ RSpec.describe ROM::HTTP::Relation do
         Class.new(ROM::HTTP::Relation) do
           schema do
             attribute :id, ROM::Types::Strict::Integer
-            attribute :name, ROM::Types::Strict::String.meta(alias: :username)
+            attribute :name, ROM::Types::Strict::String, alias: :username
           end
         end
       end
@@ -92,7 +94,7 @@ RSpec.describe ROM::HTTP::Relation do
     end
   end
 
-  describe "#insert" do
+  describe '#insert' do
     let(:result) do
       relation.insert(name: 'John')
     end
@@ -118,7 +120,7 @@ RSpec.describe ROM::HTTP::Relation do
     end
   end
 
-  describe "#update" do
+  describe '#update' do
     let(:result) do
       relation.update(name: 'John')
     end
@@ -144,7 +146,7 @@ RSpec.describe ROM::HTTP::Relation do
     end
   end
 
-  describe "#delete" do
+  describe '#delete' do
     let(:result) do
       relation.delete
     end
