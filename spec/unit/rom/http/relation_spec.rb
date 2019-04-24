@@ -4,7 +4,7 @@ RSpec.describe ROM::HTTP::Relation do
   let(:relation_klass) do
     Class.new(ROM::HTTP::Relation) do
       schema do
-        attribute :id, ROM::Types::Int.meta(primary_key: true)
+        attribute :id, ROM::Types::Integer.meta(primary_key: true)
         attribute :name, ROM::Types::String
       end
     end
@@ -66,7 +66,7 @@ RSpec.describe ROM::HTTP::Relation do
       let(:relation_klass) do
         Class.new(ROM::HTTP::Relation) do
           schema do
-            attribute :id, ROM::Types::Strict::Int
+            attribute :id, ROM::Types::Strict::Integer
           end
         end
       end
@@ -80,7 +80,7 @@ RSpec.describe ROM::HTTP::Relation do
       let(:relation_klass) do
         Class.new(ROM::HTTP::Relation) do
           schema do
-            attribute :id, ROM::Types::Strict::Int
+            attribute :id, ROM::Types::Strict::Integer
             attribute :name, ROM::Types::Strict::String.meta(alias: :username)
           end
         end

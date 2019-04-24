@@ -4,7 +4,7 @@ RSpec.describe ROM::HTTP::Commands::Create do
   let(:relation_class) do
     Class.new(ROM::HTTP::Relation) do
       schema(:users) do
-        attribute :id, ROM::Types::Int
+        attribute :id, ROM::Types::Integer
         attribute :first_name, ROM::Types::String
         attribute :last_name, ROM::Types::String
       end

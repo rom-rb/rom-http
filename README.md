@@ -4,8 +4,7 @@
 [codeclimate]: https://codeclimate.com/github/rom-rb/rom-http
 [inchpages]: http://inch-ci.org/github/rom-rb/rom-http
 [gitter]: https://gitter.im/rom-rb/chat
-[rom]:  https://github.com/rom-rb/rom
-
+[rom]: https://github.com/rom-rb/rom
 
 # rom-http [![Gitter chat](https://badges.gitter.im/rom-rb/chat.svg)][gitter]
 
@@ -36,7 +35,6 @@ Or install it yourself as:
 ## ROADMAP
 
 For details please refer to [issues](https://github.com/rom-rb/rom-http/issues).
-
 
 ## License
 
@@ -77,7 +75,7 @@ end
 
 class Users < ROM::Relation[:http]
   schema(:users) do
-    attribute :id, ROM::Types::Int
+    attribute :id, ROM::Types::Integer
     attribute :name, ROM::Types::String
     attribute :username, ROM::Types::String
     attribute :email, ROM::Types::String
@@ -174,7 +172,7 @@ configuration = ROM::Configuration.new(:my_adapter, {
 
 class Users < ROM::Relation[:my_adapter]
   schema(:users) do
-    attribute :id, ROM::Types::Int
+    attribute :id, ROM::Types::Integer
     attribute :name, ROM::Types::String
     attribute :username, ROM::Types::String
     attribute :email, ROM::Types::String

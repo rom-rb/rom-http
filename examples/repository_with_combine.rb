@@ -34,7 +34,7 @@ end
 
 class Users < ROM::Relation[:http]
   schema(:users) do
-    attribute :id, ROM::Types::Int.meta(primary_key: true)
+    attribute :id, ROM::Types::Integer.meta(primary_key: true)
     attribute :name, ROM::Types::String
     attribute :username, ROM::Types::String
     attribute :email, ROM::Types::String
@@ -49,8 +49,8 @@ end
 
 class Posts < ROM::Relation[:http]
   schema(:posts) do
-    attribute :id, ROM::Types::Int.meta(primary_key: true)
-    attribute :userId, ROM::Types::Int.meta(alias: :user_id)
+    attribute :id, ROM::Types::Integer.meta(primary_key: true)
+    attribute :userId, ROM::Types::Integer.meta(alias: :user_id)
     attribute :title, ROM::Types::String
     attribute :body, ROM::Types::String
   end

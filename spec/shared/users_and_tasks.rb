@@ -3,7 +3,7 @@ RSpec.shared_context 'users and tasks' do
   let(:users_relation) do
     Class.new(ROM::HTTP::Relation) do
       schema(:users) do
-        attribute :id, ROM::Types::Int
+        attribute :id, ROM::Types::Integer
       end
 
       def by_id(id)
@@ -14,7 +14,7 @@ RSpec.shared_context 'users and tasks' do
   let(:tasks_relation) do
     Class.new(ROM::HTTP::Relation) do
       schema(:tasks) do
-        attribute :id, ROM::Types::Int
+        attribute :id, ROM::Types::Integer
       end
 
       def by_id(id)
