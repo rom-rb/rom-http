@@ -1,3 +1,7 @@
+puts "This is outdated and broken. We need to add association support to make this work again."
+
+exit
+
 require 'inflecto'
 require 'json'
 require 'uri'
