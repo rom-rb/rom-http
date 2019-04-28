@@ -1,3 +1,23 @@
+# v0.8.0 2019-04-28
+
+This is a major overhaul of the gem which brings it closer to 1.0.0. Custom data mapping was replaced by core APIs that leverage schemas and their attributes. Custom `MapperCompiler` was added that rejects keys that are not specified in the schemas, and can be extended further to meet any future requirements.
+
+As a consequence of these changes, with this release you can easily use `rom-http` along with repositories and changesets.
+
+### Added
+
+- Support for relation schemas (solnic)
+- Support for auto-struct mapping (solnic)
+- Convenient request method predicates `Dataset#{get?,post?,delete?,put?}` (solnic)
+
+### Changed
+
+- Updated to work with `rom ~> 5.0` (parndt)
+- Input/output data are now handled by core functionality using schema's `input_schema` and `output_schema` (solnic)
+- `Dataset#name` was removed in favor of `Dataset#base_path`
+
+[Compare v0.7.0...v0.8.0](https://github.com/rom-rb/rom-http/compare/v0.7.0...v0.8.0)
+
 # v0.7.0 2018-01-11
 
 ### Added
@@ -8,8 +28,6 @@
   - updated to depend on ROM 4.0 (maximderbin)
   - Removed ruby 2.1 support (maximderbin)
   - Removed rbx-3 support (maximderbin)
-
-
 
 [Compare v0.5.0...v0.6.0](https://github.com/rom-rb/rom-http/compare/v0.6.0...v0.7.0)
 
