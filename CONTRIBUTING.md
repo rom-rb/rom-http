@@ -1,17 +1,3 @@
-# Development
-
-Local development environment can be set up via docker-compose:
-
-```shell
-docker-compose up -d
-```
-
-To run specs within the docker container:
-
-```shell
-docker-compose exec app bundle exec rake spec
-```
-
 # Pull Request Guidelines
 
 A Pull Request will only be accepted if it addresses a specific issue that was reported previously, or fixes typos, mistakes in documentation etc.
