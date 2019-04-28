@@ -1,20 +1,22 @@
 [gem]: https://rubygems.org/gems/rom-http
 [travis]: https://travis-ci.org/rom-rb/rom-http
-[gemnasium]: https://gemnasium.com/rom-rb/rom-http
 [codeclimate]: https://codeclimate.com/github/rom-rb/rom-http
 [inchpages]: http://inch-ci.org/github/rom-rb/rom-http
-[gitter]: https://gitter.im/rom-rb/chat
-[rom]: https://github.com/rom-rb/rom
 
-# rom-http [![Gitter chat](https://badges.gitter.im/rom-rb/chat.svg)][gitter]
+# rom-http
 
 [![Gem Version](https://badge.fury.io/rb/rom-http.svg)][gem]
 [![Build Status](https://travis-ci.org/rom-rb/rom-http.svg?branch=master)][travis]
-[![Dependency Status](https://gemnasium.com/rom-rb/rom-http.svg)][gemnasium]
 [![Code Climate](https://codeclimate.com/github/rom-rb/rom-http/badges/gpa.svg)][codeclimate]
-[![Documentation Status](http://inch-ci.org/github/rom-rb/rom-http.svg?branch=master&style=flat)][inchpages]
+[![Test Coverage](https://codeclimate.com/github/rom-rb/rom-http/badges/coverage.svg)][codeclimate]
+[![Inline docs](http://inch-ci.org/github/rom-rb/rom-http.svg?branch=master)][inchpages]
 
-HTTP adapter for [Ruby Object Mapper][rom]
+HTTP adapter for [rom-rb](https://github.com/rom-rb/rom).
+
+Resources:
+
+- [User Documentation](http://rom-rb.org/learn/http/)
+- [API Documentation](http://rubydoc.info/gems/rom-http)
 
 ## Installation
 
@@ -31,10 +33,6 @@ And then execute:
 Or install it yourself as:
 
     $ gem install rom-http
-
-## ROADMAP
-
-For details please refer to [issues](https://github.com/rom-rb/rom-http/issues).
 
 ## License
 
