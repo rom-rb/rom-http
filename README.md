@@ -2,6 +2,7 @@
 [travis]: https://travis-ci.org/rom-rb/rom-http
 [codeclimate]: https://codeclimate.com/github/rom-rb/rom-http
 [inchpages]: http://inch-ci.org/github/rom-rb/rom-http
+[chat]: https://rom-rb.zulipchat.com
 
 # rom-http [![Join the chat at https://rom-rb.zulipchat.com](https://img.shields.io/badge/rom--rb-join%20chat-942283.svg)][chat]
 
