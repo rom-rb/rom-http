@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ['piotr.solnica@gmail.com', 'andyholland1991@aol.com', 'cflipse@gmail.com']
   spec.summary       = 'HTTP support for ROM'
   spec.description   = spec.summary
-  spec.homepage      = 'http://rom-rb.org'
+  spec.homepage      = 'https://rom-rb.org'
   spec.license       = 'MIT'
 
   spec.files         = `git ls-files -z`.split("\x0")
