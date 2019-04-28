@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rom'
 require 'rom/http/error'
 require 'rom/http/commands'
