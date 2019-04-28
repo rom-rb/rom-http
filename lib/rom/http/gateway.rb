@@ -20,8 +20,6 @@ module ROM
     class Gateway < ROM::Gateway
       adapter :http
 
-      mapper_compiler HTTP::MapperCompiler
-
       attr_reader :datasets, :config
       private :datasets, :config
 
