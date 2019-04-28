@@ -3,7 +3,7 @@
 [codeclimate]: https://codeclimate.com/github/rom-rb/rom-http
 [inchpages]: http://inch-ci.org/github/rom-rb/rom-http
 
-# rom-http
+# rom-http [![Join the chat at https://rom-rb.zulipchat.com](https://img.shields.io/badge/rom--rb-join%20chat-942283.svg)][chat]
 
 [![Gem Version](https://badge.fury.io/rb/rom-http.svg)][gem]
 [![Build Status](https://travis-ci.org/rom-rb/rom-http.svg?branch=master)][travis]
