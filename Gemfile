@@ -14,5 +14,5 @@ group :test do
 end
 
 group :tools do
-  gem 'byebug'
+  gem 'byebug', platforms: :mri
 end
