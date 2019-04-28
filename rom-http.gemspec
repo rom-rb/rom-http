@@ -18,7 +18,7 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ['lib']
 
-  spec.add_runtime_dependency 'concurrent-ruby'
+  spec.add_runtime_dependency 'concurrent-ruby', '~> 1.1'
   spec.add_runtime_dependency 'addressable', '~> 2.6'
   spec.add_runtime_dependency 'rom-core', '~> 5.0', '>= 5.0.1'
   spec.add_runtime_dependency 'dry-core', '~> 0.4'
