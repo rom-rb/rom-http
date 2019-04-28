@@ -10,7 +10,6 @@ group :test do
 
   gem 'faraday'
   gem 'simplecov', platforms: :mri
-  gem 'codeclimate-test-reporter', platforms: :mri
 end
 
 group :tools do
