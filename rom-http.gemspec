@@ -19,7 +19,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_runtime_dependency 'concurrent-ruby'
-  spec.add_runtime_dependency 'addressable'
+  spec.add_runtime_dependency 'addressable', '~> 2.6'
   spec.add_runtime_dependency 'rom-core', '~> 5.0', '>= 5.0.1'
   spec.add_runtime_dependency 'dry-core', '~> 0.4'
   spec.add_runtime_dependency 'dry-equalizer', '~> 0.2'
