@@ -18,6 +18,10 @@ As a consequence of these changes, with this release you can easily use `rom-htt
 - Input/output data are now handled by core functionality using schema's `input_schema` and `output_schema` (solnic)
 - `Dataset#name` was removed in favor of `Dataset#base_path`
 
+### Fixed
+
+- `Relation#append_path` no longer duplicates `base_path` (solnic)
+
 [Compare v0.7.0...v0.8.0](https://github.com/rom-rb/rom-http/compare/v0.7.0...v0.8.0)
 
 # v0.7.0 2018-01-11
