@@ -1,0 +1,74 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.github.com/orgs/rom-rb
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - GitHub.com
+      Date:
+      - Mon, 29 Apr 2019 10:05:07 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Status:
+      - 200 OK
+      X-Ratelimit-Limit:
+      - '60'
+      X-Ratelimit-Remaining:
+      - '57'
+      X-Ratelimit-Reset:
+      - '1556535839'
+      Cache-Control:
+      - public, max-age=60, s-maxage=60
+      Vary:
+      - Accept
+      Etag:
+      - W/"7c4febf9df2293903c92f884a768a81a"
+      Last-Modified:
+      - Wed, 03 Apr 2019 14:36:48 GMT
+      X-Github-Media-Type:
+      - github.v3; format=json
+      Access-Control-Expose-Headers:
+      - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining,
+        X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval,
+        X-GitHub-Media-Type
+      Access-Control-Allow-Origin:
+      - "*"
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains; preload
+      X-Frame-Options:
+      - deny
+      X-Content-Type-Options:
+      - nosniff
+      X-Xss-Protection:
+      - 1; mode=block
+      Referrer-Policy:
+      - origin-when-cross-origin, strict-origin-when-cross-origin
+      Content-Security-Policy:
+      - default-src 'none'
+      X-Github-Request-Id:
+      - E967:457D:88BBB1:15715A9:5CC6CC52
+    body:
+      encoding: ASCII-8BIT
+      string: '{"login":"rom-rb","id":4589832,"node_id":"MDEyOk9yZ2FuaXphdGlvbjQ1ODk4MzI=","url":"https://api.github.com/orgs/rom-rb","repos_url":"https://api.github.com/orgs/rom-rb/repos","events_url":"https://api.github.com/orgs/rom-rb/events","hooks_url":"https://api.github.com/orgs/rom-rb/hooks","issues_url":"https://api.github.com/orgs/rom-rb/issues","members_url":"https://api.github.com/orgs/rom-rb/members{/member}","public_members_url":"https://api.github.com/orgs/rom-rb/public_members{/member}","avatar_url":"https://avatars3.githubusercontent.com/u/4589832?v=4","description":"Persistence
+        and mapping toolkit for Ruby","name":"rom-rb","company":null,"blog":"http://rom-rb.org","location":"Planet
+        Earth","email":"","is_verified":false,"has_organization_projects":true,"has_repository_projects":true,"public_repos":32,"public_gists":0,"followers":0,"following":0,"html_url":"https://github.com/rom-rb","created_at":"2013-06-01T22:03:54Z","updated_at":"2019-04-03T14:36:48Z","type":"Organization"}'
+    http_version: 
+  recorded_at: Mon, 29 Apr 2019 10:05:06 GMT
+recorded_with: VCR 4.0.0

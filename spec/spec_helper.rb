@@ -28,7 +28,12 @@ begin
 require 'byebug'
 rescue LoadError; end
 
-root = Pathname(__FILE__).dirname
+require 'vcr'
+
+VCR.configure do |config|
+  config.cassette_library_dir = "#{SPEC_ROOT}/fixtures/vcr_cassettes"
+  config.hook_into :webmock
+end
 
 Dir[root.join('support/**/*.rb').to_s].each { |file| require file }
 Dir[root.join('shared/**/*.rb').to_s].each { |file| require file }

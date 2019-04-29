@@ -8,7 +8,8 @@ group :test do
     gem 'rom-repository', group: :tools
   end
 
-  gem 'faraday'
+  gem 'webmock'
+  gem 'vcr'
   gem 'simplecov', platforms: :mri
 end
 
