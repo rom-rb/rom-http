@@ -16,8 +16,8 @@ HTTP adapter for [rom-rb](https://github.com/rom-rb/rom).
 
 Resources:
 
-- [User Documentation](http://rom-rb.org/learn/http/)
-- [API Documentation](http://rubydoc.info/gems/rom-http)
+- [User Documentation](https://rom-rb.org/learn/http/)
+- [API Documentation](https://api.rom-rb.org/rom-http)
 
 ## Installation
 
@@ -35,42 +35,10 @@ Or install it yourself as:
 
     $ gem install rom-http
 
-## License
-
-See `LICENSE` file.
-
-## Synopsis
+## Quick-start
 
 ```ruby
-require 'inflecto'
-require 'json'
-require 'uri'
-require 'net/http'
-
-class RequestHandler
-  def call(dataset)
-    uri = dataset.uri
-    http = Net::HTTP.new(uri.host, uri.port)
-    request_klass = Net::HTTP.const_get(Inflecto.classify(dataset.request_method))
-
-    request = request_klass.new(uri.request_uri)
-    dataset.headers.each_with_object(request) do |(header, value), request|
-      request[header.to_s] = value
-    end
-
-    response = http.request(request)
-  end
-end
-
-class ResponseHandler
-  def call(response, dataset)
-    if %i(post put patch).include?(dataset.request_method)
-      JSON.parse(response.body, symbolize_names: true)
-    else
-      Array([JSON.parse(response.body, symbolize_names: true)]).flatten
-    end
-  end
-end
+require 'rom'
 
 class Users < ROM::Relation[:http]
   schema(:users) do
@@ -92,10 +60,11 @@ configuration = ROM::Configuration.new(:http, {
   headers: {
     Accept: 'application/json'
   },
-  request_handler: RequestHandler.new,
-  response_handler: ResponseHandler.new
+  handlers: :json
 })
+
 configuration.register_relation(Users)
+
 container = ROM.container(configuration)
 
 container.relation(:users).by_id(1).to_a
@@ -105,35 +74,31 @@ container.relation(:users).by_id(1).to_a
 ### Extending
 
 ```ruby
-require 'inflecto'
-require 'json'
-require 'uri'
-require 'net/http'
+require 'rom-http'
 
 module ROM
   module MyAdapter
     class Dataset < ROM::HTTP::Dataset
-      configure do |config|
-        config.default_request_handler = ->(dataset) do
-          uri = dataset.uri
+      config.default_request_handler = ->(dataset) do
+        uri = dataset.uri
 
-          http = Net::HTTP.new(uri.host, uri.port)
-          request_klass = Net::HTTP.const_get(Inflecto.classify(dataset.request_method))
+        http = Net::HTTP.new(uri.host, uri.port)
+        request_klass = Net::HTTP.const_get(Inflecto.classify(dataset.request_method))
 
-          request = request_klass.new(uri.request_uri)
-          dataset.headers.each_with_object(request) do |(header, value), request|
-            request[header.to_s] = value
-          end
-
-          response = http.request(request)
+        request = request_klass.new(uri.request_uri)
+        
+        dataset.headers.each_with_object(request) do |(header, value), request|
+          request[header.to_s] = value
         end
 
-        config.default_response_handler = ->(response, dataset) do
-          if %i(post put patch).include?(dataset.request_method)
-            JSON.parse(response.body, symbolize_names: true)
-          else
-            Array([JSON.parse(response.body, symbolize_names: true)]).flatten
-          end
+        response = http.request(request)
+      end
+
+      config.default_response_handler = ->(response, dataset) do
+        if %i(post put patch).include?(dataset.request_method)
+          JSON.parse(response.body, symbolize_names: true)
+        else
+          Array([JSON.parse(response.body, symbolize_names: true)]).flatten
         end
       end
     end
@@ -185,8 +150,13 @@ class Users < ROM::Relation[:my_adapter]
 end
 
 configuration.register_relation(Users)
+
 container = ROM.container(configuration)
 
 container.relation(:users).by_id(1).to_a
 # => GET http://jsonplaceholder.typicode.com/users/1 [ Accept: application/json ]
 ```
+
+## License
+
+See `LICENSE` file.
