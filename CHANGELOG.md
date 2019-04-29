@@ -1,4 +1,4 @@
-# v0.8.0 2019-04-28
+# v0.8.0 2019-04-29
 
 This is a major overhaul of the gem which brings it closer to 1.0.0. Custom data mapping was replaced by core APIs that leverage schemas and their attributes. Custom `MapperCompiler` was added that rejects keys that are not specified in the schemas, and can be extended further to meet any future requirements.
 
@@ -8,6 +8,8 @@ As a consequence of these changes, with this release you can easily use `rom-htt
 
 - Support for relation schemas (solnic)
 - Support for auto-struct mapping (solnic)
+- Support for registering your own request/response handlers for all datasets from a specific gateway (solnic)
+- Built-in `JSON` handlers that you can set via `handlers: :json` gateway option (solnic)
 - Convenient request method predicates `Dataset#{get?,post?,delete?,put?}` (solnic)
 
 ### Changed
