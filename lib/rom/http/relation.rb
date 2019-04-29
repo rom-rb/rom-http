@@ -20,6 +20,8 @@ module ROM
       schema_dsl HTTP::Schema::DSL
       schema_attr_class HTTP::Attribute
 
+      option :output_schema, default: -> { schema.to_output_hash }
+
       forward :with_headers, :add_header, :with_options,
               :with_base_path, :with_path, :append_path,
               :with_request_method, :with_params, :add_params

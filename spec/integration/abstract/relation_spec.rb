@@ -24,7 +24,7 @@ RSpec.describe ROM::HTTP::Relation do
   end
 
   let(:response) { tuples.to_json }
-  let(:tuples) { [{ id: 1337, name: 'John' }] }
+  let(:tuples) { [{ 'id' => 1337, 'name' => 'John' }] }
   let(:id) { 1337 }
   let(:params) { { filters: { first_name: 'John' } } }
 
@@ -48,7 +48,7 @@ RSpec.describe ROM::HTTP::Relation do
   end
 
   it 'returns relation tuples' do
-    expect(users.to_a).to eql(tuples)
+    expect(users.to_a).to eql([id: 1337, name: 'John'])
 
     expect(request_handler).to have_received(:call).with(dataset).once
     expect(response_handler).to have_received(:call).with(response, dataset).once
