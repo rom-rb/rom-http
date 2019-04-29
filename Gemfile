@@ -8,8 +8,8 @@ group :test do
     gem 'rom-repository', group: :tools
   end
 
-  gem 'webmock'
-  gem 'vcr'
+  gem 'webmock', require: false
+  gem 'vcr', require: false
   gem 'simplecov', platforms: :mri
 end
 
