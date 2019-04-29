@@ -284,7 +284,7 @@ module ROM
       #
       # @api public
       def append_path(append_path)
-        with_path(join_path(path, append_path))
+        with_path(join_path(options[:path], append_path))
       end
 
       # Return a new dataset with a different request method

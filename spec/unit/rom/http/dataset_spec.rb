@@ -281,6 +281,14 @@ RSpec.describe ROM::HTTP::Dataset do
   end
 
   describe '#append_path' do
+    context 'with base_path' do
+      let(:options) { { base_path: '/users' } }
+
+      it 'returns a new dataset with provided path appended to previous path' do
+        expect(dataset.append_path('tasks').path).to eql('users/tasks')
+      end
+    end
+
     context 'without existing path' do
       it 'returns a new dataset with provided path' do
         expect(dataset.append_path('users').path).to eql('users')
