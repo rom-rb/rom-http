@@ -29,7 +29,9 @@ RSpec.describe ROM::HTTP::Gateway do
 
   describe '#dataset' do
     context 'when extended' do
-      subject(:gateway) { Test::Gateway.new(uri: 'test') }
+      subject(:gateway) { Test::Gateway.new(uri: 'test', **config) }
+
+      let(:config) { Hash.new }
 
       before do
         module Test
@@ -52,6 +54,24 @@ RSpec.describe ROM::HTTP::Gateway do
 
         it 'returns ROM::HTTP::Dataset' do
           expect(gateway.dataset(:test)).to be_instance_of(Test::Dataset)
+        end
+      end
+
+      context 'when handlers identifier is configured' do
+        let(:config) do
+          { handlers: :json }
+        end
+
+        let(:dataset) do
+          gateway.dataset(:test)
+        end
+
+        it 'sets registered request handler' do
+          expect(dataset.request_handler).to be(ROM::HTTP::Handlers[:json][:request])
+        end
+
+        it 'sets registered response handler' do
+          expect(dataset.response_handler).to be(ROM::HTTP::Handlers[:json][:response])
         end
       end
     end

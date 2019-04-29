@@ -11,7 +11,7 @@ module ROM
     # Default request/response handlers
     #
     # @api public
-    module Handlers
+    class Handlers
       # Default handler for JSON requests
       #
       # @api public

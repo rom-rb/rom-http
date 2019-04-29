@@ -3,6 +3,7 @@
 require 'concurrent'
 
 require 'rom/http/dataset'
+require 'rom/http/handlers'
 require 'rom/http/mapper_compiler'
 
 module ROM
@@ -23,7 +24,6 @@ module ROM
       adapter :http
 
       attr_reader :datasets, :config
-      private :datasets, :config
 
       # HTTP gateway interface
       #
@@ -58,8 +58,7 @@ module ROM
       #
       # @api public
       def dataset(name)
-        dataset_klass = namespace.const_defined?(:Dataset) ? namespace.const_get(:Dataset) : Dataset
-        datasets[name] = dataset_klass.new(config.merge(uri: uri, base_path: name))
+        datasets[name] = dataset_class.new(dataset_options(name))
       end
 
       # Check if dataset exists
@@ -73,11 +72,44 @@ module ROM
 
       private
 
+      # Return Dataset class
+      #
+      # @return [Class]
+      #
+      # @api private
+      def dataset_class
+        namespace.const_defined?(:Dataset) ? namespace.const_get(:Dataset) : Dataset
+      end
+
+      # Return Dataset options
+      #
+      # @return [Class]
+      #
+      # @api private
+      def dataset_options(name)
+        config.merge(uri: uri, base_path: name, **default_handlers)
+      end
+
+      # Return default handlers registered in Handlers registry
+      #
+      # @return [Hash]
+      #
+      # @api private
+      def default_handlers
+        if handlers_key = config[:handlers]
+          Handlers[handlers_key]
+            .map { |key, value| [:"#{key}_handler", value] }.to_h
+        else
+          EMPTY_HASH
+        end
+      end
+
       # @api private
       def uri
         config.fetch(:uri) { fail Error, '+uri+ configuration missing' }
       end
 
+      # @api private
       def namespace
         self.class.to_s[/(.*)(?=::)/].split('::').inject(::Object) do |constant, const_name|
           constant.const_get(const_name)
