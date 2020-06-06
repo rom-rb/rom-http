@@ -1,12 +1,19 @@
-puts "This is outdated and broken. We need to add association support to make this work again."
-
-exit
-
-require 'inflecto'
+# require 'inflecto'
 require 'json'
 require 'uri'
 require 'net/http'
 require 'rom-repository'
+require 'rom/http'
+
+module ROM
+  class Relation
+    class Loaded
+      def struct_namespace(*args)
+        source.__send__(__method__, *args)
+      end
+    end
+  end
+end
 
 class RequestHandler
   def call(dataset)
@@ -15,13 +22,14 @@ class RequestHandler
     uri.query = URI.encode_www_form(dataset.params)
 
     http = Net::HTTP.new(uri.host, uri.port)
-    request_klass = Net::HTTP.const_get(Inflecto.classify(dataset.request_method))
+    request_klass = Net::HTTP.const_get(ROM::Inflector.classify(dataset.request_method))
 
     request = request_klass.new(uri.request_uri)
     dataset.headers.each_with_object(request) do |(header, value), request|
       request[header.to_s] = value
     end
 
+    puts uri.request_uri
     response = http.request(request)
   end
 end
@@ -29,10 +37,18 @@ end
 class ResponseHandler
   def call(response, dataset)
     if %i(post put patch).include?(dataset.request_method)
-      JSON.parse(response.body, symbolize_names: true)
+      bleh(JSON.parse(response.body, symbolize_names: true))
     else
-      Array([JSON.parse(response.body, symbolize_names: true)]).flatten
+      Array([JSON.parse(response.body, symbolize_names: true)]).flatten.map(&method(:bleh))
     end
+  end
+
+  def bleh(item)
+    return item unless item.key?(:userId)
+
+
+    item[:user_id] = item.delete(:userId)
+    item
   end
 end
 
@@ -44,7 +60,12 @@ class Users < ROM::Relation[:http]
     attribute :email, ROM::Types::String
     attribute :phone, ROM::Types::String
     attribute :website, ROM::Types::String
+
+    associations do
+      has_many :posts, view: :for_user, override: true
+    end
   end
+
 
   def by_id(id)
     with_path(id.to_s)
@@ -54,32 +75,34 @@ end
 class Posts < ROM::Relation[:http]
   schema(:posts) do
     attribute :id, ROM::Types::Integer.meta(primary_key: true)
-    attribute :userId, ROM::Types::Integer, alias: :user_id
+    attribute :user_id, ROM::Types::Integer.meta(foreign_key: true)
     attribute :title, ROM::Types::String
     attribute :body, ROM::Types::String
+
+    associations do
+      belongs_to :user
+    end
   end
 
   def by_id(id)
     with_path(id.to_s)
   end
 
-  def for_user(user)
+  def for_user(association, users)
     with_options(
       base_path: 'users',
-      path: "#{user.first[:id]}/posts"
+      path: "#{users.first[:id]}/posts"
     )
   end
 end
 
 class UserRepository < ROM::Repository[:users]
-  relations :posts
-
   def find(id)
     users.by_id(id).first
   end
 
   def find_with_posts(user_id)
-    users.by_id(user_id).combine_children(many: posts.for_user).first
+    users.by_id(user_id).combine(:posts).one
   end
 end
 
@@ -95,7 +118,7 @@ configuration.register_relation(Users)
 configuration.register_relation(Posts)
 container = ROM.container(configuration)
 
-UserRepository.new(container).find_with_posts(1)
+puts JSON.pretty_generate(UserRepository.new(container).find_with_posts(1).to_h)
 # =>
 # #<ROM::Struct[User]
 #   id=1
@@ -148,8 +171,7 @@ UserRepository.new(container).find_with_posts(1)
 #     #<ROM::Struct[Post]
 #       id=9
 #       user_id=1
-#       title="nesciunt iure omnis dolorem tempora et accusantium"
-#       body="consectetur animi nesciunt iure dolore\nenim quia ad\nveniam autem ut quam aut nobis\net est aut quod aut provident voluptas autem voluptas">,
+#       title="nesciunt iure omnis dolorem tempora et accusantium" body="consectetur animi nesciunt iure dolore\nenim quia ad\nveniam autem ut quam aut nobis\net est aut quod aut provident voluptas autem voluptas">,
 #     #<ROM::Struct[Post]
 #       id=10
 #       user_id=1
