@@ -124,13 +124,11 @@ module ROM
       #
       # @api public
       def uri
-        uri = URI(join_path(super, path))
-
-        if get? && params.any?
-          uri.query = param_encoder.call(params)
+        URI(join_path(super, path)).tap do |uri|
+          if params.any?
+            uri.query = param_encoder.call(params)
+          end
         end
-
-        uri
       end
 
       # Return true if request method is set to :get

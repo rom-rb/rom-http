@@ -33,8 +33,8 @@ RSpec.describe ROM::HTTP::Dataset do
             { uri: uri, request_method: :post, params: { username: 'John', role: 'admin' } }
           end
 
-          it 'returns a valid URI without a query' do
-            expect(dataset.uri).to eql(URI(uri))
+          it 'returns a valid URI with a query' do
+            expect(dataset.uri).to eql(URI("#{uri}?username=John&role=admin"))
           end
         end
       end

@@ -26,9 +26,6 @@ module ROM
         def self.call(dataset)
           uri = URI(dataset.uri)
 
-          uri.path = dataset.absolute_path
-          uri.query = URI.encode_www_form(dataset.params)
-
           http = Net::HTTP.new(uri.host, uri.port)
           http.use_ssl = true if uri.scheme.eql?('https')
 
