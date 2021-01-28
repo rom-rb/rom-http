@@ -58,7 +58,7 @@ module ROM
       #
       # @api public
       def dataset(name)
-        datasets[name] = dataset_class.new(dataset_options(name))
+        datasets[name] = dataset_class.new(**dataset_options(name))
       end
 
       # Check if dataset exists

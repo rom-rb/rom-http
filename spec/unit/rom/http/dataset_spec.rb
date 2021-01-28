@@ -1,5 +1,5 @@
 RSpec.describe ROM::HTTP::Dataset do
-  subject(:dataset) { ROM::HTTP::Dataset.new({ uri: uri }.merge(options)) }
+  subject(:dataset) { ROM::HTTP::Dataset.new(**{ uri: uri }.merge(options)) }
 
   let(:options) do
     { uri: uri }
