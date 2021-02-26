@@ -1,0 +1,107 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.mocki.io/v1/c2037888
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '47'
+      Connection:
+      - keep-alive
+      Date:
+      - Fri, 26 Feb 2021 18:58:42 GMT
+      X-Amzn-Requestid:
+      - dacb5bae-db7a-4f10-abe8-9596dfda0869
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Amzn-Remapped-Content-Length:
+      - '47'
+      X-Amz-Apigw-Id:
+      - bXezHFr1IAMFRrw=
+      Etag:
+      - W/"2f-0BK/cHUYh1nqlpFqHbu4AtW03bY"
+      X-Powered-By:
+      - Express
+      X-Amzn-Trace-Id:
+      - Root=1-603944e0-225ac51059c55d36563406c1;Sampled=0
+      X-Cache:
+      - Miss from cloudfront
+      Via:
+      - 1.1 744a1f6aa351c9fa7c55143547282de3.cloudfront.net (CloudFront)
+      X-Amz-Cf-Pop:
+      - ATL56-C3
+      X-Amz-Cf-Id:
+      - 9ghTG0ref7YxoXwYF37mJ519f-xL2OPaJdKXhGrIpXcUv5bFAexkHw==
+    body:
+      encoding: UTF-8
+      string: '[{"id":1,"name":"John"},{"id":2,"name":"Jill"}]'
+  recorded_at: Fri, 26 Feb 2021 18:58:42 GMT
+- request:
+    method: get
+    uri: https://api.mocki.io/v1/2ac7da28
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - application/json
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '77'
+      Connection:
+      - keep-alive
+      Date:
+      - Fri, 26 Feb 2021 18:58:44 GMT
+      X-Amzn-Requestid:
+      - 79be4182-a695-478b-9dc4-c1ca7048b33c
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Amzn-Remapped-Content-Length:
+      - '77'
+      X-Amz-Apigw-Id:
+      - bXezZHTnIAMFhyg=
+      Etag:
+      - W/"4d-yap42SJ8nfd/KHL17f3ZzAAdBgs"
+      X-Powered-By:
+      - Express
+      X-Amzn-Trace-Id:
+      - Root=1-603944e2-03bbe2b779107a1b6cd59121;Sampled=0
+      X-Cache:
+      - Miss from cloudfront
+      Via:
+      - 1.1 2c65bede0f52554bf32fd64f7dfa83d0.cloudfront.net (CloudFront)
+      X-Amz-Cf-Pop:
+      - ATL56-C3
+      X-Amz-Cf-Id:
+      - ObonJUYm0INVEJxtLm0cH4REaUXpnoyr9tQRyy1MBqxxeKLDkWU-kg==
+    body:
+      encoding: UTF-8
+      string: '[{"id":1,"title":"Post 1","user_id":1},{"id":2,"title":"Post 2","user_id":2}]'
+  recorded_at: Fri, 26 Feb 2021 18:58:44 GMT
+recorded_with: VCR 6.0.0
