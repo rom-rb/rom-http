@@ -61,8 +61,8 @@ module GitHub
   module Resources
     class Organizations < ROM::Relation[:http]
       schema(:orgs) do
-        attribute :id, Types::JSON::Integer
-        attribute :name, Types::JSON::String
+        attribute :id, Types::Integer
+        attribute :name, Types::String
         attribute :created_at, Types::JSON::Time
         attribute :updated_at, Types::JSON::Time
       end
