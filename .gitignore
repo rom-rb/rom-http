@@ -14,4 +14,4 @@ Gemfile.lock
 *.a
 mkmf.log
 log/*.log
-.rubocop.yml
+
