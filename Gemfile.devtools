@@ -1,0 +1,18 @@
+# frozen_string_literal: true
+
+# this file is managed by rom-rb/devtools project
+
+git_source(:github) { |repo_name| "https://github.com/#{repo_name}" }
+
+group :test do
+  gem "simplecov", require: false, platforms: :ruby
+  gem "simplecov-cobertura", require: false, platforms: :ruby
+  gem "rexml", require: false
+
+  gem "warning" if RUBY_VERSION >= "2.4.0"
+end
+
+group :tools do
+  # this is the same version that we use on codacy
+  gem "rubocop", "0.82.0"
+end
