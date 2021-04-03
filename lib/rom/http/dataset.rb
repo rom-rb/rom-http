@@ -239,7 +239,7 @@ module ROM
       #
       # @api public
       def with_options(opts)
-        __new__(options.merge(opts))
+        __new__(**options.merge(opts))
       end
 
       # Return a new dataset with a different base path
@@ -392,8 +392,8 @@ module ROM
       private
 
       # @api private
-      def __new__(*args, &block)
-        self.class.new(*args, &block)
+      def __new__(*args, **kwargs, &block)
+        self.class.new(*args, **kwargs, &block)
       end
 
       # @api private
