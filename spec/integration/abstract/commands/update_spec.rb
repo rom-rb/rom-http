@@ -10,7 +10,7 @@ RSpec.describe ROM::HTTP::Commands::Update do
       end
 
       def by_id(id)
-        with_params(id: id)
+        with_query_params(id: id)
       end
     end
   end
@@ -34,7 +34,7 @@ RSpec.describe ROM::HTTP::Commands::Update do
         request_handler: request_handler,
         response_handler: response_handler,
         request_method: :put,
-        params: attributes
+        body_params: attributes
       )
     end
 
@@ -80,7 +80,7 @@ RSpec.describe ROM::HTTP::Commands::Update do
         response_handler: response_handler,
         base_path: :users,
         request_method: :put,
-        params: attributes_1
+        body_params: attributes_1
       )
     end
 
@@ -92,7 +92,7 @@ RSpec.describe ROM::HTTP::Commands::Update do
         response_handler: response_handler,
         base_path: :users,
         request_method: :put,
-        params: attributes_2
+        body_params: attributes_2
       )
     end
 

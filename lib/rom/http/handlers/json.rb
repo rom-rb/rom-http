@@ -24,10 +24,7 @@ module ROM
         #
         # @api public
         def self.call(dataset)
-          uri = URI(dataset.uri)
-
-          uri.path = dataset.absolute_path
-          uri.query = URI.encode_www_form(dataset.params)
+          uri = dataset.uri
 
           http = Net::HTTP.new(uri.host, uri.port)
           http.use_ssl = true if uri.scheme.eql?('https')
@@ -39,6 +36,8 @@ module ROM
           dataset.headers.each_with_object(request) do |(header, value), request|
             request[header.to_s] = value
           end
+
+          request.body = JSON.dump(dataset.body_params) if dataset.body_params.any?
 
           http.request(request)
         end

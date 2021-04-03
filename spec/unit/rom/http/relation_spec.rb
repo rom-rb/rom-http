@@ -96,7 +96,7 @@ RSpec.describe ROM::HTTP::Relation do
 
   describe '#insert' do
     let(:result) do
-      relation.insert(name: 'John')
+      relation.insert(body_params: { name: 'John' })
     end
 
     context 'with single tuple' do
@@ -122,7 +122,7 @@ RSpec.describe ROM::HTTP::Relation do
 
   describe '#update' do
     let(:result) do
-      relation.update(name: 'John')
+      relation.update(body_params: { name: 'John' })
     end
 
     context 'with single tuple' do

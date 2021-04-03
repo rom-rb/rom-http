@@ -2,7 +2,7 @@ require 'json'
 require 'rom-repository'
 
 RSpec.describe ROM::HTTP::Relation do
-  subject(:users) { container.relations[:users].by_id(id).filter(params) }
+  subject(:users) { container.relations[:users].by_id(id).filter(query_params) }
 
   include_context 'setup'
 
@@ -18,7 +18,7 @@ RSpec.describe ROM::HTTP::Relation do
       end
 
       def filter(params)
-        with_params(params)
+        with_query_params(params)
       end
     end
   end
@@ -26,7 +26,7 @@ RSpec.describe ROM::HTTP::Relation do
   let(:response) { tuples.to_json }
   let(:tuples) { [{ 'id' => 1337, 'name' => 'John' }] }
   let(:id) { 1337 }
-  let(:params) { { filters: { first_name: 'John' } } }
+  let(:query_params) { { filters: { first_name: 'John' } } }
 
   let(:dataset) do
     ROM::HTTP::Dataset.new(
@@ -36,7 +36,7 @@ RSpec.describe ROM::HTTP::Relation do
       response_handler: response_handler,
       base_path: :users,
       path: "#{id}",
-      params: params
+      query_params: query_params
     )
   end
 
@@ -64,7 +64,7 @@ RSpec.describe ROM::HTTP::Relation do
     end
 
     it 'returns structs' do
-      user = repo.users.by_id(1337).filter(params).first
+      user = repo.users.by_id(1337).filter(query_params).first
 
       expect(user.id).to be(1337)
       expect(user.name).to eql('John')

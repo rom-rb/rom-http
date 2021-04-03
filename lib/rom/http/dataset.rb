@@ -59,19 +59,19 @@ module ROM
       #     MyDataset.new(uri: "http://localhost").response_handler # MyResponseHandler
       setting :default_response_handler, reader: true
 
-      # @!method self.param_encoder
-      #   Return configured param encoder
+      # @!method self.query_param_encoder
+      #   Return configured query param encoder
       #
       #   @example
       #     class MyDataset < ROM::HTTP::Dataset
       #       configure do |config|
-      #         config.param_encoder = MyParamEncoder
+      #         config.query_param_encoder = MyParamEncoder
       #       end
       #     end
       #
-      #     MyDataset.param_encoder # MyParamEncoder
-      #     MyDataset.new(uri: "http://localhost").param_encoder # MyParamEncoder
-      setting :param_encoder, URI.method(:encode_www_form), reader: true
+      #     MyDataset.query_param_encoder # MyParamEncoder
+      #     MyDataset.new(uri: "http://localhost").query_param_encoder # MyParamEncoder
+      setting :query_param_encoder, URI.method(:encode_www_form), reader: true
 
       # @!attribute [r] request_handler
       #   @return [Object]
@@ -98,10 +98,15 @@ module ROM
       #   @api public
       option :path, type: Types::Path, default: proc { EMPTY_STRING }
 
-      # @!attribute [r] params
+      # @!attribute [r] query_params
       #   @return [Hash]
       #   @api public
-      option :params, type: Types::Hash, default: proc { EMPTY_HASH }
+      option :query_params, type: Types::Hash, default: proc { EMPTY_HASH }
+
+      # @!attribute [r] body_params
+      #   @return [Hash]
+      #   @api public
+      option :body_params, type: Types::Hash, default: proc { EMPTY_HASH }
 
       # @!attribute [r] headers
       #   @return [Hash]
@@ -111,7 +116,7 @@ module ROM
       # @!attribute [r] headers
       #   @return [Hash]
       #   @api public
-      option :param_encoder, default: proc { self.class.param_encoder }
+      option :query_param_encoder, default: proc { self.class.query_param_encoder }
 
       # @!attribute [r] uri
       #   @return [String]
@@ -126,8 +131,8 @@ module ROM
       def uri
         uri = URI(join_path(super, path))
 
-        if get? && params.any?
-          uri.query = param_encoder.call(params)
+        if query_params.any?
+          uri.query = query_param_encoder.call(query_params)
         end
 
         uri
@@ -301,36 +306,68 @@ module ROM
         with_options(request_method: request_method)
       end
 
-      # Return a new dataset with replaced request parameters
+      # Return a new dataset with replaced request query parameters
       #
-      # @param [Hash] params the new request parameters
+      # @param [Hash] query_params the new request query parameters
       #
       # @example
-      #   users = Dataset.new(params: { uid: 33 })
-      #   users.with_params(login: 'jdoe').params
+      #   users = Dataset.new(query_params: { uid: 33 })
+      #   users.with_query_params(login: 'jdoe').query_params
       #   # => { :login => 'jdoe' }
       #
       # @return [Dataset]
       #
       # @api public
-      def with_params(params)
-        with_options(params: params)
+      def with_query_params(query_params)
+        with_options(query_params: query_params)
       end
 
-      # Return a new dataset with merged request parameters
+      # Return a new dataset with merged request query parameters
       #
-      # @param [Hash] params the new request parameters to add
+      # @param [Hash] query_params the new request query parameters to add
       #
       # @example
-      #   users = Dataset.new(params: { uid: 33 })
-      #   users.add_params(login: 'jdoe').params
+      #   users = Dataset.new(query_params: { uid: 33 })
+      #   users.add_query_params(login: 'jdoe').query_params
       #   # => { uid: 33, :login => 'jdoe' }
       #
       # @return [Dataset]
       #
       # @api public
-      def add_params(new_params)
-        with_options(params: ::ROM::HTTP::Transformer[:deep_merge][params, new_params])
+      def add_query_params(new_query_params)
+        with_options(query_params: ::ROM::HTTP::Transformer[:deep_merge][query_params, new_query_params])
+      end
+
+      # Return a new dataset with replaced request body parameters
+      #
+      # @param [Hash] body_params the new request body parameters
+      #
+      # @example
+      #   users = Dataset.new(body_params: { uid: 33 })
+      #   users.with_body_params(login: 'jdoe').body_params
+      #   # => { :login => 'jdoe' }
+      #
+      # @return [Dataset]
+      #
+      # @api public
+      def with_body_params(body_params)
+        with_options(body_params: body_params)
+      end
+
+      # Return a new dataset with merged request body parameters
+      #
+      # @param [Hash] body_params the new request body parameters to add
+      #
+      # @example
+      #   users = Dataset.new(body_params: { uid: 33 })
+      #   users.add_body_params(login: 'jdoe').body_params
+      #   # => { uid: 33, :login => 'jdoe' }
+      #
+      # @return [Dataset]
+      #
+      # @api public
+      def add_body_params(new_body_params)
+        with_options(body_params: ::ROM::HTTP::Transformer[:deep_merge][body_params, new_body_params])
       end
 
       # Iterate over each response value
@@ -348,24 +385,30 @@ module ROM
 
       # Perform an insert over HTTP Post
       #
-      # @params [Hash] params The request parameters to send
+      # @param [Hash] attributes the attributes to insert
       #
       # @return [Array<Hash>]
       #
       # @api public
-      def insert(params)
-        with_options(request_method: :post, params: params).response
+      def insert(attributes)
+        with_options(
+          request_method: :post,
+          body_params: attributes
+        ).response
       end
 
       # Perform an update over HTTP Put
       #
-      # @params [Hash] params The request parameters to send
+      # @param [Hash] attributes the attributes to update
       #
       # @return [Array<Hash>]
       #
       # @api public
-      def update(params)
-        with_options(request_method: :put, params: params).response
+      def update(attributes)
+        with_options(
+          request_method: :put,
+          body_params: attributes
+        ).response
       end
 
       # Perform an delete over HTTP Delete

@@ -24,7 +24,8 @@ module ROM
 
       forward :with_headers, :add_header, :with_options,
               :with_base_path, :with_path, :append_path,
-              :with_request_method, :with_params, :add_params
+              :with_request_method, :with_query_params, :add_query_params,
+              :with_body_params, :add_body_params
 
       def primary_key
         schema.primary_key_name

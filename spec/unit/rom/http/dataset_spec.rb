@@ -15,27 +15,23 @@ RSpec.describe ROM::HTTP::Dataset do
     end
 
     context 'when uri configured' do
-      context 'when request method is GET' do
-        context 'with params' do
-          let(:options) do
-            { uri: uri, params: { username: 'John', role: 'admin' } }
-          end
+      context 'without query_params' do
+        let(:options) do
+          { uri: uri }
+        end
 
-          it 'returns a valid URI with a query' do
-            expect(dataset.uri).to eql(URI("#{uri}?username=John&role=admin"))
-          end
+        it 'returns a valid URI with a query' do
+          expect(dataset.uri).to eql(URI(uri))
         end
       end
 
-      context 'when request method is not GET' do
-        context 'with params' do
-          let(:options) do
-            { uri: uri, request_method: :post, params: { username: 'John', role: 'admin' } }
-          end
+      context 'with query_params' do
+        let(:options) do
+          { uri: uri, query_params: { username: 'John', role: 'admin' } }
+        end
 
-          it 'returns a valid URI without a query' do
-            expect(dataset.uri).to eql(URI(uri))
-          end
+        it 'returns a valid URI with a query' do
+          expect(dataset.uri).to eql(URI("#{uri}?username=John&role=admin"))
         end
       end
 
@@ -231,16 +227,30 @@ RSpec.describe ROM::HTTP::Dataset do
     end
   end
 
-  describe '#params' do
-    it 'returns empty params by default' do
-      expect(dataset.params).to eql({})
+  describe '#query_params' do
+    it 'returns empty query_params by default' do
+      expect(dataset.query_params).to eql({})
     end
 
-    context 'with params option' do
-      let(:options) { { uri: uri, params: { name: 'Jack' } } }
+    context 'with query_params option' do
+      let(:options) { { uri: uri, query_params: { name: 'Jack' } } }
 
-      it 'returns provided params' do
-        expect(dataset.params).to eql(name: 'Jack')
+      it 'returns provided query_params' do
+        expect(dataset.query_params).to eql(name: 'Jack')
+      end
+    end
+  end
+
+  describe '#body_params' do
+    it 'returns empty body_params by default' do
+      expect(dataset.body_params).to eql({})
+    end
+
+    context 'with body_params option' do
+      let(:options) { { uri: uri, body_params: { name: 'Jack' } } }
+
+      it 'returns provided body_params' do
+        expect(dataset.body_params).to eql(name: 'Jack')
       end
     end
   end
@@ -310,19 +320,35 @@ RSpec.describe ROM::HTTP::Dataset do
     end
   end
 
-  describe '#with_params' do
-    it 'returns a new dataset with new params' do
-      expect(dataset.with_params(admin: true).params).to eql(admin: true)
+  describe '#with_query_params' do
+    it 'returns a new dataset with new query_params' do
+      expect(dataset.with_query_params(admin: true).query_params).to eql(admin: true)
     end
   end
 
-  describe '#add_params' do
+  describe '#add_query_params' do
     let(:options) do
-      { params: { age: 21 } }
+      { query_params: { age: 21 } }
     end
 
-    it 'returns a new dataset with params appended' do
-      expect(dataset.add_params(admin: true).params).to eql(age: 21, admin: true)
+    it 'returns a new dataset with query_params appended' do
+      expect(dataset.add_query_params(admin: true).query_params).to eql(age: 21, admin: true)
+    end
+  end
+
+  describe '#with_body_params' do
+    it 'returns a new dataset with new body_params' do
+      expect(dataset.with_body_params(admin: true).body_params).to eql(admin: true)
+    end
+  end
+
+  describe '#add_body_params' do
+    let(:options) do
+      { body_params: { age: 21 } }
+    end
+
+    it 'returns a new dataset with body_params appended' do
+      expect(dataset.add_body_params(admin: true).body_params).to eql(age: 21, admin: true)
     end
   end
 
@@ -355,7 +381,7 @@ RSpec.describe ROM::HTTP::Dataset do
 
   describe '#insert' do
     let(:name) { 'Jill' }
-    let(:params) { { user: { name: name } } }
+    let(:attributes) { { user: { name: name } } }
     let(:new_dataset) { double(ROM::HTTP::Dataset) }
     let(:response) { double }
 
@@ -364,12 +390,12 @@ RSpec.describe ROM::HTTP::Dataset do
       allow(new_dataset).to receive(:response).and_return(response)
     end
 
-    subject! { dataset.insert(params) }
+    subject! { dataset.insert(attributes) }
 
     it do
       expect(dataset).to have_received(:with_options).with(
         request_method: :post,
-        params: params
+        body_params: attributes
       )
     end
     it { expect(new_dataset).to have_received(:response) }
@@ -378,7 +404,7 @@ RSpec.describe ROM::HTTP::Dataset do
 
   describe '#update' do
     let(:name) { 'Jill' }
-    let(:params) { { user: { name: name } } }
+    let(:attributes) { { user: { name: name } } }
     let(:new_dataset) { double(ROM::HTTP::Dataset) }
     let(:response) { double }
 
@@ -387,12 +413,12 @@ RSpec.describe ROM::HTTP::Dataset do
       allow(new_dataset).to receive(:response).and_return(response)
     end
 
-    subject! { dataset.update(params) }
+    subject! { dataset.update(attributes) }
 
     it do
       expect(dataset).to have_received(:with_options).with(
         request_method: :put,
-        params: params
+        body_params: attributes
       )
     end
     it { expect(new_dataset).to have_received(:response) }
@@ -424,11 +450,11 @@ RSpec.describe ROM::HTTP::Dataset do
       { request_handler: request_handler,
         response_handler: response_handler,
         path: 'test',
-        params: { ok: true } }
+        query_params: { ok: true } }
     end
 
     let(:request_handler) do
-      -> (ds) { ds.params }
+      -> (ds) { ds.query_params }
     end
 
     let(:response_handler) do
