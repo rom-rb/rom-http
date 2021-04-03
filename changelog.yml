@@ -1,4 +1,11 @@
 ---
+- version: unreleased
+  summary: 
+  date: 
+  fixed: 
+  added:
+  - 'Support for associations :tada: (@ianks)'
+  changed: 
 - version: 0.8.0
   date: '2019-04-29'
   summary: As a consequence of these changes, with this release you can easily use
