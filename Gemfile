@@ -2,6 +2,8 @@ source 'https://rubygems.org'
 
 gemspec
 
+eval_gemfile 'Gemfile.devtools'
+
 group :test do
   gem 'rom', git: 'https://github.com/rom-rb/rom', branch: 'master' do
     gem 'rom-core'
