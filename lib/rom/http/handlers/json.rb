@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require 'uri'
-require 'net/http'
-require 'json'
+require "uri"
+require "net/http"
+require "json"
 
-require 'rom/support/inflector'
+require "rom/support/inflector"
 
 module ROM
   module HTTP
@@ -27,7 +27,7 @@ module ROM
           uri = dataset.uri
 
           http = Net::HTTP.new(uri.host, uri.port)
-          http.use_ssl = true if uri.scheme.eql?('https')
+          http.use_ssl = true if uri.scheme.eql?("https")
 
           request_class = Net::HTTP.const_get(ROM::Inflector.classify(dataset.request_method))
 
@@ -55,7 +55,7 @@ module ROM
         # @return [Array<Hash>]
         #
         # @api public
-        def self.call(response, dataset)
+        def self.call(response, _dataset)
           Array([JSON.parse(response.body)]).flatten(1)
         end
       end

@@ -1,4 +1,4 @@
-require 'rom/http/handlers/json'
+require "rom/http/handlers/json"
 
 module ROM
   module HTTP

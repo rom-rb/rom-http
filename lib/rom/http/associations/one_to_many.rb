@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'rom/associations/one_to_many'
+require "rom/associations/one_to_many"
 
 module ROM
   module HTTP
@@ -8,7 +8,7 @@ module ROM
       # OneToMany implementation
       class OneToMany < ROM::Associations::OneToMany
         def call(target: self.target)
-          raise MissingAssociationViewError, 'must override view' unless view
+          raise MissingAssociationViewError, "must override view" unless view
 
           schema = target.schema.qualified
           relation = target
