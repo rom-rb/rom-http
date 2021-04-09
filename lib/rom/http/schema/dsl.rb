@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'rom/schema/dsl'
+require "rom/schema/dsl"
 
 module ROM
   module HTTP

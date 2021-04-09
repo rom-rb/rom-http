@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'rom/associations/many_to_one'
+require "rom/associations/many_to_one"
 
 module ROM
   module HTTP
@@ -8,7 +8,7 @@ module ROM
       # ManyToOne implementation
       class ManyToOne < ROM::Associations::ManyToOne
         def call(target: self.target)
-          raise MissingAssociationViewError, 'must override view' unless view
+          raise MissingAssociationViewError, "must override view" unless view
 
           schema = target.schema.qualified
           relation = target

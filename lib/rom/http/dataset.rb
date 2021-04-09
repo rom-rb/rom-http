@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
-require 'uri'
+require "uri"
 
-require 'dry/configurable'
-require 'dry/core/deprecations'
+require "dry/configurable"
+require "dry/core/deprecations"
 
-require 'rom/support/memoizable'
-require 'rom/constants'
-require 'rom/initializer'
-require 'rom/http/types'
-require 'rom/http/transformer'
+require "rom/support/memoizable"
+require "rom/constants"
+require "rom/initializer"
+require "rom/http/types"
+require "rom/http/transformer"
 
 module ROM
   module HTTP
@@ -22,7 +22,7 @@ module ROM
     #
     # @api public
     class Dataset
-      PATH_SEPARATOR = '/'.freeze
+      PATH_SEPARATOR = "/"
 
       extend Dry::Configurable
       extend ROM::Initializer
@@ -335,7 +335,8 @@ module ROM
       #
       # @api public
       def add_query_params(new_query_params)
-        with_options(query_params: ::ROM::HTTP::Transformer[:deep_merge][query_params, new_query_params])
+        with_options(query_params: ::ROM::HTTP::Transformer[:deep_merge][query_params,
+                                                                         new_query_params])
       end
 
       # Return a new dataset with replaced request body parameters
@@ -367,7 +368,8 @@ module ROM
       #
       # @api public
       def add_body_params(new_body_params)
-        with_options(body_params: ::ROM::HTTP::Transformer[:deep_merge][body_params, new_body_params])
+        with_options(body_params: ::ROM::HTTP::Transformer[:deep_merge][body_params,
+                                                                        new_body_params])
       end
 
       # Iterate over each response value
@@ -380,6 +382,7 @@ module ROM
       # @api public
       def each(&block)
         return to_enum unless block_given?
+
         response.each(&block)
       end
 

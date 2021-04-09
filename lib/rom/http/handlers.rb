@@ -1,4 +1,6 @@
-require 'rom/http/handlers/json'
+# frozen_string_literal: true
+
+require "rom/http/handlers/json"
 
 module ROM
   module HTTP

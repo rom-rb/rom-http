@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require 'concurrent'
+require "concurrent"
 
-require 'rom/http/dataset'
-require 'rom/http/handlers'
-require 'rom/http/mapper_compiler'
+require "rom/http/dataset"
+require "rom/http/handlers"
+require "rom/http/mapper_compiler"
 
 module ROM
   module HTTP
@@ -106,12 +106,12 @@ module ROM
 
       # @api private
       def uri
-        config.fetch(:uri) { fail Error, '+uri+ configuration missing' }
+        config.fetch(:uri) { raise Error, "+uri+ configuration missing" }
       end
 
       # @api private
       def namespace
-        self.class.to_s[/(.*)(?=::)/].split('::').inject(::Object) do |constant, const_name|
+        self.class.to_s[/(.*)(?=::)/].split("::").inject(::Object) do |constant, const_name|
           constant.const_get(const_name)
         end
       end

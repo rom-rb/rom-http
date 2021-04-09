@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'rom/schema'
-require 'rom/http/types'
+require "rom/schema"
+require "rom/http/types"
 
 module ROM
   module HTTP
@@ -23,7 +23,7 @@ module ROM
         self
       end
 
-       # Internal hook used during setup process
+      # Internal hook used during setup process
       #
       # @see Schema#finalize_associations!
       #
