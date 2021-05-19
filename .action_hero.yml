@@ -1,0 +1,6 @@
+sources:
+  - repo: rom-rb/template-gem
+    sync:
+      - "*"
+      - ".github/*"
+      - "spec/*"
