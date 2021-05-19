@@ -4,3 +4,6 @@ sources:
       - "*"
       - ".github/*"
       - "spec/*
+  - repo: action-hero/workflows
+    sync:
+      - ".github/workflows/*.yml"
