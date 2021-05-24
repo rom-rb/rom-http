@@ -3,8 +3,10 @@
 sources:
   - repo: rom-rb/template-gem
     sync:
+      - "!config.yml"
       - "config.yml:.action_hero.yml"
       - ".devtools/templates/*.sync:${{dir}}/${{name}}"
+      - ".github/workflows/ci.yml.erb"
       - ".github/**/*.*"
       - "spec/*"
       - "*"
