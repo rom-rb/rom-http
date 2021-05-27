@@ -8,7 +8,7 @@
 - Support for associations :tada: (@ianks)
 
 
-[Compare v0.8.0...master](https://github.com/rom-rb/rom-http/compare/v0.8.0...master)
+[Compare v0.8.0...master](https://github.com/rom-rb//compare/v0.8.0...master)
 
 ## 0.8.0 2019-04-29
 
@@ -66,49 +66,49 @@ As a consequence of these changes, with this release you can easily use `rom-htt
 - Input/output data are now handled by core functionality using schema's `input_schema` and `output_schema` (solnic)
 - `Dataset#name` was removed in favor of `Dataset#base_path`
 
-[Compare v0.7.0...v0.8.0](https://github.com/rom-rb/rom-http/compare/v0.7.0...v0.8.0)
+[Compare v0.7.0...v0.8.0](https://github.com/rom-rb//compare/v0.7.0...v0.8.0)
 
 ## 0.7.0 2018-01-11
 
 
 
-[Compare v0.6.0...v0.7.0](https://github.com/rom-rb/rom-http/compare/v0.6.0...v0.7.0)
+[Compare v0.6.0...v0.7.0](https://github.com/rom-rb//compare/v0.6.0...v0.7.0)
 
 ## 0.6.0 2017-02-06
 
 
 
-[Compare v0.5.0...v0.6.0](https://github.com/rom-rb/rom-http/compare/v0.5.0...v0.6.0)
+[Compare v0.5.0...v0.6.0](https://github.com/rom-rb//compare/v0.5.0...v0.6.0)
 
 ## 0.5.0 2016-08-08
 
 
 
-[Compare v0.4.0...v0.5.0](https://github.com/rom-rb/rom-http/compare/v0.4.0...v0.5.0)
+[Compare v0.4.0...v0.5.0](https://github.com/rom-rb//compare/v0.4.0...v0.5.0)
 
 ## 0.4.0 2016-04-30
 
 
 
-[Compare v0.3.0...v0.4.0](https://github.com/rom-rb/rom-http/compare/v0.3.0...v0.4.0)
+[Compare v0.3.0...v0.4.0](https://github.com/rom-rb//compare/v0.3.0...v0.4.0)
 
 ## 0.3.0 2016-03-17
 
 
 
-[Compare v0.2.0...v0.3.0](https://github.com/rom-rb/rom-http/compare/v0.2.0...v0.3.0)
+[Compare v0.2.0...v0.3.0](https://github.com/rom-rb//compare/v0.2.0...v0.3.0)
 
 ## 0.2.0 2016-01-30
 
 
 
-[Compare v0.1.2...v0.2.0](https://github.com/rom-rb/rom-http/compare/v0.1.2...v0.2.0)
+[Compare v0.1.2...v0.2.0](https://github.com/rom-rb//compare/v0.1.2...v0.2.0)
 
 ## 0.1.2 2015-09-16
 
 
 
-[Compare v0.1.1...v0.1.2](https://github.com/rom-rb/rom-http/compare/v0.1.1...v0.1.2)
+[Compare v0.1.1...v0.1.2](https://github.com/rom-rb//compare/v0.1.1...v0.1.2)
 
 ## 0.1.1 2015-09-03
 
@@ -119,7 +119,7 @@ As a consequence of these changes, with this release you can easily use `rom-htt
 - `ROM::HTTP::Gateway` no longer raises errors on missing configuration keys, these are now raised late in `Dataset` - this was to allow for the implementation of `default_request_handler` and `default_response_handler` (AMHOL)
 - `ROM::HTTP::Dataset` now uses `ROM::Options` from `rom-support`, adding typechecking to options and making it easier to define additional options in extensions
 
-[Compare v0.1.0...v0.1.1](https://github.com/rom-rb/rom-http/compare/v0.1.0...v0.1.1)
+[Compare v0.1.0...v0.1.1](https://github.com/rom-rb//compare/v0.1.0...v0.1.1)
 
 ## 0.1.0 2015-08-19
 
