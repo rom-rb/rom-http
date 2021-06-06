@@ -1,5 +1,5 @@
 # This file is synced from rom-rb/template-gem repo
-name: ci
+name: CI
 
 on:
   push:
@@ -21,6 +21,7 @@ on:
 jobs:
   tests:
     runs-on: ubuntu-latest
+    name: Tests
     strategy:
       fail-fast: false
       matrix:
@@ -59,24 +60,3 @@ jobs:
         with:
           project-token: ${{secrets.CODACY_PROJECT_TOKEN}}
           coverage-reports: coverage/coverage.xml
-  release:
-    runs-on: ubuntu-latest
-    if: contains(github.ref, 'tags') && github.event_name == 'create'
-    needs: tests
-    env:
-      GITHUB_LOGIN: rom-bot
-      GITHUB_TOKEN: ${{secrets.GH_PAT}}
-    steps:
-      - uses: actions/checkout@v1
-      - name: Install package dependencies
-        run: "[ -e $APT_DEPS ] || sudo apt-get install -y --no-install-recommends $APT_DEPS"
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 2.6
-      - name: Install dependencies
-        run: gem install ossy --no-document
-      - name: Trigger release workflow
-        run: |
-          tag=$(echo $GITHUB_REF | cut -d / -f 3)
-          ossy gh w rom-rb/devtools release --payload "{\"tag\":\"$tag\",\"sha\":\"${{github.sha}}\",\"tag_creator\":\"$GITHUB_ACTOR\",\"repo\":\"$GITHUB_REPOSITORY\",\"repo_name\":\"${{github.event.repository.name}}\"}"
