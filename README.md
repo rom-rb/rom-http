@@ -8,9 +8,9 @@
 
 [![Gem Version](https://badge.fury.io/rb/rom-http.svg)][gem]
 [![CI Status](https://github.com/rom-rb/rom-http/workflows/ci/badge.svg)][actions]
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/d37d66bb711d4aeebf5e1c1650aee261)][codacy]
+[![RuboCop](https://github.com/rom-rb/rom-http/actions/workflows/rubocop.yml/badge.svg)](https://github.com/rom-rb/rom-http/actions/workflows/rubocop.yml)
 [![Codacy Badge](https://api.codacy.com/project/badge/Coverage/d37d66bb711d4aeebf5e1c1650aee261)][codacy]
-[![Inline docs](http://inch-ci.org/github/rom-rb/rom-http.svg?branch=master)][inchpages]
+[![Inline docs](http://inch-ci.org/github/rom-rb/rom-http.svg?branch=main)][inchpages]
 
 ## Links
 
