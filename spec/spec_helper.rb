@@ -1,30 +1,28 @@
-# encoding: utf-8
+require_relative "support/coverage"
 
-require_relative 'support/coverage'
-
-require 'pathname'
+require "pathname"
 
 SPEC_ROOT = root = Pathname(__FILE__).dirname
 
-require 'rom-http'
-require 'rspec/its'
-require 'dry/configurable/test_interface'
+require "rom-http"
+require "rspec/its"
+require "dry/configurable/test_interface"
 
 ROM::HTTP::Dataset.enable_test_interface
 
 begin
-require 'byebug'
+require "byebug"
 rescue LoadError; end
 
-require 'vcr'
+require "vcr"
 
 VCR.configure do |config|
   config.cassette_library_dir = "#{SPEC_ROOT}/fixtures/vcr_cassettes"
   config.hook_into :webmock
 end
 
-Dir[root.join('support/**/*.rb').to_s].each { |file| require file }
-Dir[root.join('shared/**/*.rb').to_s].each { |file| require file }
+Dir[root.join("support/**/*.rb").to_s].each { |file| require file }
+Dir[root.join("shared/**/*.rb").to_s].each { |file| require file }
 
 # Namespace holding all objects created during specs
 module Test

@@ -1,4 +1,4 @@
-RSpec.shared_context 'setup' do
+RSpec.shared_context "setup" do
   let(:configuration) do
     ROM::Configuration.new(
       :http,
@@ -11,8 +11,8 @@ RSpec.shared_context 'setup' do
   let(:container) { ROM.container(configuration) }
   let(:rom) { container }
   let(:gateway) { container.gateways.fetch(:default) }
-  let(:uri) { 'http://localhost:3000' }
+  let(:uri) { "http://localhost:3000" }
   let(:request_handler) { double(Proc, freeze: self) }
   let(:response_handler) { double(Proc, freeze: self) }
-  let(:headers) { { accept: 'application/json' } }
+  let(:headers) { {accept: "application/json"} }
 end

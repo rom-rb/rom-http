@@ -1,5 +1,5 @@
 RSpec.describe ROM::HTTP::Commands::Delete do
-  include_context 'setup'
+  include_context "setup"
 
   let(:relation) do
     Class.new(ROM::HTTP::Relation) do

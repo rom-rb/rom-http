@@ -1,5 +1,5 @@
-RSpec.shared_context 'users and tasks' do
-  include_context 'setup'
+RSpec.shared_context "users and tasks" do
+  include_context "setup"
   let(:users_relation) do
     Class.new(ROM::HTTP::Relation) do
       schema(:users) do

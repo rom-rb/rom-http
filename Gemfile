@@ -1,16 +1,16 @@
-source 'https://rubygems.org'
+source "https://rubygems.org"
 
 gemspec
 
-eval_gemfile 'Gemfile.devtools'
+eval_gemfile "Gemfile.devtools"
 
 group :test do
-  gem 'rspec'
-  gem 'rspec-its'
-  gem 'webmock', require: false
-  gem 'vcr', require: false
+  gem "rspec"
+  gem "rspec-its"
+  gem "vcr", require: false
+  gem "webmock", require: false
 end
 
 group :tools do
-  gem 'byebug', platforms: :mri
+  gem "byebug", platforms: :mri
 end

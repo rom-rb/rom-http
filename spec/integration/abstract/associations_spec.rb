@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-RSpec.describe 'Associations', :vcr do
+RSpec.describe "Associations", :vcr do
   let(:configuration) do
     configuration = ROM::Configuration.new(
       :http, {
-        uri: 'https://api.mocki.io',
+        uri: "https://api.mocki.io",
         headers: {
-          Accept: 'application/json'
+          Accept: "application/json"
         },
         handlers: :json
       }
@@ -23,7 +23,7 @@ RSpec.describe 'Associations', :vcr do
   let(:users_klass) do
     Class.new(ROM::HTTP::Relation) do
       dataset do
-        with_options(base_path: 'v1/c2037888')
+        with_options(base_path: "v1/c2037888")
       end
 
       schema(:users) do
@@ -46,7 +46,7 @@ RSpec.describe 'Associations', :vcr do
   let(:posts_klass) do
     Class.new(ROM::HTTP::Relation) do
       dataset do
-        with_options(base_path: 'v1/2ac7da28')
+        with_options(base_path: "v1/2ac7da28")
       end
 
       schema(:posts) do
@@ -67,27 +67,27 @@ RSpec.describe 'Associations', :vcr do
     end
   end
 
-  describe 'has_many' do
-    it 'can combine results' do
+  describe "has_many" do
+    it "can combine results" do
       VCR.use_cassette(:user_with_posts) do
         result = users.combine(:posts).to_a
 
         expect(result).to contain_exactly(
-          { id: 1, name: 'John', posts: [{ id: 1, user_id: 1, title: 'Post 1' }] },
-          { id: 2, name: 'Jill', posts: [{ id: 2, user_id: 2, title: 'Post 2' }] }
+          {id: 1, name: "John", posts: [{id: 1, user_id: 1, title: "Post 1"}]},
+          {id: 2, name: "Jill", posts: [{id: 2, user_id: 2, title: "Post 2"}]}
         )
       end
     end
   end
 
-  describe 'belongs_to' do
-    it 'can combine results' do
+  describe "belongs_to" do
+    it "can combine results" do
       VCR.use_cassette(:posts_with_user) do
         result = posts.combine(:user).to_a
 
         expect(result).to contain_exactly(
-          { id: 1, title: 'Post 1', user: { id: 1, name: 'John' }, user_id: 1 },
-          { id: 2, title: 'Post 2', user: { id: 2, name: 'Jill' }, user_id: 2 }
+          {id: 1, title: "Post 1", user: {id: 1, name: "John"}, user_id: 1},
+          {id: 2, title: "Post 2", user: {id: 2, name: "Jill"}, user_id: 2}
         )
       end
     end

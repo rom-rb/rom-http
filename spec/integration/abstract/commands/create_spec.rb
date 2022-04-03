@@ -1,5 +1,5 @@
 RSpec.describe ROM::HTTP::Commands::Create do
-  include_context 'setup'
+  include_context "setup"
 
   let(:relation_class) do
     Class.new(ROM::HTTP::Relation) do
@@ -17,10 +17,10 @@ RSpec.describe ROM::HTTP::Commands::Create do
 
   let(:relation) { container.relations[:users] }
 
-  context 'with single tuple' do
+  context "with single tuple" do
     let(:response) { double }
 
-    let(:attributes) { { first_name: 'John', last_name: 'Jackson' } }
+    let(:attributes) { {first_name: "John", last_name: "Jackson"} }
 
     let(:tuple) { attributes.merge(id: 1) }
 
@@ -57,14 +57,14 @@ RSpec.describe ROM::HTTP::Commands::Create do
     end
   end
 
-  context 'with a collection' do
+  context "with a collection" do
     let(:response_1) { double }
 
     let(:response_2) { double }
 
-    let(:attributes_1) { { first_name: 'John', last_name: 'Jackson' } }
+    let(:attributes_1) { {first_name: "John", last_name: "Jackson"} }
 
-    let(:attributes_2) { { first_name: 'Jill', last_name: 'Smith' } }
+    let(:attributes_2) { {first_name: "Jill", last_name: "Smith"} }
 
     let(:tuple_1) { attributes_1.merge(id: 1) }
 

@@ -1,10 +1,10 @@
-require 'json'
-require 'rom-repository'
+require "json"
+require "rom-repository"
 
 RSpec.describe ROM::HTTP::Relation do
   subject(:users) { container.relations[:users].by_id(id).filter(query_params) }
 
-  include_context 'setup'
+  include_context "setup"
 
   let(:relation) do
     Class.new(ROM::HTTP::Relation) do
@@ -24,9 +24,9 @@ RSpec.describe ROM::HTTP::Relation do
   end
 
   let(:response) { tuples.to_json }
-  let(:tuples) { [{ 'id' => 1337, 'name' => 'John' }] }
+  let(:tuples) { [{"id" => 1337, "name" => "John"}] }
   let(:id) { 1337 }
-  let(:query_params) { { filters: { first_name: 'John' } } }
+  let(:query_params) { {filters: {first_name: "John"}} }
 
   let(:dataset) do
     ROM::HTTP::Dataset.new(
@@ -35,7 +35,7 @@ RSpec.describe ROM::HTTP::Relation do
       request_handler: request_handler,
       response_handler: response_handler,
       base_path: :users,
-      path: "#{id}",
+      path: id.to_s,
       query_params: query_params
     )
   end
@@ -47,27 +47,27 @@ RSpec.describe ROM::HTTP::Relation do
     allow(response_handler).to receive(:call).and_return(tuples)
   end
 
-  it 'returns relation tuples' do
-    expect(users.to_a).to eql([id: 1337, name: 'John'])
+  it "returns relation tuples" do
+    expect(users.to_a).to eql([id: 1337, name: "John"])
 
     expect(request_handler).to have_received(:call).with(dataset).once
     expect(response_handler).to have_received(:call).with(response, dataset).once
   end
 
-  context 'using a repo' do
+  context "using a repo" do
     let(:repo) do
       Class.new(ROM::Repository) do
         def self.to_s
-          'UserRepo'
+          "UserRepo"
         end
       end.new(container)
     end
 
-    it 'returns structs' do
+    it "returns structs" do
       user = repo.users.by_id(1337).filter(query_params).first
 
       expect(user.id).to be(1337)
-      expect(user.name).to eql('John')
+      expect(user.name).to eql("John")
 
       expect(request_handler).to have_received(:call).with(dataset).once
       expect(response_handler).to have_received(:call).with(response, dataset).once
