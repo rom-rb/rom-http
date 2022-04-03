@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 RSpec.describe ROM::HTTP::Commands::Create do
   include_context "setup"
 

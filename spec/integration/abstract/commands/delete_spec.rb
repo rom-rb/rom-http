@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 RSpec.describe ROM::HTTP::Commands::Delete do
   include_context "setup"
 

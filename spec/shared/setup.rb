@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 RSpec.shared_context "setup" do
   let(:configuration) do
     ROM::Configuration.new(

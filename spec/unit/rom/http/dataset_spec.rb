@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 RSpec.describe ROM::HTTP::Dataset do
   subject(:dataset) { ROM::HTTP::Dataset.new(**{uri: uri}.merge(options)) }
 
