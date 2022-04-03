@@ -5,7 +5,7 @@ gemspec
 eval_gemfile 'Gemfile.devtools'
 
 group :test do
-  gem 'rom', git: 'https://github.com/rom-rb/rom', branch: 'master' do
+  gem 'rom', git: 'https://github.com/rom-rb/rom', branch: 'main' do
     gem 'rom-core'
     gem 'rom-repository', group: :tools
   end
