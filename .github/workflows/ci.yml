@@ -1,5 +1,5 @@
 # This file is synced from rom-rb/template-gem repo
-name: CI
+name: ci
 
 on:
   push:
@@ -28,11 +28,8 @@ jobs:
         ruby:
         - "3.0"
         - "2.7"
-        - "2.6"
-        - "2.5"
-        - "jruby"
         include:
-          - ruby: "3.0"
+          - ruby: "3.1"
             coverage: "true"
     env:
       COVERAGE: ${{matrix.coverage}}
