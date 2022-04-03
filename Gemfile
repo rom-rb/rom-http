@@ -5,9 +5,10 @@ gemspec
 eval_gemfile 'Gemfile.devtools'
 
 group :test do
+  gem 'rspec'
+  gem 'rspec-its'
   gem 'webmock', require: false
   gem 'vcr', require: false
-  gem 'simplecov', platforms: :mri
 end
 
 group :tools do
