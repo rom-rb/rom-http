@@ -71,7 +71,7 @@ module ROM
       #
       #     MyDataset.query_param_encoder # MyParamEncoder
       #     MyDataset.new(uri: "http://localhost").query_param_encoder # MyParamEncoder
-      setting :query_param_encoder, URI.method(:encode_www_form), reader: true
+      setting :query_param_encoder, default: URI.method(:encode_www_form), reader: true
 
       # @!attribute [r] request_handler
       #   @return [Object]
