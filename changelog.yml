@@ -1,90 +1,94 @@
 ---
-- version: unreleased
-  summary: 
-  date: 
-  fixed: 
+- version: 0.9.0
+  summary:
+  date:
+  fixed:
+    - "Warning message from dry-configurable (@gkostin1966)"
   added:
-  - 'Support for associations :tada: (@ianks)'
-  changed: 
+    - "Support for associations :tada: (@ianks)"
+    - "Support for ruby 3 (@AMHOL)"
+  changed:
+    - "Request params separated into query_params and body_params (@AMHOL in #44)"
 - version: 0.8.0
-  date: '2019-04-29'
-  summary: As a consequence of these changes, with this release you can easily use
+  date: "2019-04-29"
+  summary:
+    As a consequence of these changes, with this release you can easily use
     `rom-http` along with repositories and changesets.
   added:
-  - Support for relation schemas (solnic)
-  - Support for auto-struct mapping (solnic)
-  - Support for registering your own request/response handlers for all datasets from
-    a specific gateway (solnic)
-  - 'Built-in `JSON` handlers that you can set via `handlers: :json` gateway option
-    (solnic)'
-  - Convenient request method predicates `Dataset#{get?,post?,delete?,put?}` (solnic)
+    - Support for relation schemas (solnic)
+    - Support for auto-struct mapping (solnic)
+    - Support for registering your own request/response handlers for all datasets from
+      a specific gateway (solnic)
+    - "Built-in `JSON` handlers that you can set via `handlers: :json` gateway option
+      (solnic)"
+    - Convenient request method predicates `Dataset#{get?,post?,delete?,put?}` (solnic)
   changed:
-  - Updated to work with `rom ~> 5.0` (parndt)
-  - Input/output data are now handled by core functionality using schema's `input_schema`
-    and `output_schema` (solnic)
-  - "`Dataset#name` was removed in favor of `Dataset#base_path`"
+    - Updated to work with `rom ~> 5.0` (parndt)
+    - Input/output data are now handled by core functionality using schema's `input_schema`
+      and `output_schema` (solnic)
+    - "`Dataset#name` was removed in favor of `Dataset#base_path`"
   fixed:
-  - |-
-    `Relation#append_path` no longer duplicates `base_path` (solnic)
+    - |-
+      `Relation#append_path` no longer duplicates `base_path` (solnic)
 
-      - Add Dataset#add_params(AMHOL)
+        - Add Dataset#add_params(AMHOL)
 
-      - Updated error messages (AMHOL)
-      - updated to depend on ROM 4.0 (maximderbin)
-      - Removed ruby 2.1 support (maximderbin)
-      - Removed rbx-3 support (maximderbin)
+        - Updated error messages (AMHOL)
+        - updated to depend on ROM 4.0 (maximderbin)
+        - Removed ruby 2.1 support (maximderbin)
+        - Removed rbx-3 support (maximderbin)
 
-      - Make schemas mandatory and use schema API from ROM core (AMHOL)
-      - Generate transformer using schema (AMHOL)
-      - Removed rbx-2 support (solnic)
-      - Add Dataset#base_path and Relation#primary_key (AMHOL)
-      - Updated to work with ROM 3.0 (maximderbin)
-      - Removed ruby 2.1 support (maximderbin)
-      - Fix Relation#primary_key when schema defines alias (AMHOL)
-      - Transform keys on insert and update (maximderbin)
-      - Remove `rom-support` dependency (maximderbin)
+        - Make schemas mandatory and use schema API from ROM core (AMHOL)
+        - Generate transformer using schema (AMHOL)
+        - Removed rbx-2 support (solnic)
+        - Add Dataset#base_path and Relation#primary_key (AMHOL)
+        - Updated to work with ROM 3.0 (maximderbin)
+        - Removed ruby 2.1 support (maximderbin)
+        - Fix Relation#primary_key when schema defines alias (AMHOL)
+        - Transform keys on insert and update (maximderbin)
+        - Remove `rom-support` dependency (maximderbin)
 
-      - Removed ruby 2.0 support
-      - Use `schema` API from ROM::Core.  Replaces old schema (solnic)
-      - Now works out of the box with `rom-repository` (solnic)
+        - Removed ruby 2.0 support
+        - Use `schema` API from ROM::Core.  Replaces old schema (solnic)
+        - Now works out of the box with `rom-repository` (solnic)
 
-      - updated to depend on the forthcoming rom 2.0 (cflipse)
+        - updated to depend on the forthcoming rom 2.0 (cflipse)
 
-      - replaced dry-data with dry-types  (Nikita Shilnikov <ns@latera.ru>)
-
-
-      - schema support using `dry-data` (AMHOL)
+        - replaced dry-data with dry-types  (Nikita Shilnikov <ns@latera.ru>)
 
 
-      - Projections (`container.relation(:users).project(:id, :name)`) (AMHOL)
+        - schema support using `dry-data` (AMHOL)
 
 
-      - `ROM::HTTP::Dataset` macros for setting `default_request_handler` and `default_response_handler` (AMHOL)
+        - Projections (`container.relation(:users).project(:id, :name)`) (AMHOL)
+
+
+        - `ROM::HTTP::Dataset` macros for setting `default_request_handler` and `default_response_handler` (AMHOL)
 - version: 0.7.0
-  date: '2018-01-11'
+  date: "2018-01-11"
 - version: 0.6.0
-  date: '2017-02-06'
+  date: "2017-02-06"
 - version: 0.5.0
-  date: '2016-08-08'
+  date: "2016-08-08"
 - version: 0.4.0
-  date: '2016-04-30'
+  date: "2016-04-30"
 - version: 0.3.0
-  date: '2016-03-17'
+  date: "2016-03-17"
 - version: 0.2.0
-  date: '2016-01-30'
+  date: "2016-01-30"
 - version: 0.1.2
-  date: '2015-09-16'
+  date: "2015-09-16"
 - version: 0.1.1
-  date: '2015-09-03'
+  date: "2015-09-03"
   changed:
-  - "`ROM::HTTP::Gateway` tries to load the `Dataset` class lazily from the same namespace
-    that the `Gateway` is defined in, with a fallback to `ROM::HTTP::Dataset`, making
-    extending easier (AMHOL)"
-  - "`ROM::HTTP::Gateway` no longer raises errors on missing configuration keys, these
-    are now raised late in `Dataset` - this was to allow for the implementation of
-    `default_request_handler` and `default_response_handler` (AMHOL)"
-  - "`ROM::HTTP::Dataset` now uses `ROM::Options` from `rom-support`, adding typechecking
-    to options and making it easier to define additional options in extensions"
+    - "`ROM::HTTP::Gateway` tries to load the `Dataset` class lazily from the same namespace
+      that the `Gateway` is defined in, with a fallback to `ROM::HTTP::Dataset`, making
+      extending easier (AMHOL)"
+    - "`ROM::HTTP::Gateway` no longer raises errors on missing configuration keys, these
+      are now raised late in `Dataset` - this was to allow for the implementation of
+      `default_request_handler` and `default_response_handler` (AMHOL)"
+    - "`ROM::HTTP::Dataset` now uses `ROM::Options` from `rom-support`, adding typechecking
+      to options and making it easier to define additional options in extensions"
 - version: 0.1.0
-  date: '2015-08-19'
+  date: "2015-08-19"
   summary: First public release \o/
