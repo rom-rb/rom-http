@@ -8,7 +8,7 @@
     - "Support for associations :tada: (@ianks)"
     - "Support for ruby 3 (@AMHOL)"
   changed:
-    - "Request params separated into query_params and body_params (@AMHOL in #44)"
+    - "Request params separated into query_params and body_params (@AMHOL in [#44](https://github.com/rom-rb/rom-http/pull/44))"
     - "Minimal ruby version is set to 2.7 (@flash-gordon)"
 - version: 0.8.0
   date: "2019-04-29"
