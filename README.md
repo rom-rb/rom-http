@@ -21,8 +21,8 @@
 
 This library officially supports the following Ruby versions:
 
-* MRI >= `2.5`
-* jruby >= `9.2`
+* MRI >= `2.7`
+* ~jruby >= `9.3`~ (awaits Ruby 2.7 compatibility)
 
 ## License
 
