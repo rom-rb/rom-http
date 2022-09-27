@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "rom"
 
 rom = ROM.container(:http, uri: "https://api.github.com", handlers: :json) do |config|

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Mutant
   class Selector
     # Expression based test selector
@@ -6,6 +7,6 @@ module Mutant
       def call(_subject)
         integration.all_tests
       end
-    end # Expression
-  end # Selector
-end # Mutant
+    end
+  end
+end

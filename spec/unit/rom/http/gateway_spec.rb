@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "rom/lint/spec"
 
 RSpec.describe ROM::HTTP::Gateway do

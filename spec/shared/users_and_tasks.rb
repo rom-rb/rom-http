@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 RSpec.shared_context "users and tasks" do
   include_context "setup"
   let(:users_relation) do

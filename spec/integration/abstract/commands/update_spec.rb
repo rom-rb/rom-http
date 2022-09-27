@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 RSpec.describe ROM::HTTP::Commands::Update do
   include_context "setup"
 

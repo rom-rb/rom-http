@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require_relative "support/coverage"
 
 require "pathname"
@@ -22,8 +23,8 @@ VCR.configure do |config|
   config.hook_into :webmock
 end
 
-Dir[root.join("support/**/*.rb").to_s].each { |file| require file }
-Dir[root.join("shared/**/*.rb").to_s].each { |file| require file }
+Dir[root.join("support/**/*.rb").to_s].sort.each { |file| require file }
+Dir[root.join("shared/**/*.rb").to_s].sort.each { |file| require file }
 
 # Namespace holding all objects created during specs
 module Test

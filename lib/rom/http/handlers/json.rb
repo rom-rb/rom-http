@@ -33,8 +33,8 @@ module ROM
 
           request = request_class.new(uri.request_uri)
 
-          dataset.headers.each_with_object(request) do |(header, value), request|
-            request[header.to_s] = value
+          dataset.headers.each_with_object(request) do |(header, value), req|
+            req[header.to_s] = value
           end
 
           request.body = JSON.dump(dataset.body_params) if dataset.body_params.any?

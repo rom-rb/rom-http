@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "rom/http/handlers/json"
 
 RSpec.describe ROM::HTTP::Handlers do

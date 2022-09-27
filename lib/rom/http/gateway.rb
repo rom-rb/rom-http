@@ -96,7 +96,7 @@ module ROM
       #
       # @api private
       def default_handlers
-        if handlers_key = config[:handlers]
+        if (handlers_key = config[:handlers])
           Handlers[handlers_key]
             .map { |key, value| [:"#{key}_handler", value] }.to_h
         else
