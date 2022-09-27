@@ -8,12 +8,12 @@
 - Support for ruby 3 (@AMHOL)
 
 ### Changed
-- Request params separated into query_params and body_params (@AMHOL in #44)
+- Request params separated into query_params and body_params (@AMHOL in [#44](https://github.com/rom-rb/rom-http/pull/44))
 - Minimal ruby version is set to 2.7 (@flash-gordon)
 
 ### Fixed
 
-- "Warning message from dry-configurable (@gkostin1966)
+- Warning message from dry-configurable (@gkostin1966)
 
 [Compare v0.8.0...v0.9.0](https://github.com/rom-rb/rom-http/compare/v0.8.0...v0.9.0)
 
