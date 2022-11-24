@@ -8,7 +8,7 @@ module ROM
     #
     # @api public
     class Handlers
-      extend Dry::Container::Mixin
+      extend Dry::Core::Container::Mixin
 
       register(:json, request: JSONRequest, response: JSONResponse)
     end
