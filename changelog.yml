@@ -1,4 +1,9 @@
 ---
+- version: 0.10.0
+  summary:
+  date: "2022-11-26"
+  fixed:
+    - "Bump dry-core to ~> 1.0 (via #52) (@tiev)"
 - version: 0.9.0
   summary:
   date: "2022-09-27"
